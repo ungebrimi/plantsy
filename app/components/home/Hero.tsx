@@ -44,16 +44,16 @@ const Hero = () => {
           <div className="mx-auto max-w-2xl gap-x-14 lg:mx-0 lg:flex lg:max-w-none lg:items-center">
             <div className="w-full max-w-xl lg:shrink-0 xl:max-w-2xl">
               <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-              Horticulture - Simplified. Greenery at its Best, Right in Your Home
+                Horticulture - Simplified. Greenery at its Best, Right in Your Home
               </h1>
               <p className="relative mt-6 text-lg leading-8 text-gray-600 sm:max-w-md lg:max-w-none">
-                Welcome to the effortless way to cultivate your personal indoor and outdoor oasis. Our team of expert horticulturists is committed to streamlining complex gardening tasks, from maintaining lush greenery to introducing and arranging new plant life. 
-                Experience the thrill of vibrant, flourishing plants right in your home, curated with care by the best in the business. With us, greenery isn't just a hobby - it's a lifestyle.
+                Welcome to the effortless way to cultivate your personal indoor and outdoor oasis. Our team of expert horticulturists is committed to streamlining complex gardening tasks, from maintaining lush greenery to introducing and arranging new plant life.
+                Experience the thrill of vibrant, flourishing plants right in your home, curated with care by the best in the business. With us, greenery isn &apos; t just a hobby - it&apos;s a lifestyle.
               </p>
               <div className="mt-10 flex items-center gap-x-6">
                 <a
                   href="#"
-                  className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  className="rounded-md bg-green-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
                 >
                   Get started
                 </a>
