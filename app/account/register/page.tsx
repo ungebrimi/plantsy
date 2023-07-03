@@ -2,7 +2,7 @@
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
-import { useState, useRef } from 'react'
+import { useState, useRef, MutableRefObject } from 'react'
 import Link from 'next/link'
 import HCaptcha from '@hcaptcha/react-hcaptcha'
 
@@ -10,7 +10,7 @@ export default function Register() {
   const [message, setMessage] = useState<string | undefined>()
   const [acceptTerms, setAcceptTerms] = useState<boolean>(false)
   const [captchaToken, setCaptchaToken] = useState<string | undefined>()
-  const formRef = useRef<HTMLFormElement>()
+  const formRef = useRef<HTMLFormElement>(null);
   const router = useRouter()
   // should be supabase DB type this any as well
   const supabase = createClientComponentClient<any>()
@@ -137,7 +137,7 @@ export default function Register() {
                     className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-600"
                   />
                   <label htmlFor="checked" className="ml-3 block text-sm leading-6 text-gray-900">
-                    By checking I accept Plantsy's<Link href="/legal" className="text-green-500 underline font-bold"> terms & conditions</Link>
+                    By checking I accept Plantsy{`'`}s<Link href="/legal" className="text-green-500 underline font-bold"> terms & conditions</Link>
                   </label>
                 </div>
               </div>

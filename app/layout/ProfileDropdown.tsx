@@ -12,7 +12,7 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 
-const ProfileDropdown = (user: User) => {
+const ProfileDropdown = ({ user }: { user: User | null }) => {
   const router = useRouter()
   const supabase = createClientComponentClient()
 
