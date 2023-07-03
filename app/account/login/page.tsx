@@ -1,6 +1,6 @@
 'use client'
 import Link from "next/link"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import HCaptcha from '@hcaptcha/react-hcaptcha'
@@ -10,6 +10,7 @@ export default function Login() {
   const supabase = createClientComponentClient()
   const [error, setError] = useState<string | undefined>(undefined)
   const [captchaToken, setCaptchaToken] = useState<string | undefined>()
+  const captcha = useRef<any>()
 
   const handleSignIn = async (e: any) => {
     e.preventDefault();
@@ -22,16 +23,21 @@ export default function Login() {
       email,
       password,
       options: {
-        captchaToken: captchaToken
+        captchaToken
       }
     }).then(res => {
       if (res.error) {
         setError(res.error.message)
       }
       else {
-        router.push("/marketplace")
+        console.log(res)
+        captcha.current.resetCaptcha()
+        setTimeout(() => {
+          router.push("/marketplace")
+        }, 2000)
       }
     })
+
   }
 
   return (

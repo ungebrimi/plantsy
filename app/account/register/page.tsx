@@ -2,7 +2,7 @@
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
-import { useState, useRef, MutableRefObject } from 'react'
+import { useState, useRef } from 'react'
 import Link from 'next/link'
 import HCaptcha from '@hcaptcha/react-hcaptcha'
 
@@ -14,6 +14,7 @@ export default function Register() {
   const router = useRouter()
   // should be supabase DB type this any as well
   const supabase = createClientComponentClient<any>()
+  const captcha = useRef<any>()
 
   const handleSignUp = async (e: any) => {
     e.preventDefault();
@@ -49,10 +50,11 @@ export default function Register() {
       password,
       options: {
         emailRedirectTo: `${location.origin}/auth/callback?next=/account/thank-you`, // Specify the desired next URL
-        captchaToken: captchaToken
+        captchaToken
       },
     });
 
+    captcha.current.resetCaptcha()
     setTimeout(() => {
       router.push("/account/profile");
     }, 5000);
