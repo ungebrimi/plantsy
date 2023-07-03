@@ -1,11 +1,14 @@
 "use client"
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import HCaptcha from '@hcaptcha/react-hcaptcha'
 
 export default function UpdatePassword() {
   const [password, setPassword] = useState('');
   const [confirmedPassword, setConfirmedPassword] = useState('');
   const [message, setMessage] = useState('');
+  const [captchaToken, setCaptchaToken] = useState<string | undefined>()
+  const captcha = useRef<any>()
 
   const supabase = createClientComponentClient();
 
@@ -26,7 +29,7 @@ export default function UpdatePassword() {
     }
 
     try {
-      await supabase.auth.updateUser({ password });
+      await supabase.auth.updateUser({ password: password });
 
       setMessage('Password has been updated successfully.');
       setPassword('');
@@ -81,6 +84,11 @@ export default function UpdatePassword() {
                   />
                 </div>
               </div>
+              <HCaptcha
+                sitekey={"8c6238de-63ae-47f6-8007-0421360fb824"}
+                onVerify={(token: string) => { setCaptchaToken(token) }} />
+
+
               <div>
                 <button
                   type="submit"

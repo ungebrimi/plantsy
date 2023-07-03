@@ -30,7 +30,6 @@ export default function Login() {
         setError(res.error.message)
       }
       else {
-        console.log(res)
         captcha.current.resetCaptcha()
         setTimeout(() => {
           router.push("/marketplace")

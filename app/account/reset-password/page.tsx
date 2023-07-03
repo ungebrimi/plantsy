@@ -1,10 +1,13 @@
 "use client"
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import HCaptcha from '@hcaptcha/react-hcaptcha'
 
 export default function ResetPassword() {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
+  const [captchaToken, setCaptchaToken] = useState<string | undefined>()
+  const captcha = useRef<any>()
 
   const supabase = createClientComponentClient();
 
@@ -13,7 +16,9 @@ export default function ResetPassword() {
     try {
       await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/auth/callback?next=/account/update-password`,
+        captchaToken
       });
+      captcha.current.resetCaptcha()
       setMessage('Reset password email has been sent. Please check your inbox.');
       setEmail('');
     } catch (error: any) {
@@ -21,7 +26,6 @@ export default function ResetPassword() {
       setMessage('Error resetting password. Please try again later.');
     }
   };
-  https://dhxummckajoranathmmy.supabase.co/auth/v1/verify?redirect_to=http%253A%252F%252Flocalhost%253A3000%252Fauth%252Fcallback%253Fnext%253D%252Faccount%252Fupdate-password&token=pkce_f465b01c864f0a7ee50a2eae4b4534f71a071b3f6e08c48017aa26a5&type=recovery
 
   return (
     <>
@@ -58,6 +62,11 @@ export default function ResetPassword() {
                   />
                 </div>
               </div>
+
+              <HCaptcha
+                sitekey={"8c6238de-63ae-47f6-8007-0421360fb824"}
+                onVerify={(token: string) => { setCaptchaToken(token) }} />
+
               <div>
                 <button
                   type="submit"
