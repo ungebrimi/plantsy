@@ -20,7 +20,10 @@ export default function ResetPassword() {
       console.error('Error resetting password:', error.message);
       setMessage('Error resetting password. Please try again later.');
     }
-  }; return (
+  };
+  https://dhxummckajoranathmmy.supabase.co/auth/v1/verify?redirect_to=http%253A%252F%252Flocalhost%253A3000%252Fauth%252Fcallback%253Fnext%253D%252Faccount%252Fupdate-password&token=pkce_f465b01c864f0a7ee50a2eae4b4534f71a071b3f6e08c48017aa26a5&type=recovery
+
+  return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">

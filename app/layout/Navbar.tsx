@@ -9,8 +9,8 @@ import ProfileDropdown from './ProfileDropdown'
 
 const navigation = [
   { name: 'Marketplace', href: '/marketplace' },
-  { name: 'Company', href: '#' },
-  { name: 'Get in touch', href: '#' },
+  { name: 'Company', href: '/company' },
+  { name: 'Get in touch', href: '/contact' },
 ]
 
 export default function Navbar({ session }: { session: any }) {

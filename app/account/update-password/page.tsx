@@ -1,25 +1,51 @@
-/*
- * This page is updating your password 
- * */
+"use client"
+import { useState } from 'react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
-export default function Reset() {
+export default function UpdatePassword() {
+  const [password, setPassword] = useState('');
+  const [confirmedPassword, setConfirmedPassword] = useState('');
+  const [message, setMessage] = useState('');
+
+  const supabase = createClientComponentClient();
+
+  const handleUpdatePassword = async (e: any) => {
+    e.preventDefault();
+
+    if (password !== confirmedPassword) {
+      setMessage("Passwords don't match. Please try again.");
+      return;
+    }
+
+    // Password validation check
+    const uppercaseRegex = /[A-Z]/;
+    const numberRegex = /[0-9]/;
+    if (password.length < 8 || !uppercaseRegex.test(password) || !numberRegex.test(password)) {
+      setMessage('Password must be at least 8 characters long, contain an uppercase letter, and a number.');
+      return;
+    }
+
+    try {
+      await supabase.auth.updateUser({ password });
+
+      setMessage('Password has been updated successfully.');
+      setPassword('');
+      setConfirmedPassword('');
+    } catch (error: any) {
+      console.error('Error updating password:', error.message);
+      setMessage('Error updating password. Please try again later.');
+    }
+  };
+
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <img
-            className="mx-auto h-10 w-auto"
-            src="https://tailwindui.com/img/logos/mark.svg?color=green&shade=600"
-            alt="Your Company"
-          />
-          <h2 className="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-            Enter a new password
-          </h2>
-        </div>
+        {/* Rest of the component code */}
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
           <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
-            <form className="space-y-6" action="#" method="POST">
+            <p>{message}</p>
+            <form className="space-y-6" onSubmit={handleUpdatePassword}>
               <div>
                 <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
                   Password
@@ -31,6 +57,8 @@ export default function Reset() {
                     type="password"
                     autoComplete="password"
                     required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
                   />
                 </div>
@@ -44,9 +72,11 @@ export default function Reset() {
                   <input
                     id="confirmed_password"
                     name="confirmed_password"
-                    type="confirmed_password"
+                    type="password"
                     autoComplete="confirmed_password"
                     required
+                    value={confirmedPassword}
+                    onChange={(e) => setConfirmedPassword(e.target.value)}
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
                   />
                 </div>
@@ -64,6 +94,6 @@ export default function Reset() {
         </div>
       </div>
     </>
-  )
+  );
 }
 
