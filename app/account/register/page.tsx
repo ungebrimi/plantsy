@@ -4,10 +4,12 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import { useState, useRef } from 'react'
 import Link from 'next/link'
+import HCaptcha from '@hcaptcha/react-hcaptcha'
 
 export default function Register() {
   const [message, setMessage] = useState<string | undefined>()
   const [acceptTerms, setAcceptTerms] = useState<boolean>(false)
+  const [captchaToken, setCaptchaToken] = useState<string | undefined>()
   const formRef = useRef<HTMLFormElement>()
   const router = useRouter()
   // should be supabase DB type this any as well
@@ -23,9 +25,11 @@ export default function Register() {
     let confirmPassword = values.confirm_password.trim();
 
     // Password requirements checker
-    const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9]).*$/;
-    if (!passwordRegex.test(password)) {
-      setMessage("Password must contain an uppercase letter, a special symbol, and a number");
+    // Password validation check
+    const uppercaseRegex = /[A-Z]/;
+    const numberRegex = /[0-9]/;
+    if (password.length < 8 || !uppercaseRegex.test(password) || !numberRegex.test(password)) {
+      setMessage('Password must be at least 8 characters long, contain an uppercase letter, and a number.');
       return;
     }
 
@@ -45,11 +49,12 @@ export default function Register() {
       password,
       options: {
         emailRedirectTo: `${location.origin}/auth/callback?next=/account/thank-you`, // Specify the desired next URL
+        captchaToken: captchaToken
       },
     });
 
     setTimeout(() => {
-      router.push("/profile");
+      router.push("/account/profile");
     }, 5000);
   };
 
@@ -70,7 +75,6 @@ export default function Register() {
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
           <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
             <form className="space-y-6" action="#" ref={formRef} onSubmit={handleSignUp} method="POST">
-
               <div>
                 <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
                   Email address<span className="text-red-500">*</span>
@@ -119,6 +123,10 @@ export default function Register() {
                 </div>
               </div>
 
+              <HCaptcha
+                sitekey={"8c6238de-63ae-47f6-8007-0421360fb824"}
+                onVerify={(token: string) => { setCaptchaToken(token) }} />
+
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <input
@@ -129,11 +137,10 @@ export default function Register() {
                     className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-600"
                   />
                   <label htmlFor="checked" className="ml-3 block text-sm leading-6 text-gray-900">
-                    By checking I accept Plantsy terms & conditions
+                    By checking I accept Plantsy's<Link href="/legal" className="text-green-500 underline font-bold"> terms & conditions</Link>
                   </label>
                 </div>
               </div>
-
               <div>
                 <button
                   type="submit"
