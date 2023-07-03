@@ -3,11 +3,13 @@ import Link from "next/link"
 import { useState } from "react"
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
+import HCaptcha from '@hcaptcha/react-hcaptcha'
 
 export default function Login() {
   const router = useRouter()
   const supabase = createClientComponentClient()
   const [error, setError] = useState<string | undefined>(undefined)
+  const [captchaToken, setCaptchaToken] = useState<string | undefined>()
 
   const handleSignIn = async (e: any) => {
     e.preventDefault();
@@ -19,6 +21,9 @@ export default function Login() {
     await supabase.auth.signInWithPassword({
       email,
       password,
+      options: {
+        captchaToken: captchaToken
+      }
     }).then(res => {
       if (res.error) {
         setError(res.error.message)
@@ -77,6 +82,10 @@ export default function Login() {
                   />
                 </div>
               </div>
+
+              <HCaptcha
+                sitekey={"8c6238de-63ae-47f6-8007-0421360fb824"}
+                onVerify={(token: string) => { setCaptchaToken(token) }} />
               {error && (<p className="text-red-500 font-medium text-sm">{error}</p>)}
               <div className="flex items-center justify-between">
                 {/*
