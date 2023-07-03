@@ -1,5 +1,6 @@
 import './globals.css'
-import Navbar from './layout/Navbar'
+import Footer from './layout/Footer'
+import Navigation from './layout/Navigation'
 
 export const metadata = {
   title: 'Plantsy',
@@ -14,8 +15,9 @@ export default function RootLayout({
   return (
     <html lang="en" className='h-full bg-gray-50'>
       <body className="h-full">
-        <Navbar />
+        <Navigation />
         {children}
+        <Footer />
       </body>
     </html>
   )

@@ -7,6 +7,7 @@ import type { NextRequest } from 'next/server'
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
+  const next = requestUrl.searchParams.get('next');
 
   if (code) {
     // this any should be database type from supa CLI
@@ -14,6 +15,9 @@ export async function GET(request: NextRequest) {
     await supabase.auth.exchangeCodeForSession(code)
   }
 
-  // URL to redirect to after sign in process completes
-  return NextResponse.redirect(requestUrl.origin)
+  if (next) {
+    return NextResponse.redirect(next);
+  } else {
+    return NextResponse.redirect(requestUrl.origin);
+  }
 }

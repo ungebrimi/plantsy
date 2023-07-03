@@ -1,18 +1,43 @@
 "use client"
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Dialog } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import type { User } from "../../dbtypes.d.ts";
+import ProfileDropdown from './ProfileDropdown'
 
 const navigation = [
-  { name: 'Product', href: '#' },
-  { name: 'Features', href: '#' },
-  { name: 'Marketplace', href: '#' },
+  { name: 'Marketplace', href: '/marketplace' },
   { name: 'Company', href: '#' },
+  { name: 'Get in touch', href: '#' },
 ]
 
-export default function Navbar() {
+export default function Navbar({ session }: { session: any }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [user, setUser] = useState<User | null>(null)
+  const supabase = createClientComponentClient()
+
+  useEffect(() => {
+    async function getUserData() {
+      try {
+        const { data, error } = await supabase.from("profiles").select()
+        if (error) {
+          console.log(error)
+          return
+        }
+        if (data) {
+          setUser(data[0]) // Assuming you want to set the first user from the response
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    if (session) {
+      getUserData()
+    }
+  }, [session, supabase])
+
 
   return (
     <header className="">
@@ -30,17 +55,23 @@ export default function Navbar() {
             </Link>
           ))}
         </div>
-        <div className="flex flex-1 items-center justify-end gap-x-6">
-          <Link href="/login" className="hidden lg:block lg:text-sm lg:font-semibold lg:leading-6 lg:text-gray-900">
-            Log in
-          </Link>
-          <Link
-            href="register"
-            className="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-          >
-            Sign up
-          </Link>
-        </div>
+        {session !== null ? (
+          <div className="flex flex-1 items-center justify-end gap-x-6">
+            <ProfileDropdown user={user} />
+          </div>
+        ) : (
+          <div className="flex flex-1 items-center justify-end gap-x-6">
+            <Link href="/account/login" className="hidden lg:block lg:text-sm lg:font-semibold lg:leading-6 lg:text-gray-900">
+              Log in
+            </Link>
+            <Link
+              href="/account/register"
+              className="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+            >
+              Sign up
+            </Link>
+          </div>
+        )}
         <div className="flex lg:hidden">
           <button
             type="button"
@@ -94,10 +125,18 @@ export default function Navbar() {
               </div>
               <div className="py-6">
                 <Link
-                  href="login"
+                  href="account/login"
                   className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
                   Log in
+                </Link>
+              </div>
+              <div className="py-6">
+                <Link
+                  href="account/register"
+                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                >
+                  Register
                 </Link>
               </div>
             </div>
