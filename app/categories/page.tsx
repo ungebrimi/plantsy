@@ -100,9 +100,9 @@ const Categories = () => {
 												<p className='text-gray-500'><span className='inline-block text-sm'><ChatBubbleLeftIcon className='h-4 w-4 inline-block' /> <span className='inline-block relative top-0.5 ml-1'>Response in about <strong>2 hours</strong></span></span></p>
 											</div>
 											<p className='text-gray-500 mt-4 text-sm bg-slate-100 p-2'>
-												Dani G. says, "Highly recommended for someone looking
+												Dani G. says, Highly recommended for someone looking
 												for a good{" "}
-												<span className='font-semibold'>handyman</span>!"{" "}
+												<span className='font-semibold'>handyman</span>
 												<span className='text-cyan-400'>See More</span>
 											</p>
 										</div>
@@ -152,9 +152,9 @@ const Categories = () => {
 												<p className='text-gray-500'><span className='inline-block text-sm'><ChatBubbleLeftIcon className='h-4 w-4 inline-block' /> <span className='inline-block relative top-0.5 ml-1'>Response in about <strong>2 hours</strong></span></span></p>
 											</div>
 											<p className='text-gray-500 mt-4 text-sm bg-slate-100 p-2'>
-												Dani G. says, "Highly recommended for someone looking
+												Dani G. says, Highly recommended for someone looking
 												for a good{" "}
-												<span className='font-semibold'>handyman</span>!"{" "}
+												<span className='font-semibold'>handyman</span>
 												<span className='text-cyan-400'>See More</span>
 											</p>
 										</div>
@@ -204,9 +204,9 @@ const Categories = () => {
 												<p className='text-gray-500'><span className='inline-block text-sm'><ChatBubbleLeftIcon className='h-4 w-4 inline-block' /> <span className='inline-block relative top-0.5 ml-1'>Response in about <strong>2 hours</strong></span></span></p>
 											</div>
 											<p className='text-gray-500 mt-4 text-sm bg-slate-100 p-2'>
-												Dani G. says, "Highly recommended for someone looking
+												Dani G. says, Highly recommended for someone looking
 												for a good{" "}
-												<span className='font-semibold'>handyman</span>!"{" "}
+												<span className='font-semibold'>handyman</span>
 												<span className='text-cyan-400'>See More</span>
 											</p>
 										</div>
@@ -256,9 +256,9 @@ const Categories = () => {
 												<p className='text-gray-500'><span className='inline-block text-sm'><ChatBubbleLeftIcon className='h-4 w-4 inline-block' /> <span className='inline-block relative top-0.5 ml-1'>Response in about <strong>2 hours</strong></span></span></p>
 											</div>
 											<p className='text-gray-500 mt-4 text-sm bg-slate-100 p-2'>
-												Dani G. says, "Highly recommended for someone looking
+												Dani G. says, Highly recommended for someone looking
 												for a good{" "}
-												<span className='font-semibold'>handyman</span>!"{" "}
+												<span className='font-semibold'>handyman</span>
 												<span className='text-cyan-400'>See More</span>
 											</p>
 										</div>
