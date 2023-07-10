@@ -1,14 +1,11 @@
 "use client"
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import HCaptcha from '@hcaptcha/react-hcaptcha'
 
 export default function UpdatePassword() {
   const [password, setPassword] = useState('');
   const [confirmedPassword, setConfirmedPassword] = useState('');
   const [message, setMessage] = useState('');
-  const [captchaToken, setCaptchaToken] = useState<string | undefined>()
-  const captcha = useRef<any>()
 
   const supabase = createClientComponentClient();
 

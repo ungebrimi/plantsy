@@ -22,15 +22,15 @@ export default function Login() {
     await supabase.auth.signInWithPassword({
       email,
       password,
-      options: {
-        captchaToken
-      }
+      // options: {
+      //   captchaToken
+      // }
     }).then(res => {
       if (res.error) {
         setError(res.error.message)
       }
       else {
-        captcha.current.resetCaptcha()
+        // captcha.current.resetCaptcha()
         setTimeout(() => {
           router.push("/marketplace")
         }, 2000)

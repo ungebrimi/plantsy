@@ -4,6 +4,10 @@ interface User {
   last_name: string | null;
   email: string | null;
   company: string | null;
+  website: string | null;
+  status: string | null;
+  profile_picture: string | null;
+  about: string | null;
   zip: string | null;
   city: string | null;
   street: string | null;
@@ -13,7 +17,6 @@ interface User {
   phone: string | null;
   role: string | null;
   rating: number | null;
-  profile_image: string | null;
 }
 
 export { User };

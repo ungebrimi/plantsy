@@ -16,11 +16,33 @@ export default function Register() {
   const supabase = createClientComponentClient<any>()
   const captcha = useRef<any>()
 
+  const createBucket = async (id: string) => {
+    console.log(id)
+    try {
+      const { data, error } = await supabase
+        .storage
+        .createBucket(id, {
+          public: false,
+          allowedMimeTypes: ['image/*'],
+          fileSizeLimit: 5024
+        });
+      if (error) {
+        console.error(error);
+        return null; // Handle the error appropriately
+      }
+      console.log(data);
+      return data;
+    } catch (error) {
+      console.error(error);
+      return null; // Handle the error appropriately
+    }
+  };
+
   const handleSignUp = async (e: any) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
     const values: any = Object.fromEntries(data.entries());
-    setMessage(undefined)
+    setMessage(undefined);
     let email = values.email.trim();
     let password = values.password.trim();
     let confirmPassword = values.confirm_password.trim();
@@ -45,19 +67,34 @@ export default function Register() {
     }
 
     setMessage(`Thanks for registering! We have sent you a confirmation email to ${email}`);
-    await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${location.origin}/auth/callback?next=/account/thank-you`, // Specify the desired next URL
-        captchaToken
-      },
-    });
 
-    captcha.current.resetCaptcha()
-    setTimeout(() => {
-      router.push("/account/profile");
-    }, 5000);
+    try {
+      const { user, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${location.origin}/auth/callback?next=/account/thank-you`, // Specify the desired next URL
+          captchaToken
+        },
+      });
+
+      if (error) {
+        console.error(error);
+        return null; // Handle the error appropriately
+      }
+
+      if (user) {
+        await createBucket(user.id);
+      }
+
+      // captcha.current.resetCaptcha();
+      setTimeout(() => {
+        router.push("/account/profile");
+      }, 5000);
+    } catch (error) {
+      console.error(error);
+      // Handle the error appropriately
+    }
   };
 
   return (

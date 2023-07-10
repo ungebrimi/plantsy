@@ -56,7 +56,7 @@ const ProfileDropdown = ({ user }: { user: User | null }) => {
           <Menu.Item>
             {({ active }) => (
               <Link
-                href="#"
+                href="/account/profile"
                 className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
               >
                 Your Profile
@@ -66,7 +66,7 @@ const ProfileDropdown = ({ user }: { user: User | null }) => {
           <Menu.Item>
             {({ active }) => (
               <Link
-                href=""
+                href="/account/messages"
                 className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
               >
                 Messages
