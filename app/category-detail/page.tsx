@@ -36,7 +36,7 @@ const CategoryDetail = () => {
 		{ value: "merah", label: "Merah" },
 	];
 
-	const handleWarnaChange = async (selected, selectaction) => {
+	const handleWarnaChange = async (selected: any, selectaction: any) => {
 		const { action } = selectaction;
 		if (action === "clear") {
 		} else if (action === "select-option") {
@@ -71,7 +71,7 @@ const CategoryDetail = () => {
 		],
 	};
 
-	function classNames(...classes) {
+	function classNames(...classes: any) {
 		return classes.filter(Boolean).join(" ");
 	}
 
