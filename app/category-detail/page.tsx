@@ -15,18 +15,24 @@ import {
 	PhoneIcon,
 	MagnifyingGlassIcon,
 	ExclamationTriangleIcon,
+	ArrowLeftIcon,
+	ArrowRightIcon,
+	InformationCircleIcon,
 } from "@heroicons/react/24/outline";
 
-import {
-	StarIcon
-} from "@heroicons/react/24/solid";
+import { StarIcon } from "@heroicons/react/24/solid";
 import Select from "react-select";
 import { useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
+import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 const CategoryDetail = () => {
 	const [warna, setWarna] = useState([]);
 	const [open, setOpen] = useState(false);
+	const [showMore, showMoreFaqs] = useState(true);
+	const [openCredentialDetailsDialog, setOpenCredentialDetailsDialog] =
+		useState(false);
 
 	const optionsWarna = [
 		{ value: "biru", label: "Biru" },
@@ -82,7 +88,7 @@ const CategoryDetail = () => {
 					<div className='flex gap-8'>
 						<div className='flex md:w-9/12'>
 							<div className='w-full'>
-								<div className='grid grid-rows-4 grid-flow-col gap-4'>
+								<div className='grid grid-flow-col gap-4'>
 									<div className='bg-white rounded-xl shadow-md overflow-hidden'>
 										<div className='md:flex'>
 											<div className='box-border h-48 w-48 p-6'>
@@ -127,8 +133,8 @@ const CategoryDetail = () => {
 												Introduction :{" "}
 												<span className='text-gray-600 text-sm font-semibold'>
 													Lawn Love is a modern, high-tech lawn care service.
-													Get an instant, accurate satellite quote, and we
-													send over a lawn pro to work their magic on your yard.
+													Get an instant, accurate satellite quote, and we send
+													over a lawn pro to work their magic on your yard.
 													Payment and scheduling are automated, and you can
 													manage everything from your phone. We are Lawn Love,
 													and we bringing lawn care into the 21st century.
@@ -188,6 +194,39 @@ const CategoryDetail = () => {
 													Request a call
 												</button>
 											</div>
+										</div>
+										<div className='pl-6 pr-6 pb-2 border-t-2'>
+											<p className='font-bold text-lg'>Featured Projects</p>
+											<p>5 photos</p>
+											<Carousel showArrows={true} className='w-96'>
+												<div>
+													<img src='https://production-next-images-cdn.thumbtack.com/i/465604260963860483/desktop/standard/400square-legacy' />
+													<p className='legend'>Legend 1</p>
+												</div>
+												<div>
+													<img
+														width='50'
+														src='https://production-next-images-cdn.thumbtack.com/i/465604260963860483/desktop/standard/400square-legacy'
+													/>
+													<p className='legend'>Legend 2</p>
+												</div>
+												<div>
+													<img src='https://production-next-images-cdn.thumbtack.com/i/465604260963860483/desktop/standard/400square-legacy' />
+													<p className='legend'>Legend 3</p>
+												</div>
+												<div>
+													<img src='https://production-next-images-cdn.thumbtack.com/i/465604260963860483/desktop/standard/400square-legacy' />
+													<p className='legend'>Legend 4</p>
+												</div>
+												<div>
+													<img src='https://production-next-images-cdn.thumbtack.com/i/465604260963860483/desktop/standard/400square-legacy' />
+													<p className='legend'>Legend 5</p>
+												</div>
+												<div>
+													<img src='https://production-next-images-cdn.thumbtack.com/i/465604260963860483/desktop/standard/400square-legacy' />
+													<p className='legend'>Legend 6</p>
+												</div>
+											</Carousel>
 										</div>
 										<div className='pl-6 pr-6 pb-2 border-t-2'>
 											<p className='text-gray-700 text-lg font-bold mt-4'>
@@ -305,7 +344,383 @@ const CategoryDetail = () => {
 											</div>
 										</div>
 										<div className='flex pl-6 pr-6 pb-2'>
-											<p>Read reviews that mention:</p>
+											<p className='text-gray-600'>
+												Read reviews that mention:
+											</p>
+										</div>
+										<div className='pl-6 pr-6 pb-2 border-b-2 border-gray-300'>
+											<span className='inline-flex border-2 items-center rounded-full px-4 py-2 text-xs font-medium text-sky-500 ring-1 ring-inset ring-gray-500/10 mr-4 mt-2'>
+												service 17
+											</span>
+											<span className='inline-flex border-2 items-center rounded-full px-4 py-2 text-xs font-medium text-sky-500 ring-1 ring-inset ring-gray-500/10 mr-4 mt-2'>
+												yard 13
+											</span>
+											<span className='inline-flex border-2 items-center rounded-full px-4 py-2 text-xs font-medium text-sky-500 ring-1 ring-inset ring-gray-500/10 mr-4 mt-2'>
+												lawn 11
+											</span>
+											<span className='inline-flex border-2 items-center rounded-full px-4 py-2 text-xs font-medium text-sky-500 ring-1 ring-inset ring-gray-500/10 mr-4 mt-2'>
+												mow 7
+											</span>
+											<span className='inline-flex border-2 items-center rounded-full px-4 py-2 text-xs font-medium text-sky-500 ring-1 ring-inset ring-gray-500/10 mr-4 mt-2'>
+												cut 5
+											</span>
+											<span className='inline-flex border-2 items-center rounded-full px-4 py-2 text-xs font-medium text-sky-500 ring-1 ring-inset ring-gray-500/10 mr-4 mt-2'>
+												grass 4
+											</span>
+											<span className='inline-flex border-2 items-center rounded-full px-4 py-2 text-xs font-medium text-sky-500 ring-1 ring-inset ring-gray-500/10 mr-4 mt-2'>
+												leaves 2
+											</span>
+											<span className='inline-flex border-2 items-center rounded-full px-4 py-2 text-xs font-medium text-sky-500 ring-1 ring-inset ring-gray-500/10 mr-4 mt-2'>
+												overgrown 2
+											</span>
+											<span className='inline-flex border-2 items-center rounded-full px-4 py-2 text-xs font-medium text-sky-500 ring-1 ring-inset ring-gray-500/10 mr-4 mt-2'>
+												care 2
+											</span>
+											<span className='inline-flex border-2 items-center rounded-full px-4 py-2 text-xs font-medium text-sky-500 ring-1 ring-inset ring-gray-500/10 mr-4 mt-2'>
+												weed 2
+											</span>
+										</div>
+										<div className='border-b-2'>
+											<div className='flex pl-6 pr-6 mt-4'>
+												<div className='mr-2'>
+													<img
+														className='h-10 w-10 rounded-full'
+														src='https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+														alt=''
+													/>
+												</div>
+												<div className='w-full'>
+													<div className='d-flex'>
+														<p className='font-bold'>
+															Michelle t.{" "}
+															<span className='float-right font-light'>
+																Apr 29, 2023
+															</span>
+														</p>
+													</div>
+													<div className='flex'>
+														<StarIcon className='h-5 w-5 text-yellow-400' />
+														<StarIcon className='h-5 w-5 text-yellow-400' />
+														<StarIcon className='h-5 w-5 text-yellow-400' />
+														<StarIcon className='h-5 w-5 text-yellow-400' />
+														<StarIcon className='h-5 w-5 text-yellow-400' />
+														<span className='flex pt-0 ml-4'>
+															<CheckBadgeIcon className='h-4 w-4 text-gray-500 mr-2 mt-1' />{" "}
+															Hired on Thumbtack
+														</span>
+													</div>
+												</div>
+											</div>
+											<div className='pl-6 pr-6 pb-2 mt-2'>
+												<p className='font-normal text-sm'>
+													Marco did an excellent job on a tough{" "}
+													<strong>lawn</strong> service! Cleaned everything up
+													and left both front and back yards looking much
+													improved.
+												</p>
+												<p className='font-light text-sm mt-1'>
+													Details: Home • Every 2 weeks • Less than 1,000 sq ft
+													(acres) • Standard (up to 6 in) • Bag and haul • No, I
+													dont need to be there
+												</p>
+												<div className='bg-gray-100 p-4 mt-2 rounded'>
+													<p className='font-medium'>
+														Lawn Love Lawn Cares reply
+													</p>
+													<p className='font-normal'>
+														Thanks for reviewing Marco’s lawn care work,
+														Michelle! Its always good to hear about our
+														providers doing good work. And if you ever think of
+														a way that we can improve our service, definitely
+														let us know through the app.
+													</p>
+												</div>
+												<p className='text-xs text-gray-500 mt-4 mb-4'>
+													Lawn Mowing and Trimming
+												</p>
+											</div>
+										</div>
+										<div className='border-b-2'>
+											<div className='flex pl-6 pr-6 mt-4'>
+												<div className='mr-2'>
+													<img
+														className='h-10 w-10 rounded-full'
+														src='https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+														alt=''
+													/>
+												</div>
+												<div className='w-full'>
+													<div className='d-flex'>
+														<p className='font-bold'>
+															Michelle t.{" "}
+															<span className='float-right font-light'>
+																Apr 29, 2023
+															</span>
+														</p>
+													</div>
+													<div className='flex'>
+														<StarIcon className='h-5 w-5 text-yellow-400' />
+														<StarIcon className='h-5 w-5 text-yellow-400' />
+														<StarIcon className='h-5 w-5 text-yellow-400' />
+														<StarIcon className='h-5 w-5 text-yellow-400' />
+														<StarIcon className='h-5 w-5 text-yellow-400' />
+														<span className='flex pt-0 ml-4'>
+															<CheckBadgeIcon className='h-4 w-4 text-gray-500 mr-2 mt-1' />{" "}
+															Hired on Thumbtack
+														</span>
+													</div>
+												</div>
+											</div>
+											<div className='pl-6 pr-6 pb-2 mt-2'>
+												<p className='font-normal text-sm'>
+													Marco did an excellent job on a tough{" "}
+													<strong>lawn</strong> service! Cleaned everything up
+													and left both front and back yards looking much
+													improved.
+												</p>
+												<p className='font-light text-sm mt-1'>
+													Details: Home • Every 2 weeks • Less than 1,000 sq ft
+													(acres) • Standard (up to 6 in) • Bag and haul • No, I
+													dont need to be there
+												</p>
+												<div className='bg-gray-100 p-4 mt-2 rounded'>
+													<p className='font-medium'>
+														Lawn Love Lawn Cares reply
+													</p>
+													<p className='font-normal'>
+														Thanks for reviewing Marco’s lawn care work,
+														Michelle! Its always good to hear about our
+														providers doing good work. And if you ever think of
+														a way that we can improve our service, definitely
+														let us know through the app.
+													</p>
+												</div>
+												<p className='text-xs text-gray-500 mt-4 mb-4'>
+													Lawn Mowing and Trimming
+												</p>
+											</div>
+										</div>
+										<div className='border-b-2 pb-8'>
+											<div className='flex pl-6 pr-6 mt-4'>
+												<div className='mr-2'>
+													<img
+														className='h-10 w-10 rounded-full'
+														src='https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+														alt=''
+													/>
+												</div>
+												<div className='w-full'>
+													<div className='d-flex'>
+														<p className='font-bold'>
+															Michelle t.{" "}
+															<span className='float-right font-light'>
+																Apr 29, 2023
+															</span>
+														</p>
+													</div>
+													<div className='flex'>
+														<StarIcon className='h-5 w-5 text-yellow-400' />
+														<StarIcon className='h-5 w-5 text-yellow-400' />
+														<StarIcon className='h-5 w-5 text-yellow-400' />
+														<StarIcon className='h-5 w-5 text-yellow-400' />
+														<StarIcon className='h-5 w-5 text-yellow-400' />
+														<span className='flex pt-0 ml-4'>
+															<CheckBadgeIcon className='h-4 w-4 text-gray-500 mr-2 mt-1' />{" "}
+															Hired on Thumbtack
+														</span>
+													</div>
+												</div>
+											</div>
+											<div className='pl-6 pr-6 pb-2 mt-2'>
+												<p className='font-normal text-sm'>
+													Marco did an excellent job on a tough{" "}
+													<strong>lawn</strong> service! Cleaned everything up
+													and left both front and back yards looking much
+													improved.
+												</p>
+												<p className='font-light text-sm mt-1'>
+													Details: Home • Every 2 weeks • Less than 1,000 sq ft
+													(acres) • Standard (up to 6 in) • Bag and haul • No, I
+													dont need to be there
+												</p>
+												<div className='bg-gray-100 p-4 mt-2 rounded'>
+													<p className='font-medium'>
+														Lawn Love Lawn Cares reply
+													</p>
+													<p className='font-normal'>
+														Thanks for reviewing Marco’s lawn care work,
+														Michelle! Its always good to hear about our
+														providers doing good work. And if you ever think of
+														a way that we can improve our service, definitely
+														let us know through the app.
+													</p>
+												</div>
+												<p className='text-xs text-gray-500 mt-4 mb-4'>
+													Lawn Mowing and Trimming
+												</p>
+											</div>
+											<div className='flex justify-center pl-6 pr-6 mt-2 mb-2 '>
+												<button className='border-2 pt-2 pb-2 pl-4 pr-4 mr-2'>
+													<ArrowLeftIcon className='h-6 w-6 text-gray-500' />
+												</button>
+												<button className='border-2 pt-2 pb-2 pl-4 pr-4'>
+													<ArrowRightIcon className='h-6 w-6 text-gray-500' />
+												</button>
+											</div>
+										</div>
+										<div className='flex pl-6 pr-6 mt-4'>
+											<p className='font-bold text-lg flex'>
+												Credentials{" "}
+												<InformationCircleIcon className='h-5 w-5 mt-1 ml-1 text-gray-500' />
+											</p>
+										</div>
+										<div className='flex columns-2 pl-6 pr-6 mt-4'>
+											<div className='w-full'>
+												<p className='flex font-medium'>
+													Business Verified{" "}
+													<CheckIcon className='h-6 w-6 text-gray-500' />
+												</p>
+												<p className='text-gray-600'>
+													Lawn Love Lawn Care verified
+												</p>
+											</div>
+											<div className='w-full'>
+												<p className='flex font-medium'>
+													Background Check{" "}
+													<CheckIcon className='h-6 w-6 text-gray-500' />
+												</p>
+												<p className='text-gray-600'>
+													Lawn Love Lawn Care verified
+												</p>
+											</div>
+										</div>
+										<div className='border-b-2 flex pl-6 pr-6 mt-4 pb-6'>
+											<p
+												className='text-sky-500 font-medium'
+												onClick={() => setOpenCredentialDetailsDialog(true)}>
+												View credential details
+											</p>
+										</div>
+										<div className='border-b-2 pl-6 pr-6 mt-4 pb-4'>
+											<p className='font-bold text-lg'>FAQs</p>
+											<p className='font-medium text-md mt-4'>
+												What should the customer know about your pricing (e.g.,
+												discounts, fees)?
+											</p>
+											<p className='text-sm mt-2'>
+												Our quoting is highly dependent on the customer
+												providing us an accurate depiction of the condition of
+												their property, the type of job requested, and our
+												ability to inspect the yard using satellite imagery. We
+												are able to provide a discount to customers who book
+												regular services with us to help keep their yards
+												maintained and healthy during the entire growing season!
+											</p>
+										</div>
+										<div className='border-b-2 pl-6 pr-6 mt-4 pb-4'>
+											<p className='font-medium text-md mt-4'>
+												What is your typical process for working with a new
+												customer?
+											</p>
+											<p className='text-sm mt-2'>
+												We provide all customers with a quote for service in
+												advance of visiting their property. Once a quote is
+												accepted, a highly trained and experienced lawn care
+												tech is dispatched to the customer’s property to
+												complete the work.
+											</p>
+											<p className='text-sm mt-2'>
+												Our goal is to provide a high level of customer service
+												that leaves both yards sparkling and our customer
+												smiling! In the rare event that a job needs to be
+												rescheduled or re-quoted, we openly communicate all
+												options to the customer in a transparent and
+												low-pressure manner. Payment for most jobs is only
+												required once the job is complete and the customer is
+												completely satisfied!
+											</p>
+										</div>
+										<div className='border-b-2 pl-6 pr-6 mt-4 pb-4'>
+											<p className='font-medium text-md mt-4'>
+												What education and/or training do you have that relates
+												to your work?
+											</p>
+											<p className='text-sm mt-2'>
+												We are dedicated to continual learning. There is always
+												room in our noggins for more industry expertise.
+											</p>
+										</div>
+										{showMore === true ? (
+											<div>
+												<div className='border-b-2 pl-6 pr-6 mt-4 pb-4'>
+													<p className='font-medium text-md mt-4'>
+														How did you get started doing this type of work?
+													</p>
+													<p className='text-sm mt-2'>
+														We recognized a need for reliable, affordable lawn
+														care help when we tried to book a lawn technician
+														ourselves. We figured wed scratch our own itch, and
+														have been going strong ever since.
+													</p>
+												</div>
+												<div className='border-b-2 pl-6 pr-6 mt-4 pb-4'>
+													<p className='font-medium text-md mt-4'>
+														What types of customers have you worked with?
+													</p>
+													<p className='text-sm mt-2'>
+														We do a wide array of work ranging from mowing and
+														maintenance to aeration, seeding, fertilization,
+														irrigation repair and more.
+													</p>
+												</div>
+												<div className='border-b-2 pl-6 pr-6 mt-4 pb-4'>
+													<p className='font-medium text-md mt-4'>
+														Describe a recent project you are fond of. How long
+														did it take?
+													</p>
+													<p className='text-sm mt-2'>
+														We are the latest development in the field. And we
+														aim to change the lawn services industry on a
+														fundamental level.
+													</p>
+												</div>
+												<div className='border-b-2 pl-6 pr-6 mt-4 pb-4'>
+													<p className='font-medium text-md mt-4'>
+														What advice would you give a customer looking to
+														hire a provider in your area of work?
+													</p>
+													<p className='text-sm mt-2'>
+														Price and expertise are not mutually exclusive. If
+														you look hard you can find service providers who are
+														both highly skilled and very well priced.
+													</p>
+												</div>
+												<div className='pl-6 pr-6 mt-4 pb-4'>
+													<p className='font-medium text-md mt-4'>
+														What questions should customers think through before
+														talking to professionals about their project?
+													</p>
+													<p className='text-sm mt-2'>
+														Please be honest about the condition of your lawn
+														and property. Our ability to provide accurate
+														estimates is dependent on our customers giving us
+														good information. If you don’t know something, such
+														as when your lawn was last aerated or fertilized, no
+														problem! We can work with any yard condition to
+														craft a tailored plan, and ensure you love our work
+														all season long!
+													</p>
+												</div>
+											</div>
+										) : (
+											""
+										)}
+										<div className='text-sky-500 font-medium pl-6 pr-6 mb-4 mt-2'>
+											<a
+												href='javascript:void(0)'
+												onClick={() => showMoreFaqs(!showMore)}>
+												Show {showMore === true ? "less" : "more"}
+											</a>
 										</div>
 									</div>
 								</div>
@@ -418,8 +833,8 @@ const CategoryDetail = () => {
 											<p className='text-md '>Our review guidelines</p>
 										</div>
 										<p className='mt-2 text-gray-600'>
-											We here to help you find the best pro for your project
-											and reviews are an important part of your search.
+											We here to help you find the best pro for your project and
+											reviews are an important part of your search.
 										</p>
 										<p className='mt-3 text-gray-600'>
 											We remove any reviews that:
@@ -489,6 +904,70 @@ const CategoryDetail = () => {
 				</Dialog>
 			</Transition.Root>
 			{/* Review guideline dialog */}
+
+			{/* Credential Details dialog */}
+			<Transition.Root show={openCredentialDetailsDialog} as={Fragment}>
+				<Dialog
+					as='div'
+					className='relative z-10'
+					onClose={setOpenCredentialDetailsDialog}>
+					<Transition.Child
+						as={Fragment}
+						enter='ease-out duration-300'
+						enterFrom='opacity-0'
+						enterTo='opacity-100'
+						leave='ease-in duration-200'
+						leaveFrom='opacity-100'
+						leaveTo='opacity-0'>
+						<div className='fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity' />
+					</Transition.Child>
+
+					<div className='fixed inset-0 z-10 overflow-y-auto'>
+						<div className='flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0'>
+							<Transition.Child
+								as={Fragment}
+								enter='ease-out duration-300'
+								enterFrom='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
+								enterTo='opacity-100 translate-y-0 sm:scale-100'
+								leave='ease-in duration-200'
+								leaveFrom='opacity-100 translate-y-0 sm:scale-100'
+								leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'>
+								<Dialog.Panel className='relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 w-5/12'>
+									<div className='bg-white pl-6 pt-6'>
+										<div className='mt-3 font-bold'>
+											<p className='text-2xl'>Credential Details</p>
+										</div>
+										<p className='flex mt-2 pt-2 font-medium'>
+											Business Verified{" "}
+											<CheckIcon className='h-6 w-6 text-gray-500 ml-1' />
+										</p>
+										<p className='text-gray-600'>
+											Lawn Love Lawn Care verified
+										</p>
+									</div>
+									<div className='bg-white pl-6 pt-2'>
+										<p className='flex mt-2 font-medium'>
+											Background Check
+											<CheckIcon className='h-6 w-6 text-gray-500 ml-1' />
+										</p>
+										<p className='text-gray-600'>Jeremy Yamaguchi</p>
+										<p className='text-gray-600'>Completed on 7/26/2021</p>
+									</div>
+									<div className='bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6'>
+										<button
+											type='button'
+											className='mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto'
+											onClick={() => setOpenCredentialDetailsDialog(false)}>
+											Close
+										</button>
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition.Root>
+			{/* Credential Details dialog */}
 		</>
 	);
 };
