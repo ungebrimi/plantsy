@@ -10,7 +10,7 @@ interface Form {
   profile_picture: string | null;
 }
 
-const ProfileInformation = ({ user }: { user: User }) => {
+const ProfileInformation = ({ user }: { user: User | null }) => {
   const supabase = createClientComponentClient();
   const [formData, setFormData] = useState<Form>({
     website: null,

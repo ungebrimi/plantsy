@@ -10,7 +10,7 @@ interface Form {
   sms_notification_messages: boolean;
 }
 
-const Notifications = ({ user }: { user: User }) => {
+const Notifications = ({ user }: { user: User | null }) => {
   const supabase = createClientComponentClient();
   const [formData, setFormData] = useState<Form>({
     email_notification_jobs: false,

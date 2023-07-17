@@ -81,10 +81,6 @@ export default function UpdatePassword() {
                   />
                 </div>
               </div>
-              <HCaptcha
-                sitekey={"8c6238de-63ae-47f6-8007-0421360fb824"}
-                onVerify={(token: string) => { setCaptchaToken(token) }} />
-
 
               <div>
                 <button

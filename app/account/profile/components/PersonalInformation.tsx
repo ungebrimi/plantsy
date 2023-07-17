@@ -15,7 +15,7 @@ interface Form {
   phone: string | null;
 }
 
-const PersonalInformation = ({ user }: { user: User }) => {
+const PersonalInformation = ({ user }: { user: User | null }) => {
   const supabase = createClientComponentClient();
   const [formData, setFormData] = useState<Form>({
     first_name: null,
