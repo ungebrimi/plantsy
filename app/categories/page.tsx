@@ -7,7 +7,7 @@ import { TrophyIcon, MapPinIcon, ChatBubbleLeftIcon } from "@heroicons/react/24/
 const Categories = () => {
 	return (
 		<div className='relative isolate'>
-			<div className="mx-auto mt-20 max-w-7xl sm:mt-20">
+			<div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
 				<div className='md:flex gap-8'>
 					<div className='md:w-1/5'>
 						<p className='md:text-2xl font-medium'>Filters</p>

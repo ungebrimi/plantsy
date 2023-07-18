@@ -1,8 +1,9 @@
 "use client"
-import React, { useState } from 'react'
+import React from 'react';
 import Image from 'next/image';
 import { UserCircleIcon } from '@heroicons/react/24/outline';
-import imageCompression from 'browser-image-compression';
+import useImageUpload from '@/hooks/useImageUpload';
+import { User } from '@/dbtypes';
 
 interface Form {
   website: string | null;
@@ -10,37 +11,24 @@ interface Form {
   profile_picture: string | null;
 }
 
-const Avatar = ({ formData, setFormData }: { formData: Form, setFormData: any }) => {
-  const [loadingImage, setLoadingImage] = useState<boolean>(false);
+const Avatar = ({ formData, setFormData, user }: { formData: Form, setFormData: any, user: User }) => {
+  const { loading, image, error, handleImageUpload } = useImageUpload();
 
-  async function handleImageUpload(event: any) {
-    const imageFile = event.target.files[0];
-    setLoadingImage(true);
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    handleImageUpload(event);
+  };
 
-    const options = {
-      maxSizeMB: 1,
-      maxWidthOrHeight: 1920,
-      useWebWorker: true,
-    };
-
-    try {
-      const compressedFile = await imageCompression(imageFile, options);
-
-      const reader = new FileReader();
-      reader.onload = () => {
-        const imageDataUrl = reader.result as string;
+  React.useEffect(() => {
+    const handleFormDataUpdate = () => {
+      if (image && !error) {
         setFormData((prevFormData: Form) => ({
           ...prevFormData,
-          profile_picture: imageDataUrl,
+          profile_picture: image.url,
         }));
-        setLoadingImage(false);
-      };
-      reader.readAsDataURL(compressedFile);
-    } catch (error) {
-      console.log(error);
-      setLoadingImage(false);
-    }
-  }
+      }
+    };
+    handleFormDataUpdate()
+  }, [image, error, setFormData])
 
   return (
     <div className="col-span-full">
@@ -49,24 +37,44 @@ const Avatar = ({ formData, setFormData }: { formData: Form, setFormData: any })
       </label>
       <div className="mt-2 flex items-center gap-x-3">
         {formData.profile_picture ? (
-          <img src={formData.profile_picture} alt="profile picture" className="h-12 w-12 text-gray-300 rounded-full" />
-        ) : (
+          <>
+            <img src={formData.profile_picture} alt="profile picture" className="h-12 w-12 text-gray-300 rounded-full" />
+            <button
+              type="button"
+              className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+            >
+              <input type="file" accept="image/*" onChange={handleImageChange} />
+              Change
+            </button>
+          </>) : (
           <>
             <UserCircleIcon className="h-12 w-12 text-gray-300 rounded-full" aria-hidden="true" />
             <button
               type="button"
               className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
             >
-              <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e)} />
+              <input type="file" accept="image/*" onChange={handleImageChange} />
               Change
             </button>
           </>
         )}
-
       </div>
-      {loadingImage && <p>Loading image...</p>}
+      {loading && <p>Loading image...</p>}
+      {error && <p>Error uploading image.</p>}
     </div>
-  )
-}
+  );
+};
 
-export default Avatar
+export default Avatar;
+      // THIS BIT IS FOR IF YOU WANT TO READ THE IMAGE WITHOUT UPLOADING IT
+      // const reader = new FileReader();
+      // reader.onload = () => {
+      //   const imageDataUrl = reader.result as string;
+      //   setFormData((prevFormData: Form) => ({
+      //     ...prevFormData,
+      //     profile_picture: imageDataUrl,
+      //   }));
+      //   setLoadingImage(false);
+      // };
+      // reader.readAsDataURL(compressedFile);
+

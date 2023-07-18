@@ -10,7 +10,7 @@ interface Form {
   profile_picture: string | null;
 }
 
-const ProfileInformation = ({ user }: { user: User | null }) => {
+const ProfileInformation = ({ user }: { user: any | null }) => {
   const supabase = createClientComponentClient();
   const [formData, setFormData] = useState<Form>({
     website: null,
@@ -19,6 +19,7 @@ const ProfileInformation = ({ user }: { user: User | null }) => {
   });
 
   const getProfileData = useCallback(async () => {
+    if (!user) return
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -42,7 +43,7 @@ const ProfileInformation = ({ user }: { user: User | null }) => {
       console.error(error);
       throw error;
     }
-  }, [setFormData, supabase, user.id]);
+  }, [setFormData, supabase, user]);
 
   useEffect(() => {
     getProfileData();
@@ -50,6 +51,7 @@ const ProfileInformation = ({ user }: { user: User | null }) => {
 
 
   async function updateProfileInformation() {
+    if (!user) return
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -112,7 +114,7 @@ const ProfileInformation = ({ user }: { user: User | null }) => {
             </div>
             <p className="mt-3 text-sm leading-6 text-gray-600">Write a few sentences about yourself.</p>
           </div>
-          <Avatar formData={formData} setFormData={setFormData} />
+          <Avatar formData={formData} setFormData={setFormData} user={user} />
         </div>
       </div>
       <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">

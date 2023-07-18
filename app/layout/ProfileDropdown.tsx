@@ -26,10 +26,12 @@ const ProfileDropdown = ({ user }: { user: User | null }) => {
       <div>
         <Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
           <span className="sr-only">Open user menu</span>
-          {user && user.profile_image ? (
+          {user && user.profile_picture ? (
             <Image
               className="h-8 w-8 rounded-full"
-              src={user.profile_image || ""}
+              src={user.profile_picture}
+              width={300}
+              height={300}
               alt=""
             />
           ) : (

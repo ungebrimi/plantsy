@@ -10,7 +10,7 @@ interface Form {
   sms_notification_messages: boolean;
 }
 
-const Notifications = ({ user }: { user: User | null }) => {
+const Notifications = ({ user }: { user: any | null }) => {
   const supabase = createClientComponentClient();
   const [formData, setFormData] = useState<Form>({
     email_notification_jobs: false,
@@ -41,7 +41,6 @@ const Notifications = ({ user }: { user: User | null }) => {
 
       if (data && data.length > 0) {
         const notificationData = data[0];
-        console.log(data)
         setFormData({
           email_notification_jobs: notificationData.email_notification_jobs,
           email_notification_messages: notificationData.email_notification_messages,
@@ -76,8 +75,6 @@ const Notifications = ({ user }: { user: User | null }) => {
         console.error('Error:', error.message);
         throw error;
       }
-
-      console.log(data);
       return data;
     } catch (error) {
       console.error('Error:', error);

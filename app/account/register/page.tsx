@@ -69,7 +69,7 @@ export default function Register() {
     setMessage(`Thanks for registering! We have sent you a confirmation email to ${email}`);
 
     try {
-      const { user, error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -82,11 +82,6 @@ export default function Register() {
         console.error(error);
         return null; // Handle the error appropriately
       }
-
-      if (user) {
-        await createBucket(user.id);
-      }
-
       // captcha.current.resetCaptcha();
       setTimeout(() => {
         router.push("/account/profile");

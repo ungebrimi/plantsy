@@ -21,12 +21,13 @@ export default function Navbar({ session }: { session: any }) {
   useEffect(() => {
     async function getUserData() {
       try {
-        const { data, error } = await supabase.from("profiles").select()
+        const { data, error } = await supabase.from("profiles").select().eq("id", session.user.id)
         if (error) {
           console.log(error)
           return
         }
         if (data) {
+          console.log(data)
           setUser(data[0]) // Assuming you want to set the first user from the response
         }
       } catch (error) {
