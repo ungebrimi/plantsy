@@ -22,9 +22,6 @@ export default function Login() {
     await supabase.auth.signInWithPassword({
       email,
       password,
-      // options: {
-      //   captchaToken
-      // }
     }).then(res => {
       if (res.error) {
         setError(res.error.message)
@@ -32,7 +29,7 @@ export default function Login() {
       else {
         // captcha.current.resetCaptcha()
         setTimeout(() => {
-          router.push("/marketplace")
+          router.push("/")
         }, 2000)
       }
     })

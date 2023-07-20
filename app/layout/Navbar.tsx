@@ -8,9 +8,9 @@ import type { User } from "../../dbtypes.d.ts";
 import ProfileDropdown from './ProfileDropdown'
 
 const navigation = [
-  { name: 'Marketplace', href: '/marketplace' },
-  { name: 'Company', href: '/company' },
-  { name: 'Get in touch', href: '/contact' },
+  { name: 'Marketplace', href: '/home/marketplace' },
+  { name: 'Company', href: '/home/company' },
+  { name: 'Get in touch', href: '/home/contact' },
 ]
 
 export default function Navbar({ session }: { session: any }) {
@@ -62,11 +62,11 @@ export default function Navbar({ session }: { session: any }) {
           </div>
         ) : (
           <div className="flex flex-1 items-center justify-end gap-x-6">
-            <Link href="/account/login" className="hidden lg:block lg:text-sm lg:font-semibold lg:leading-6 lg:text-gray-900">
+            <Link href="/account/auth/login" className="hidden lg:block lg:text-sm lg:font-semibold lg:leading-6 lg:text-gray-900">
               Log in
             </Link>
             <Link
-              href="/account/register"
+              href="/account/auth/register"
               className="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
             >
               Sign up
@@ -97,7 +97,7 @@ export default function Navbar({ session }: { session: any }) {
               />
             </Link>
             <Link
-              href="/register"
+              href="/account/auth/register"
               className="ml-auto rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
             >
               Sign up
@@ -126,7 +126,7 @@ export default function Navbar({ session }: { session: any }) {
               </div>
               <div className="py-6">
                 <Link
-                  href="account/login"
+                  href="account/auth/login"
                   className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
                   Log in
@@ -134,7 +134,7 @@ export default function Navbar({ session }: { session: any }) {
               </div>
               <div className="py-6">
                 <Link
-                  href="account/register"
+                  href="account/auth/register"
                   className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
                   Register
