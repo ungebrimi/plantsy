@@ -1,6 +1,6 @@
-import Footer from "../layout/Footer";
-import Navigation from "../layout/Navigation";
-import "../globals.css";
+import Footer from "../../layout/Footer";
+import Navigation from "../../layout/Navigation";
+import "../../globals.css";
 
 export const metadata = {
   title: "Plantsy",

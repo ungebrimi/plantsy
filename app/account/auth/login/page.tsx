@@ -1,16 +1,16 @@
-'use client'
-import Link from "next/link"
-import { useRef, useState } from "react"
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { useRouter } from 'next/navigation'
-import HCaptcha from '@hcaptcha/react-hcaptcha'
+"use client";
+import Link from "next/link";
+import { useRef, useState } from "react";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useRouter } from "next/navigation";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 
 export default function Login() {
-  const router = useRouter()
-  const supabase = createClientComponentClient()
-  const [error, setError] = useState<string | undefined>(undefined)
-  const [captchaToken, setCaptchaToken] = useState<string | undefined>()
-  const captcha = useRef<any>()
+  const router = useRouter();
+  const supabase = createClientComponentClient();
+  const [error, setError] = useState<string | undefined>(undefined);
+  const [captchaToken, setCaptchaToken] = useState<string | undefined>();
+  const captcha = useRef<any>();
 
   const handleSignIn = async (e: any) => {
     e.preventDefault();
@@ -19,22 +19,22 @@ export default function Login() {
     const email = values.email;
     const password = values.password;
 
-    await supabase.auth.signInWithPassword({
-      email,
-      password,
-    }).then(res => {
-      if (res.error) {
-        setError(res.error.message)
-      }
-      else {
-        // captcha.current.resetCaptcha()
-        setTimeout(() => {
-          router.push("/")
-        }, 2000)
-      }
-    })
-
-  }
+    await supabase.auth
+      .signInWithPassword({
+        email,
+        password,
+      })
+      .then((res) => {
+        if (res.error) {
+          setError(res.error.message);
+        } else {
+          // captcha.current.resetCaptcha()
+          setTimeout(() => {
+            router.push("/");
+          }, 2000);
+        }
+      });
+  };
 
   return (
     <>
@@ -52,9 +52,17 @@ export default function Login() {
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
           <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
-            <form className="space-y-6" action="#" method="POST" onSubmit={handleSignIn}>
+            <form
+              className="space-y-6"
+              action="#"
+              method="POST"
+              onSubmit={handleSignIn}
+            >
               <div>
-                <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
                   Email address
                 </label>
                 <div className="mt-2">
@@ -70,7 +78,10 @@ export default function Login() {
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
                   Password
                 </label>
                 <div className="mt-2">
@@ -87,8 +98,13 @@ export default function Login() {
 
               <HCaptcha
                 sitekey={"8c6238de-63ae-47f6-8007-0421360fb824"}
-                onVerify={(token: string) => { setCaptchaToken(token) }} />
-              {error && (<p className="text-red-500 font-medium text-sm">{error}</p>)}
+                onVerify={(token: string) => {
+                  setCaptchaToken(token);
+                }}
+              />
+              {error && (
+                <p className="text-red-500 font-medium text-sm">{error}</p>
+              )}
               <div className="flex items-center justify-between">
                 {/*
                   // hidden for now not sure if is usefull
@@ -106,7 +122,10 @@ export default function Login() {
                 */}
 
                 <div className="text-sm leading-6">
-                  <Link href="/account/reset-password" className="font-semibold text-green-600 hover:text-green-500">
+                  <Link
+                    href="/account/auth/reset-password"
+                    className="font-semibold text-green-600 hover:text-green-500"
+                  >
                     Forgot password?
                   </Link>
                 </div>
@@ -124,13 +143,16 @@ export default function Login() {
           </div>
 
           <p className="mt-10 text-center text-sm text-gray-500">
-            Not a member?{' '}
-            <Link href="/account/register" className="font-semibold leading-6 text-green-600 hover:text-green-500">
+            Not a member?{" "}
+            <Link
+              href="/account/auth/register"
+              className="font-semibold leading-6 text-green-600 hover:text-green-500"
+            >
               Register now for free
             </Link>
           </p>
         </div>
       </main>
     </>
-  )
+  );
 }
