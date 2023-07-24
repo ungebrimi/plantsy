@@ -29,7 +29,6 @@ const Avatar = ({
   React.useEffect(() => {
     const handleFormDataUpdate = () => {
       if (image && !error) {
-        console.log(image);
         setFormData((prevFormData: Form) => ({
           ...prevFormData,
           profile_picture: image.url,
@@ -50,7 +49,9 @@ const Avatar = ({
       <div className="mt-2 flex items-center gap-x-3">
         {formData.profile_picture ? (
           <>
-            <img
+            <Image
+              width={300}
+              height={300}
               src={formData.profile_picture}
               alt="profile picture"
               className="h-12 w-12 text-gray-300 rounded-full"

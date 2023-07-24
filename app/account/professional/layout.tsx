@@ -1,17 +1,23 @@
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+export const dynamic = "force-dynamic";
+import { getSession } from "@/app/supabase-server";
 import Navigation from "./layout/Navigation";
-import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export default async function ProfessionalLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = createServerComponentClient<any>({ cookies });
+  const session = (await getSession()) || null;
+  if (!session) {
+    console.log("session is missing");
+    redirect("/");
+  }
+  if (session.user.user_metadata.role !== "professional") {
+    console.log("You do not have a professsional account");
+    redirect("/");
+  }
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
   return (
     <>
       <Navigation session={session} />

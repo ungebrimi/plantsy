@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
+import Image from "next/image";
 
 export default function Login() {
   const router = useRouter();
@@ -40,10 +41,12 @@ export default function Login() {
     <>
       <main className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <img
+          <Image
+            width={300}
+            height={300}
             className="mx-auto h-10 w-auto"
-            src="https://tailwindui.com/img/logos/mark.svg?color=green&shade=600"
-            alt="Your Company"
+            src="/plantsy.png"
+            alt="Plantsy"
           />
           <h2 className="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
             Sign in to your account

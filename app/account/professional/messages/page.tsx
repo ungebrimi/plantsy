@@ -1,4 +1,5 @@
 /** @format */
+import Image from "next/image";
 
 const Messages = () => {
   return (
@@ -29,7 +30,9 @@ const Messages = () => {
                 </div>
                 <div className="flex flex-col items-center bg-indigo-100 border border-gray-200 mt-4 w-full py-6 px-4 rounded-lg">
                   <div className="h-20 w-20 rounded-full border overflow-hidden">
-                    <img
+                    <Image
+                      width={300}
+                      height={300}
                       src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                       alt="Avatar"
                       className="h-full w-full"
@@ -215,7 +218,9 @@ const Messages = () => {
                             </div>
                             <div className="relative ml-3 text-sm bg-white py-2 px-4 shadow rounded-xl">
                               <div className="flex flex-row items-center">
-                                <img
+                                <Image
+                                  width={300}
+                                  height={300}
                                   className="h-40 w-40 rounded-full"
                                   src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                                   alt=""

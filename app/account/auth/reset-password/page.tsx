@@ -1,13 +1,14 @@
-"use client"
-import { useRef, useState } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import HCaptcha from '@hcaptcha/react-hcaptcha'
+"use client";
+import { useRef, useState } from "react";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
+import Image from "next/image";
 
 export default function ResetPassword() {
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
-  const [captchaToken, setCaptchaToken] = useState<string | undefined>()
-  const captcha = useRef<any>()
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [captchaToken, setCaptchaToken] = useState<string | undefined>();
+  const captcha = useRef<any>();
 
   const supabase = createClientComponentClient();
 
@@ -16,14 +17,16 @@ export default function ResetPassword() {
     try {
       await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/auth/callback?next=/account/update-password`,
-        captchaToken
+        captchaToken,
       });
-      captcha.current.resetCaptcha()
-      setMessage('Reset password email has been sent. Please check your inbox.');
-      setEmail('');
+      captcha.current.resetCaptcha();
+      setMessage(
+        "Reset password email has been sent. Please check your inbox."
+      );
+      setEmail("");
     } catch (error: any) {
-      console.error('Error resetting password:', error.message);
-      setMessage('Error resetting password. Please try again later.');
+      console.error("Error resetting password:", error.message);
+      setMessage("Error resetting password. Please try again later.");
     }
   };
 
@@ -31,10 +34,12 @@ export default function ResetPassword() {
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <img
+          <Image
+            width={300}
+            height={300}
             className="mx-auto h-10 w-auto"
-            src="https://tailwindui.com/img/logos/mark.svg?color=green&shade=600"
-            alt="Your Company"
+            src="/plantsy.png"
+            alt="Plantsy"
           />
           <h2 className="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
             Reset password
@@ -46,7 +51,10 @@ export default function ResetPassword() {
             <p>{message}</p>
             <form className="space-y-6" onSubmit={handleResetPassword}>
               <div>
-                <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
                   Email address
                 </label>
                 <div className="mt-2">
@@ -65,7 +73,10 @@ export default function ResetPassword() {
 
               <HCaptcha
                 sitekey={"8c6238de-63ae-47f6-8007-0421360fb824"}
-                onVerify={(token: string) => { setCaptchaToken(token) }} />
+                onVerify={(token: string) => {
+                  setCaptchaToken(token);
+                }}
+              />
 
               <div>
                 <button
@@ -80,5 +91,5 @@ export default function ResetPassword() {
         </div>
       </div>
     </>
-  )
+  );
 }

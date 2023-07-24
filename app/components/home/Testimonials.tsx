@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const testimonials = [
   {
     body: "Laborum quis quam. Dolorum et ut quod quia. Voluptas numquam delectus nihil. Aut enim doloremque et ipsam.",
@@ -105,7 +107,9 @@ export default function Testimonials() {
                     <p>{`“${testimonial.body}”`}</p>
                   </blockquote>
                   <figcaption className="mt-6 flex items-center gap-x-4">
-                    <img
+                    <Image
+                      width={300}
+                      height={300}
                       className="h-10 w-10 rounded-full bg-gray-50"
                       src={testimonial.author.imageUrl}
                       alt=""

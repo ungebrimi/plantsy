@@ -1,25 +1,68 @@
-"use client"
-import React from 'react'
-import { Fragment } from 'react'
-import Link from 'next/link'
-import { Menu, Transition } from '@headlessui/react'
-import { User } from '@/dbtypes'
-import Image from 'next/image'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { useRouter } from 'next/navigation'
+"use client";
+import React, { useEffect, useState } from "react";
+import { Fragment } from "react";
+import Link from "next/link";
+import { Menu, Transition } from "@headlessui/react";
+import { User } from "@/dbtypes";
+import Image from "next/image";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useRouter } from "next/navigation";
 
 function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(" ");
 }
 
-const ProfileDropdown = ({ user }: { user: User | null }) => {
-  const router = useRouter()
-  const supabase = createClientComponentClient()
+const ProfileDropdown = ({ session }: { session: any }) => {
+  const router = useRouter();
+  const supabase = createClientComponentClient();
+  const [user, setUser] = useState<User | null>(null);
 
+  useEffect(() => {
+    async function getUserData() {
+      try {
+        // query for professional
+        const { data: professional, error: PE } = await supabase
+          .from("professionals")
+          .select()
+          .eq("id", session.user.id);
+        // query for clients
+        const { data: client, error: CE } = await supabase
+          .from("clients")
+          .select()
+          .eq("id", session.user.id);
+
+        // Sorry for horrible naming of errors.
+        if (PE) {
+          console.error(PE);
+          return;
+        }
+        if (CE) {
+          console.error(CE);
+          return;
+        }
+        if (professional) {
+          return professional[0];
+        }
+        if (client) {
+          return client[0];
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    if (session) {
+      getUserData().then((res: User) => {
+        setUser(res);
+      });
+    }
+  }, [session, supabase, router]);
+
+  console.log(user);
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
-    router.refresh()
-  }
+    await supabase.auth.signOut();
+    router.refresh();
+  };
 
   return (
     <Menu as="div" className="relative ml-3">
@@ -58,10 +101,13 @@ const ProfileDropdown = ({ user }: { user: User | null }) => {
           <Menu.Item>
             {({ active }) => (
               <Link
-                href="/account/profile"
-                className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
+                href={`/account/${user?.role}`}
+                className={classNames(
+                  active ? "bg-gray-100" : "",
+                  "block px-4 py-2 text-sm text-gray-700"
+                )}
               >
-                Your Profile
+                Dashboard
               </Link>
             )}
           </Menu.Item>
@@ -69,7 +115,10 @@ const ProfileDropdown = ({ user }: { user: User | null }) => {
             {({ active }) => (
               <Link
                 href="/account/messages"
-                className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
+                className={classNames(
+                  active ? "bg-gray-100" : "",
+                  "block px-4 py-2 text-sm text-gray-700"
+                )}
               >
                 Messages
               </Link>
@@ -80,7 +129,10 @@ const ProfileDropdown = ({ user }: { user: User | null }) => {
               <Link
                 href="/"
                 onClick={handleSignOut}
-                className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
+                className={classNames(
+                  active ? "bg-gray-100" : "",
+                  "block px-4 py-2 text-sm text-gray-700"
+                )}
               >
                 Sign out
               </Link>
@@ -89,7 +141,7 @@ const ProfileDropdown = ({ user }: { user: User | null }) => {
         </Menu.Items>
       </Transition>
     </Menu>
-  )
-}
+  );
+};
 
-export default ProfileDropdown
+export default ProfileDropdown;

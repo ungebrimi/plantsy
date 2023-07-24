@@ -1,19 +1,20 @@
-import Hero from './components/home/Hero'
-import Categories from './components/home/Categories'
-import Features from './components/home/Features'
-import Testimonials from './components/home/Testimonials'
-import Navigation from './layout/Navigation'
-import Footer from './layout/Footer'
+import Hero from "./components/home/Hero";
+import Categories from "./components/home/Categories";
+import Features from "./components/home/Features";
+import Testimonials from "./components/home/Testimonials";
+import Footer from "./layout/Footer";
+import Navbar from "./layout/Navbar";
+export const dynamic = "force-dynamic";
 
-export default function Home() {
+export default async function Home() {
   return (
     <main>
-      <Navigation />
+      <Navbar />
       <Hero />
       <Categories />
       <Features />
       <Testimonials />
       <Footer />
     </main>
-  )
+  );
 }

@@ -1,11 +1,8 @@
-"use client";
-import { useState, useEffect } from "react";
-import { Dialog } from "@headlessui/react";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import type { User } from "../../dbtypes.d.ts";
 import ProfileDropdown from "./ProfileDropdown";
+import Image from "next/image.js";
+import { getSession } from "@/app/supabase-server";
+import MobileMenu from "./MobileMenu";
 
 const navigation = [
   { name: "Marketplace", href: "/home/marketplace" },
@@ -13,34 +10,8 @@ const navigation = [
   { name: "Get in touch", href: "/home/contact" },
 ];
 
-export default function Navbar({ session }: { session: any }) {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
-  const supabase = createClientComponentClient();
-
-  useEffect(() => {
-    async function getUserData() {
-      try {
-        const { data, error } = await supabase
-          .from("profiles")
-          .select()
-          .eq("id", session.user.id);
-        if (error) {
-          console.log(error);
-          return;
-        }
-        if (data) {
-          console.log(data);
-          setUser(data[0]); // Assuming you want to set the first user from the response
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    if (session) {
-      getUserData();
-    }
-  }, [session, supabase]);
+export default async function Navbar() {
+  const session = (await getSession()) || null;
 
   return (
     <header className="">
@@ -50,8 +21,14 @@ export default function Navbar({ session }: { session: any }) {
       >
         <div className="flex lg:flex-1">
           <Link href="/" className="-m-1.5 p-1.5">
-            <span className="sr-only">Your Company</span>
-            <img className="h-16 w-auto" src="/plantsy.png" alt="" />
+            <span className="sr-only">Plantsy</span>
+            <Image
+              width={300}
+              height={300}
+              className="h-16 w-auto"
+              src="/plantsy.png"
+              alt=""
+            />
           </Link>
         </div>
         <div className="hidden lg:flex lg:gap-x-12">
@@ -67,7 +44,7 @@ export default function Navbar({ session }: { session: any }) {
         </div>
         {session !== null ? (
           <div className="flex flex-1 items-center justify-end gap-x-6">
-            <ProfileDropdown user={user} />
+            <ProfileDropdown session={session} />
           </div>
         ) : (
           <div className="flex flex-1 items-center justify-end gap-x-6">
@@ -85,82 +62,8 @@ export default function Navbar({ session }: { session: any }) {
             </Link>
           </div>
         )}
-        <div className="flex lg:hidden">
-          <button
-            type="button"
-            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
-            onClick={() => setMobileMenuOpen(true)}
-          >
-            <span className="sr-only">Open main menu</span>
-            <Bars3Icon className="h-6 w-6" aria-hidden="true" />
-          </button>
-        </div>
       </nav>
-      <Dialog
-        as="div"
-        className="lg:hidden"
-        open={mobileMenuOpen}
-        onClose={setMobileMenuOpen}
-      >
-        <div className="fixed inset-0 z-10" />
-        <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
-          <div className="flex items-center gap-x-6">
-            <Link href="/" className="-m-1.5 p-1.5">
-              <span className="sr-only">Your Company</span>
-              <img
-                className="h-8 w-auto"
-                src="https://tailwindui.com/img/logos/mark.svg?color=green&shade=600"
-                alt=""
-              />
-            </Link>
-            <Link
-              href="/account/auth/register"
-              className="ml-auto rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-            >
-              Sign up
-            </Link>
-            <button
-              type="button"
-              className="-m-2.5 rounded-md p-2.5 text-gray-700"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <span className="sr-only">Close menu</span>
-              <XMarkIcon className="h-6 w-6" aria-hidden="true" />
-            </button>
-          </div>
-          <div className="mt-6 flow-root">
-            <div className="-my-6 divide-y divide-gray-500/10">
-              <div className="space-y-2 py-6">
-                {navigation.map((item) => (
-                  <a
-                    key={item.name}
-                    href={item.href}
-                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                  >
-                    {item.name}
-                  </a>
-                ))}
-              </div>
-              <div className="py-6">
-                <Link
-                  href="account/auth/login"
-                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                >
-                  Log in
-                </Link>
-              </div>
-              <div className="py-6">
-                <Link
-                  href="account/auth/register"
-                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                >
-                  Register
-                </Link>
-              </div>
-            </div>
-          </div>
-        </Dialog.Panel>
-      </Dialog>
+      <MobileMenu navigation={navigation} />
     </header>
   );
 }

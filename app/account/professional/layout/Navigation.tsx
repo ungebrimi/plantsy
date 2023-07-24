@@ -12,6 +12,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { User } from "@/dbtypes";
+import Image from "next/image";
 
 const navigation = [
   {
@@ -54,7 +55,6 @@ export default function Navigation({ session }: { session: any }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const supabase = createClientComponentClient();
-  console.log(location.href);
 
   useEffect(() => {
     async function getUserData() {
@@ -138,7 +138,9 @@ export default function Navigation({ session }: { session: any }) {
                   {/* Sidebar component, swap this element with another sidebar if you like */}
                   <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-2">
                     <div className="flex h-16 shrink-0 items-center">
-                      <img
+                      <Image
+                        width={300}
+                        height={300}
                         className="h-8 w-auto"
                         src="/plantsy.png"
                         alt="Your Company"
@@ -188,7 +190,9 @@ export default function Navigation({ session }: { session: any }) {
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6">
             <div className="flex h-16 shrink-0 items-center">
-              <img
+              <Image
+                width={300}
+                height={300}
                 className="h-12 border-2 w-auto object-fill mr-6"
                 src="/plantsy.png"
                 alt="Plantsy"
@@ -231,13 +235,17 @@ export default function Navigation({ session }: { session: any }) {
                     className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50"
                   >
                     {user?.profile_picture ? (
-                      <img
+                      <Image
+                        width={300}
+                        height={300}
                         className="h-8 w-8 rounded-full bg-gray-50"
                         src={user.profile_picture}
                         alt=""
                       />
                     ) : (
-                      <img
+                      <Image
+                        width={300}
+                        height={300}
                         className="h-8 w-8 rounded-full bg-gray-50"
                         src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                         alt=""
@@ -269,11 +277,23 @@ export default function Navigation({ session }: { session: any }) {
           </div>
           <a href="#">
             <span className="sr-only">Your profile</span>
-            <img
-              className="h-8 w-8 rounded-full bg-gray-50"
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-              alt=""
-            />
+            {user?.profile_picture ? (
+              <Image
+                width={300}
+                height={300}
+                className="h-8 w-8 rounded-full bg-gray-50"
+                src={user.profile_picture}
+                alt=""
+              />
+            ) : (
+              <Image
+                width={300}
+                height={300}
+                className="h-8 w-8 rounded-full bg-gray-50"
+                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                alt=""
+              />
+            )}
           </a>
         </div>
       </div>

@@ -1,26 +1,14 @@
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+"use server";
 import { redirect } from "next/navigation";
 import ProfileInformation from "./components/ProfileInformation";
 import PersonalInformation from "./components/PersonalInformation";
 import Notifications from "./components/Notifications";
-
-/*
- * this is a server component, where we first create a createServerComponentClient and pass it the cookies from the next headers.
- * this is to check if we have a signed in user session, if not we redirect the user back to home page.
- * */
+import { getSession } from "@/app/supabase-server";
 
 export default async function Profile() {
-  const supabase = createServerComponentClient<any>({ cookies });
+  const session = (await getSession()) || null;
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!session || !user) {
+  if (!session) {
     redirect("/");
   }
 
@@ -37,7 +25,7 @@ export default async function Profile() {
               share.
             </p>
           </div>
-          <ProfileInformation user={user} />
+          <ProfileInformation user={session.user} />
         </div>
 
         <div className="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
@@ -50,7 +38,7 @@ export default async function Profile() {
             </p>
           </div>
 
-          <PersonalInformation user={user} />
+          <PersonalInformation user={session.user} />
         </div>
 
         <div className="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
@@ -63,7 +51,7 @@ export default async function Profile() {
               pick what else you want to hear about.
             </p>
           </div>
-          <Notifications user={user} />
+          <Notifications user={session.user} />
         </div>
       </div>
     </main>
