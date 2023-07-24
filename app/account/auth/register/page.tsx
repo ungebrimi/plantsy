@@ -85,7 +85,7 @@ export default function Register() {
         email,
         password,
         options: {
-          emailRedirectTo: `${location.origin}/auth/callback?next=/account/${userType.role}`, // Specify the desired next URL
+          emailRedirectTo: `${location.origin}/auth/callback`, // Specify the desired next URL
           captchaToken,
           data: {
             role: userType.role,
