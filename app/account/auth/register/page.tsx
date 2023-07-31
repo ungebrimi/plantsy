@@ -48,6 +48,8 @@ export default function Register() {
     let email = values.email.trim();
     let password = values.password.trim();
     let confirmPassword = values.confirm_password.trim();
+    let firstName = values.first_name.trim();
+    let lastName = values.last_name.trim();
 
     // Password requirements checker
     // Password validation check
@@ -64,7 +66,7 @@ export default function Register() {
       return;
     }
 
-    if (!email || !password || !acceptTerms) {
+    if (!email || !password || !acceptTerms || !firstName || !lastName) {
       setMessage(
         "You need to fill in all required fields and accept the terms and conditions to continue"
       );
@@ -85,10 +87,12 @@ export default function Register() {
         email,
         password,
         options: {
-          emailRedirectTo: `${location.origin}/auth/callback`, // Specify the desired next URL
+          emailRedirectTo: `${location.origin}/auth/callback?next=/account/auth/thank-you`, // Specify the desired next URL
           captchaToken,
           data: {
             role: userType.role,
+            first_name: firstName,
+            last_name: lastName,
           },
         },
       });
@@ -97,11 +101,10 @@ export default function Register() {
         console.error(error);
         return null; // Handle the error appropriately
       }
-      console.log(data);
       // captcha.current.resetCaptcha();
       setTimeout(() => {
-        router.push("/account/auth/thank-you");
-      }, 5000);
+        router.push("/");
+      }, 10000);
     } catch (error) {
       console.error(error);
       // Handle the error appropriately
@@ -137,6 +140,42 @@ export default function Register() {
               onSubmit={handleSignUp}
               method="POST"
             >
+              <div>
+                <label
+                  htmlFor="first_name"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  First name<span className="text-red-500">*</span>
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="first_name"
+                    name="first_name"
+                    type="first_name"
+                    autoComplete="first_name"
+                    required
+                    className="block px-1 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
+              <div>
+                <label
+                  htmlFor="last_name"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Last name<span className="text-red-500">*</span>
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="last_name"
+                    name="last_name"
+                    type="last_name"
+                    autoComplete="last_name"
+                    required
+                    className="block px-1 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
               <div>
                 <label
                   htmlFor="email"

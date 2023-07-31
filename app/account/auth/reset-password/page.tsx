@@ -7,8 +7,8 @@ import Image from "next/image";
 export default function ResetPassword() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const [captchaToken, setCaptchaToken] = useState<string | undefined>();
-  const captcha = useRef<any>();
+  // const [captchaToken, setCaptchaToken] = useState<string | undefined>();
+  // const captcha = useRef<any>();
 
   const supabase = createClientComponentClient();
 
@@ -16,10 +16,10 @@ export default function ResetPassword() {
     e.preventDefault();
     try {
       await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/callback?next=/account/update-password`,
-        captchaToken,
+        redirectTo: `${window.location.origin}/account/update-password`,
+        // captchaToken,
       });
-      captcha.current.resetCaptcha();
+      // captcha.current.resetCaptcha();
       setMessage(
         "Reset password email has been sent. Please check your inbox."
       );
@@ -70,13 +70,14 @@ export default function ResetPassword() {
                   />
                 </div>
               </div>
-
+              {/*
               <HCaptcha
                 sitekey={"8c6238de-63ae-47f6-8007-0421360fb824"}
                 onVerify={(token: string) => {
                   setCaptchaToken(token);
                 }}
               />
+              */}
 
               <div>
                 <button

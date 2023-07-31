@@ -1,13 +1,23 @@
-"use client"
-import { useState } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+"use client";
+import { useEffect, useState } from "react";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useRouter } from "next/router";
 
 export default function UpdatePassword() {
-  const [password, setPassword] = useState('');
-  const [confirmedPassword, setConfirmedPassword] = useState('');
-  const [message, setMessage] = useState('');
+  const [event, setEvent] = useState<any>(null);
+  const [password, setPassword] = useState("");
+  const [confirmedPassword, setConfirmedPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const router = useRouter();
 
   const supabase = createClientComponentClient();
+
+  useEffect(() => {
+    supabase.auth.onAuthStateChange(async (event, session) => {
+      setEvent(event);
+    });
+  }, []);
+  console.log(event);
 
   const handleUpdatePassword = async (e: any) => {
     e.preventDefault();
@@ -16,24 +26,28 @@ export default function UpdatePassword() {
       setMessage("Passwords don't match. Please try again.");
       return;
     }
-
     // Password validation check
     const uppercaseRegex = /[A-Z]/;
     const numberRegex = /[0-9]/;
-    if (password.length < 8 || !uppercaseRegex.test(password) || !numberRegex.test(password)) {
-      setMessage('Password must be at least 8 characters long, contain an uppercase letter, and a number.');
+    if (
+      password.length < 8 ||
+      !uppercaseRegex.test(password) ||
+      !numberRegex.test(password)
+    ) {
+      setMessage(
+        "Password must be at least 8 characters long, contain an uppercase letter, and a number."
+      );
       return;
     }
 
     try {
       await supabase.auth.updateUser({ password: password });
-
-      setMessage('Password has been updated successfully.');
-      setPassword('');
-      setConfirmedPassword('');
+      setMessage("Password has been updated successfully.");
+      setPassword("");
+      setConfirmedPassword("");
     } catch (error: any) {
-      console.error('Error updating password:', error.message);
-      setMessage('Error updating password. Please try again later.');
+      console.error("Error updating password:", error.message);
+      setMessage("Error updating password. Please try again later.");
     }
   };
 
@@ -47,7 +61,10 @@ export default function UpdatePassword() {
             <p>{message}</p>
             <form className="space-y-6" onSubmit={handleUpdatePassword}>
               <div>
-                <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
                   Password
                 </label>
                 <div className="mt-2">
@@ -65,7 +82,10 @@ export default function UpdatePassword() {
               </div>
 
               <div>
-                <label htmlFor="confirmed_password" className="block text-sm font-medium leading-6 text-gray-900">
+                <label
+                  htmlFor="confirmed_password"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
                   Confirm your password
                 </label>
                 <div className="mt-2">
@@ -97,4 +117,3 @@ export default function UpdatePassword() {
     </>
   );
 }
-

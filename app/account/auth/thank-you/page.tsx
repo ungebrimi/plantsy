@@ -7,7 +7,7 @@ const ThankYou = async () => {
   const session = (await getSession()) || null;
 
   if (!session) {
-    redirect("/500");
+    return <h1>loading...</h1>;
   }
 
   return (

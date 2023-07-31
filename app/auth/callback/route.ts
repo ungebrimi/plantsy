@@ -10,9 +10,15 @@ export async function GET(request: NextRequest) {
   const next = requestUrl.searchParams.get("next");
 
   if (code) {
-    // this any should be database type from supa CLI
     const supabase = createRouteHandlerClient<any>({ cookies });
     await supabase.auth.exchangeCodeForSession(code);
   }
-  return NextResponse.redirect(requestUrl.origin + "/auth/thank-you");
+
+  if (next && code) {
+    console.log(next);
+    return NextResponse.redirect(next);
+  } else if (code) {
+    console.log(requestUrl.origin);
+    return NextResponse.redirect(requestUrl.origin);
+  }
 }
