@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 import Image from "next/image";
+import Modal from "./Modal";
 
 const publishingOptions = [
   {
@@ -34,6 +35,8 @@ export default function Register() {
   const [acceptTerms, setAcceptTerms] = useState<boolean>(false);
   const [captchaToken, setCaptchaToken] = useState<string | undefined>();
   const [userType, setUserType] = useState(publishingOptions[0]);
+  const [success, setSuccess] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>("");
   const formRef = useRef<HTMLFormElement>(null);
   const router = useRouter();
   // should be supabase DB type this any as well
@@ -50,6 +53,8 @@ export default function Register() {
     let confirmPassword = values.confirm_password.trim();
     let firstName = values.first_name.trim();
     let lastName = values.last_name.trim();
+    // set the email state to the trimmed email from table
+    setEmail(email);
 
     // Password requirements checker
     // Password validation check
@@ -78,12 +83,8 @@ export default function Register() {
       return;
     }
 
-    setMessage(
-      `Thanks for registering! We have sent you a confirmation email to ${email}`
-    );
-
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -101,10 +102,8 @@ export default function Register() {
         console.error(error);
         return null; // Handle the error appropriately
       }
+      setSuccess(true);
       // captcha.current.resetCaptcha();
-      setTimeout(() => {
-        router.push("/");
-      }, 10000);
     } catch (error) {
       console.error(error);
       // Handle the error appropriately
@@ -386,6 +385,7 @@ export default function Register() {
           </p>
         </div>
       </div>
+      {success && <Modal email={email} />}
     </main>
   );
 }
