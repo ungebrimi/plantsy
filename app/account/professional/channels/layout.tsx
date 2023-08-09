@@ -1,6 +1,6 @@
 export const metadata = {
-  title: "Plantsy",
-  description: "Your green fingered friends",
+  title: "Plantsy | Channels",
+  description: "Your messages with clients",
 };
 
 export default function ChannelLayout({

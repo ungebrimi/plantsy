@@ -13,6 +13,8 @@ import {
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { User } from "@/dbtypes";
 import Image from "next/image";
+import Sidebar from "./Sidebar";
+import Link from "next/link";
 
 const navigation = [
   {
@@ -23,7 +25,7 @@ const navigation = [
   },
   {
     name: "Messages",
-    href: "/account/professional/messages",
+    href: "/account/professional/channels",
     icon: ChatBubbleLeftIcon,
     current: false,
   },
@@ -54,6 +56,7 @@ function classNames(...classes: string[]) {
 export default function Navigation({ session }: { session: any }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [openMessageTab, setOpenMessageTab] = useState<boolean>(false);
   const supabase = createClientComponentClient();
 
   useEffect(() => {
@@ -68,7 +71,6 @@ export default function Navigation({ session }: { session: any }) {
           return;
         }
         if (data) {
-          console.log(data[0]);
           setUser(data[0]); // Assuming you want to set the first user from the response
         }
       } catch (error) {
@@ -150,30 +152,62 @@ export default function Navigation({ session }: { session: any }) {
                       <ul role="list" className="flex flex-1 flex-col gap-y-7">
                         <li>
                           <ul role="list" className="-mx-2 space-y-1">
-                            {navigation.map((item) => (
-                              <li key={item.name}>
-                                <a
-                                  href={item.href}
-                                  className={classNames(
-                                    item.current
-                                      ? "bg-gray-50 text-green-600"
-                                      : "text-gray-700 hover:text-green-600 hover:bg-gray-50",
-                                    "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                                  )}
-                                >
-                                  <item.icon
-                                    className={classNames(
-                                      item.current
-                                        ? "text-green-600"
-                                        : "text-gray-400 group-hover:text-green-600",
-                                      "h-6 w-6 shrink-0"
-                                    )}
-                                    aria-hidden="true"
-                                  />
-                                  {item.name}
-                                </a>
-                              </li>
-                            ))}
+                            {navigation.map((item) => {
+                              if (item.name !== "Messages")
+                                return (
+                                  <li key={item.name}>
+                                    <Link
+                                      href={item.href}
+                                      className={classNames(
+                                        item.current
+                                          ? "bg-gray-50 text-green-600"
+                                          : "text-gray-700 hover:text-green-600 hover:bg-gray-50",
+                                        "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                                      )}
+                                    >
+                                      <item.icon
+                                        className={classNames(
+                                          item.current
+                                            ? "text-green-600"
+                                            : "text-gray-400 group-hover:text-green-600",
+                                          "h-6 w-6 shrink-0"
+                                        )}
+                                        aria-hidden="true"
+                                      />
+                                      {item.name}
+                                    </Link>
+                                  </li>
+                                );
+                              else
+                                return (
+                                  <li key={item.name}>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setOpenMessageTab(!openMessageTab);
+                                        setSidebarOpen(false);
+                                      }}
+                                      className={classNames(
+                                        item.current
+                                          ? "bg-gray-50 text-green-600"
+                                          : "text-gray-700 hover:text-green-600 hover:bg-gray-50",
+                                        "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                                      )}
+                                    >
+                                      <item.icon
+                                        className={classNames(
+                                          item.current
+                                            ? "text-green-600"
+                                            : "text-gray-400 group-hover:text-green-600",
+                                          "h-6 w-6 shrink-0"
+                                        )}
+                                        aria-hidden="true"
+                                      />
+                                      {item.name}
+                                    </button>
+                                  </li>
+                                );
+                            })}
                           </ul>
                         </li>
                       </ul>
@@ -202,35 +236,63 @@ export default function Navigation({ session }: { session: any }) {
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
                 <li>
                   <ul role="list" className="-mx-2 space-y-1">
-                    {navigation.map((item) => (
-                      <li key={item.name}>
-                        <a
-                          href={item.href}
-                          className={classNames(
-                            item.current
-                              ? "bg-gray-50 text-green-600"
-                              : "text-gray-700 hover:text-green-600 hover:bg-gray-50",
-                            "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                          )}
-                        >
-                          <item.icon
-                            className={classNames(
-                              item.current
-                                ? "text-green-600"
-                                : "text-gray-400 group-hover:text-green-600",
-                              "h-6 w-6 shrink-0"
-                            )}
-                            aria-hidden="true"
-                          />
-                          {item.name}
-                        </a>
-                      </li>
-                    ))}
+                    {navigation.map((item) => {
+                      if (item.name !== "Messages")
+                        return (
+                          <li key={item.name}>
+                            <Link
+                              href={item.href}
+                              className={classNames(
+                                item.current
+                                  ? "bg-gray-50 text-green-600"
+                                  : "text-gray-700 hover:text-green-600 hover:bg-gray-50",
+                                "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                              )}
+                            >
+                              <item.icon
+                                className={classNames(
+                                  item.current
+                                    ? "text-green-600"
+                                    : "text-gray-400 group-hover:text-green-600",
+                                  "h-6 w-6 shrink-0"
+                                )}
+                                aria-hidden="true"
+                              />
+                              {item.name}
+                            </Link>
+                          </li>
+                        );
+                      else
+                        return (
+                          <li key={item.name}>
+                            <button
+                              onClick={() => setOpenMessageTab(!openMessageTab)}
+                              className={classNames(
+                                item.current
+                                  ? "bg-gray-50 text-green-600"
+                                  : "text-gray-700 hover:text-green-600 hover:bg-gray-50",
+                                "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                              )}
+                            >
+                              <item.icon
+                                className={classNames(
+                                  item.current
+                                    ? "text-green-600"
+                                    : "text-gray-400 group-hover:text-green-600",
+                                  "h-6 w-6 shrink-0"
+                                )}
+                                aria-hidden="true"
+                              />
+                              {item.name}
+                            </button>
+                          </li>
+                        );
+                    })}
                   </ul>
                 </li>
 
                 <li className="-mx-6 mt-auto">
-                  <a
+                  <Link
                     href="#"
                     className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50"
                   >
@@ -256,7 +318,7 @@ export default function Navigation({ session }: { session: any }) {
                     <span aria-hidden="true">
                       {user?.first_name + " " + user?.last_name}
                     </span>
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </nav>
@@ -275,7 +337,7 @@ export default function Navigation({ session }: { session: any }) {
           <div className="flex-1 text-sm font-semibold leading-6 text-gray-900">
             Dashboard
           </div>
-          <a href="#">
+          <Link href="#">
             <span className="sr-only">Your profile</span>
             {user?.profile_picture ? (
               <Image
@@ -294,9 +356,10 @@ export default function Navigation({ session }: { session: any }) {
                 alt=""
               />
             )}
-          </a>
+          </Link>
         </div>
       </div>
+      <Sidebar open={openMessageTab} setOpen={setOpenMessageTab} />
     </>
   );
 }

@@ -1,7 +1,7 @@
 interface User {
   id: string;
-  first_name: string | null;
-  last_name: string | null;
+  first_name: string;
+  last_name: string;
   email: string | null;
   company: string | null;
   website: string | null;
@@ -15,8 +15,11 @@ interface User {
   county: string | null;
   country: string | null;
   phone: string | null;
-  role: string | null;
+  role: string;
   rating: number | null;
+  company: string;
+  company_role: string | null;
+  active: boolean;
 }
 
 export { User };

@@ -58,7 +58,6 @@ const ProfileDropdown = ({ session }: { session: any }) => {
     }
   }, [session, supabase, router]);
 
-  console.log(user);
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     router.refresh();
@@ -108,19 +107,6 @@ const ProfileDropdown = ({ session }: { session: any }) => {
                 )}
               >
                 Dashboard
-              </Link>
-            )}
-          </Menu.Item>
-          <Menu.Item>
-            {({ active }) => (
-              <Link
-                href="/account/messages"
-                className={classNames(
-                  active ? "bg-gray-100" : "",
-                  "block px-4 py-2 text-sm text-gray-700"
-                )}
-              >
-                Messages
               </Link>
             )}
           </Menu.Item>
