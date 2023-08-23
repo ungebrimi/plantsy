@@ -35,7 +35,11 @@ const ChatPanel = ({
           table: "messages",
         },
         (payload) => {
-          setMessages([...messages, payload.new as MessageType]);
+          // Use functional update to ensure you're working with the latest state
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            payload.new as MessageType,
+          ]);
           // Play the notification sound
           const audio = new Audio("/notification.mp3");
           audio.play();

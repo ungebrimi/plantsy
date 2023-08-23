@@ -4,7 +4,7 @@ import { FileType } from "@/dbtypes";
 
 type FileUploadHookResult = {
   loading: boolean;
-  files: FileType[];
+  response: FileType[];
   error: any;
   handleFileUpload: (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -14,7 +14,7 @@ type FileUploadHookResult = {
 
 const useFileUpload = (): FileUploadHookResult => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [files, setFiles] = useState<FileType[]>([]);
+  const [response, setResponse] = useState<FileType[]>([]);
   const [error, setError] = useState<any>(null);
   const supabase = createClientComponentClient();
 
@@ -69,13 +69,13 @@ const useFileUpload = (): FileUploadHookResult => {
 
     const res: any = await Promise.all(uploadPromises);
     console.log("response was resolved: ", res);
-    setFiles(res);
+    setResponse(res);
     setLoading(false);
   };
 
   return {
     loading,
-    files,
+    response,
     error,
     handleFileUpload,
   };

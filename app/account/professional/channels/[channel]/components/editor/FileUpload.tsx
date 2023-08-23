@@ -6,13 +6,14 @@ import useFileUpload from "@/hooks/useFileUpload";
 import { FileType } from "@/dbtypes";
 
 interface FileUploadProps {
+  files: FileType[];
   setFiles: React.Dispatch<SetStateAction<FileType[]>>;
   session: any;
 }
 
-const FileUpload = ({ setFiles, session }: FileUploadProps) => {
+const FileUpload = ({ files, setFiles, session }: FileUploadProps) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const { loading, files, error, handleFileUpload } = useFileUpload();
+  const { loading, response, error, handleFileUpload } = useFileUpload();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     handleFileUpload(event, `${session.user.id}/files`);
@@ -21,12 +22,12 @@ const FileUpload = ({ setFiles, session }: FileUploadProps) => {
   React.useEffect(() => {
     const handleFormDataUpdate = () => {
       if (error) console.error(error);
-      if (files && !error) {
-        setFiles(files);
+      if (response && !error) {
+        setFiles(response);
       }
     };
     handleFormDataUpdate();
-  }, [files, error, setFiles]);
+  }, [response, error, setFiles]);
 
   return (
     <div className="flow-root">
@@ -39,20 +40,29 @@ const FileUpload = ({ setFiles, session }: FileUploadProps) => {
           <span className="sr-only">Attach a file</span>
         </div>
       ) : (
-        <label htmlFor="fileInput" className="cursor-pointer">
-          <div className="-m-1 inline-flex h-10 w-10 items-center justify-center rounded-full text-gray-400 hover:text-gray-500">
-            <PaperClipIcon className="h-6 w-6" aria-hidden="true" />
-            <span className="sr-only">Attach a file</span>
-          </div>
-          <input
-            type="file"
-            id="fileInput"
-            className="sr-only"
-            onChange={handleChange}
-            multiple
-            accept=".pdf, .docx, .xls, .xlsx, .txt, .md, .odt, .ods, .odp, .odg"
-          />
-        </label>
+        <>
+          {loading ? (
+            <PaperClipIcon
+              className="h-6 w-6 animate-pulse text-gray-600"
+              aria-hidden="true"
+            />
+          ) : (
+            <label htmlFor="fileInput" className="cursor-pointer">
+              <div className="-m-1 inline-flex h-10 w-10 items-center justify-center rounded-full text-gray-400 hover:text-gray-500">
+                <PaperClipIcon className="h-6 w-6" aria-hidden="true" />
+                <span className="sr-only">Attach a file</span>
+              </div>
+              <input
+                type="file"
+                id="fileInput"
+                className="sr-only"
+                onChange={handleChange}
+                multiple
+                accept=".pdf, .docx, .xls, .xlsx, .txt, .md, .odt, .ods, .odp, .odg"
+              />
+            </label>
+          )}
+        </>
       )}
       {openModal && (
         <FileModal

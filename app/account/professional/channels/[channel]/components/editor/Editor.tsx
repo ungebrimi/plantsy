@@ -7,9 +7,6 @@ import { MessageType, FileType } from "@/dbtypes";
 
 export default function Editor({
   session,
-  channel,
-  messages,
-  setMessages,
   writer,
 }: {
   session: any;
@@ -91,7 +88,7 @@ export default function Editor({
                 setImages={setImages}
                 session={session}
               />
-              <FileUpload setFiles={setFiles} session={session} />
+              <FileUpload files={files} setFiles={setFiles} session={session} />
               <Emoji message={message} setMessage={setMessage} />
             </div>
             <div className="flex-shrink-0">

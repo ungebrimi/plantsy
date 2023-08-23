@@ -1,8 +1,13 @@
 // MISSING FUNCTIONALITY THAT REMOVES THE FILE FROM STORAGE AND FILE TABLE: THIS IS ONLY VISUAL ATM
 import { Fragment, SetStateAction, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { FolderIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  DocumentIcon,
+  FolderIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 import { FileType } from "@/dbtypes";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 type FileModalProps = {
   open: boolean;
@@ -19,14 +24,34 @@ export default function FileModal({
 }: FileModalProps) {
   const cancelButtonRef = useRef(null);
   const [tempFiles, setTempFiles] = useState<FileType[]>(files);
+  const supabase = createClientComponentClient();
 
-  function removeFile(i: number) {
-    const newFileArr = [...tempFiles]; // Create a new array to avoid modifying the original array directly
-    newFileArr.splice(i, 1); // Remove the element at index i
-    setTempFiles(newFileArr); // Update the state with the new array
+  async function removeFile(file_id: number) {
+    const updatedTempFiles = tempFiles.filter((file) => file.id !== file_id);
+    setTempFiles(updatedTempFiles);
+  }
+
+  async function removeImageFromDB(file: FileType) {
+    const { error } = await supabase.from("files").delete().eq("id", file.id);
+    if (error) {
+      console.error(error);
+    } else {
+      console.log(`file ${file.name} has been removed from the database`);
+    }
   }
 
   function handleSave() {
+    // Find images that were present in the images array but are not in tempImages
+    const filesToRemove = files.filter(
+      (file) => !tempFiles.some((tempFile) => tempFile.id === file.id)
+    );
+
+    // Remove those images from the database
+    filesToRemove.forEach((image) => {
+      removeImageFromDB(image);
+    });
+
+    // Update the images array to match tempImages
     setFiles(tempFiles);
     setOpen(false);
   }
@@ -64,7 +89,7 @@ export default function FileModal({
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
                 <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                  <div className="sm:flex sm:items-start">
+                  <div className="sm:flex sm:items-start justify-start">
                     <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
                       <FolderIcon
                         className="h-6 w-6 text-red-600"
@@ -78,26 +103,32 @@ export default function FileModal({
                       >
                         Manage files
                       </Dialog.Title>
-                      <ul className="mt-2 flow-root space-y-2 w-full flex flex-col">
-                        {/*THE FILES TO LIST AND MANAGE GOES HERE*/}
-                        {tempFiles &&
-                          tempFiles.map((file, idx) => {
-                            return (
-                              <li
-                                key={idx}
-                                className="w-full hover:bg-gray-100 pr-3 py-1 flex items-center rounded-lg"
-                              >
-                                {file.name}
-                                <button
-                                  type="button"
-                                  onClick={() => removeFile(idx)}
-                                  className="-m-1 inline-flex items-center justify-center rounded-full text-gray-400 hover:text-gray-500"
-                                >
-                                  <XMarkIcon className="h-5 w-5 ml-2" />
-                                </button>
-                              </li>
-                            );
-                          })}
+                      <ul role="list" className="divide-y divide-gray-100 mt-4">
+                        {tempFiles.map((file: FileType) => (
+                          <li
+                            key={file.id}
+                            className="flex items-center justify-between gap-x-6 py-5"
+                          >
+                            <div className="flex min-w-0 gap-x-4">
+                              <DocumentIcon className="w-10 text-gray-500 flex-none  bg-gray-50" />
+                              <div className="min-w-0 flex-auto">
+                                <p className="text-sm font-semibold leading-6 text-gray-900">
+                                  {file.name}
+                                </p>
+                                <p className="mt-1 truncate text-xs leading-5 text-gray-500">
+                                  {file.type}
+                                </p>
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => removeFile(file.id)}
+                              className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                            >
+                              Remove
+                            </button>
+                          </li>
+                        ))}
                       </ul>
                     </div>
                   </div>
