@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Fragment } from "react";
 import Link from "next/link";
 import { Menu, Transition } from "@headlessui/react";
-import { User } from "@/dbtypes";
+import { Client, Professional } from "@/dbtypes";
 import Image from "next/image";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
@@ -15,7 +15,7 @@ function classNames(...classes: string[]) {
 const ProfileDropdown = ({ session }: { session: any }) => {
   const router = useRouter();
   const supabase = createClientComponentClient();
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<Professional | Client | null>(null);
 
   useEffect(() => {
     async function getUserData() {
@@ -52,7 +52,7 @@ const ProfileDropdown = ({ session }: { session: any }) => {
     }
 
     if (session) {
-      getUserData().then((res: User) => {
+      getUserData().then((res: Professional | Client) => {
         setUser(res);
       });
     }

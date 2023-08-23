@@ -1,19 +1,20 @@
 "use client";
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import Profile from "./Profile";
-import { User } from "@/dbtypes";
-import Link from "next/link";
 import ArchivedConversations from "./ArchivedConversations";
 import ActiveConversations from "./ActiveConversations";
+import { Professional } from "@/dbtypes";
 
 export default function Sidebar({
   open,
   setOpen,
+  professional,
 }: {
   open: boolean;
   setOpen: any;
+  professional: Professional;
 }) {
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -70,8 +71,8 @@ export default function Sidebar({
                       </div>
                     </div>
                     <div className="relative mt-6 flex-1 px-4 sm:px-6">
-                      <Profile />
-                      <ActiveConversations />
+                      <Profile professional={professional} />
+                      <ActiveConversations professional={professional} />
                       <ArchivedConversations />
                     </div>
                   </div>

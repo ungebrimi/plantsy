@@ -3,7 +3,7 @@ import React from "react";
 import Image from "next/image";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import useImageUpload from "@/hooks/useImageUpload";
-import { User } from "@/dbtypes";
+import { Client } from "@/dbtypes";
 
 interface Form {
   website: string | null;
@@ -18,12 +18,12 @@ const Avatar = ({
 }: {
   formData: Form;
   setFormData: any;
-  user: User;
+  user: Client;
 }) => {
   const { loading, image, error, handleImageUpload } = useImageUpload();
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    handleImageUpload(event);
+    handleImageUpload(event, `${user.id}/avatars`);
   };
 
   React.useEffect(() => {

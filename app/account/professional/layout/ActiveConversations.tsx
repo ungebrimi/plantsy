@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Fragment, useState } from "react";
 import { Disclosure } from "@headlessui/react";
 import { MinusIcon, PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { Client, Professional } from "@/dbtypes";
 
 type Conversation = {
   id: number;
@@ -14,40 +16,27 @@ type Conversation = {
   unread_messages: boolean;
 };
 
-const activeArr: Conversation[] = [
-  {
-    id: 1,
-    inserted_at: "2023-08-07T08:00:00Z",
-    client_id: "a1b2c3d4",
-    client_name: "John doe",
-    professional_id: null,
-    professional_name: null,
-    unread_messages: true,
-  },
-  {
-    id: 2,
-    inserted_at: "2023-08-07T08:00:00Z",
-    client_id: "x9y8z7w6",
-    client_name: "Jesus Escobar",
-    professional_id: null,
-    professional_name: null,
-    unread_messages: false,
-  },
-  {
-    id: 3,
-    inserted_at: "2023-08-07T08:00:00Z",
-    client_id: "m4n5o6p7",
-    client_name: "Bhavin",
-    professional_id: null,
-    professional_name: null,
-    unread_messages: false,
-  },
-];
-
-const ActiveConversations = () => {
+const ActiveConversations = ({
+  professional,
+}: {
+  professional: Professional;
+}) => {
   const [activeConversations, setActiveConverstations] = useState<
     Conversation[] | null
-  >(activeArr);
+  >(null);
+
+  const supabase = createClientComponentClient();
+  useEffect(() => {
+    async function getChannels() {
+      const { data, error } = await supabase
+        .from("channels")
+        .select()
+        .eq("professional_id", professional.id);
+      if (error) console.error(error);
+      return data;
+    }
+    getChannels().then((res) => setActiveConverstations(res));
+  }, [supabase]);
 
   return (
     <Disclosure as="div" defaultOpen className="border-b border-gray-200 py-6">

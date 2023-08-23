@@ -4,12 +4,26 @@ import ProfileInformation from "./components/ProfileInformation";
 import PersonalInformation from "./components/PersonalInformation";
 import Notifications from "./components/Notifications";
 import { getSession } from "@/app/supabase-server";
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
+import { Professional } from "@/dbtypes";
 
 export default async function Profile() {
   const session = (await getSession()) || null;
-
   if (!session) {
     redirect("/");
+  }
+  const supabase = createServerComponentClient({ cookies });
+
+  const { data: user, error } = await supabase
+    .from("professionals")
+    .select()
+    .eq("id", session.user.id)
+    .single();
+
+  if (error) {
+    console.error(error);
+    throw error;
   }
 
   return (
@@ -25,7 +39,7 @@ export default async function Profile() {
               share.
             </p>
           </div>
-          <ProfileInformation user={session.user} />
+          <ProfileInformation user={user} />
         </div>
 
         <div className="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
@@ -38,7 +52,7 @@ export default async function Profile() {
             </p>
           </div>
 
-          <PersonalInformation user={session.user} />
+          <PersonalInformation user={user} />
         </div>
 
         <div className="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
@@ -51,7 +65,7 @@ export default async function Profile() {
               pick what else you want to hear about.
             </p>
           </div>
-          <Notifications user={session.user} />
+          <Notifications user={user} />
         </div>
       </div>
     </main>

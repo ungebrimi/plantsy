@@ -14,40 +14,10 @@ type Conversation = {
   unread_messages: boolean;
 };
 
-const activeArr: Conversation[] = [
-  {
-    id: 1,
-    inserted_at: "2023-08-07T08:00:00Z",
-    client_id: "a1b2c3d4",
-    client_name: "John doe",
-    professional_id: null,
-    professional_name: null,
-    unread_messages: true,
-  },
-  {
-    id: 2,
-    inserted_at: "2023-08-07T08:00:00Z",
-    client_id: "x9y8z7w6",
-    client_name: "Jesus Escobar",
-    professional_id: null,
-    professional_name: null,
-    unread_messages: false,
-  },
-  {
-    id: 3,
-    inserted_at: "2023-08-07T08:00:00Z",
-    client_id: "m4n5o6p7",
-    client_name: "Bhavin",
-    professional_id: null,
-    professional_name: null,
-    unread_messages: false,
-  },
-];
-
 const ArchivedConversations = () => {
   const [archivedConversations, setArchivedConverstations] = useState<
     Conversation[] | null
-  >(activeArr);
+  >(null);
 
   return (
     <Disclosure as="div" className="border-b border-gray-200 py-6">
@@ -58,7 +28,7 @@ const ArchivedConversations = () => {
               <h2 className="text-sm font-semibold leading-6 text-gray-900">
                 Archived conversations{" "}
                 <span className="text-gray-400">
-                  ({archivedConversations?.length})
+                  ({archivedConversations?.length || 0})
                 </span>
               </h2>
               <span className="flex items-center">

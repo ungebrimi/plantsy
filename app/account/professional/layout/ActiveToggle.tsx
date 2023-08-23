@@ -2,13 +2,17 @@
 import { useState } from "react";
 import { Switch } from "@headlessui/react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { User } from "@/dbtypes";
+import { Professional } from "@/dbtypes";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function ActiveToggle({ professional }: { professional: User }) {
+export default function ActiveToggle({
+  professional,
+}: {
+  professional: Professional;
+}) {
   const [enabled, setEnabled] = useState(professional.active);
   const supabase = createClientComponentClient();
 

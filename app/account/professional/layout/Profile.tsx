@@ -1,33 +1,9 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { getSession } from "@/app/supabase-client";
-import { User } from "@/dbtypes";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { useRouter } from "next/navigation";
+import React from "react";
+import { Professional } from "@/dbtypes";
 import ActiveToggle from "./ActiveToggle";
 
-const Profile = () => {
-  const router = useRouter();
-  const supabase = createClientComponentClient();
-  const [professional, setProfessional] = useState<User | null>(null);
-
-  useEffect(() => {
-    async function getUserData() {
-      const session = (await getSession()) || null;
-      if (!session) return;
-      const { data: professional, error } = await supabase
-        .from("professionals")
-        .select("*")
-        .eq("id", session.user.id);
-      if (error) {
-        console.error(error);
-        return;
-      }
-      setProfessional(professional[0]);
-    }
-    getUserData();
-  }, [supabase, router]);
-
+const Profile = ({ professional }: { professional: Professional }) => {
   return (
     <>
       <section className="flex flex-col items-center bg-indigo-100 border border-gray-200 mt-4 w-full py-6 px-4 rounded-lg">

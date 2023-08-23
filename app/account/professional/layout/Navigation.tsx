@@ -1,5 +1,5 @@
 "use client";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -10,8 +10,7 @@ import {
   UserIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { User } from "@/dbtypes";
+import { Professional } from "@/dbtypes";
 import Image from "next/image";
 import Sidebar from "./Sidebar";
 import Link from "next/link";
@@ -53,34 +52,13 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Navigation({ session }: { session: any }) {
+export default function Navigation({
+  professional,
+}: {
+  professional: Professional;
+}) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
   const [openMessageTab, setOpenMessageTab] = useState<boolean>(false);
-  const supabase = createClientComponentClient();
-
-  useEffect(() => {
-    async function getUserData() {
-      try {
-        const { data, error } = await supabase
-          .from("professionals")
-          .select()
-          .eq("id", session.user.id);
-        if (error) {
-          console.log(error);
-          return;
-        }
-        if (data) {
-          setUser(data[0]); // Assuming you want to set the first user from the response
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    if (session) {
-      getUserData();
-    }
-  }, [session, supabase]);
 
   return (
     <>
@@ -296,27 +274,25 @@ export default function Navigation({ session }: { session: any }) {
                     href="#"
                     className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50"
                   >
-                    {user?.profile_picture ? (
+                    {professional?.profile_picture ? (
                       <Image
                         width={300}
                         height={300}
                         className="h-8 w-8 rounded-full bg-gray-50"
-                        src={user.profile_picture}
+                        src={professional.profile_picture}
                         alt=""
                       />
                     ) : (
-                      <Image
-                        width={300}
-                        height={300}
-                        className="h-8 w-8 rounded-full bg-gray-50"
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        alt=""
-                      />
+                      <p className="hidden xs:flex items-center text-white justify-center uppercase font-bold h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
+                        {professional &&
+                          professional.first_name.charAt(0) +
+                          professional.last_name.charAt(0)}
+                      </p>
                     )}
 
                     <span className="sr-only">Your profile</span>
                     <span aria-hidden="true">
-                      {user?.first_name + " " + user?.last_name}
+                      {professional?.first_name + " " + professional?.last_name}
                     </span>
                   </Link>
                 </li>
@@ -339,12 +315,12 @@ export default function Navigation({ session }: { session: any }) {
           </div>
           <Link href="#">
             <span className="sr-only">Your profile</span>
-            {user?.profile_picture ? (
+            {professional?.profile_picture ? (
               <Image
                 width={300}
                 height={300}
                 className="h-8 w-8 rounded-full bg-gray-50"
-                src={user.profile_picture}
+                src={professional.profile_picture}
                 alt=""
               />
             ) : (
@@ -359,7 +335,11 @@ export default function Navigation({ session }: { session: any }) {
           </Link>
         </div>
       </div>
-      <Sidebar open={openMessageTab} setOpen={setOpenMessageTab} />
+      <Sidebar
+        open={openMessageTab}
+        setOpen={setOpenMessageTab}
+        professional={professional}
+      />
     </>
   );
 }

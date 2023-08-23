@@ -1,5 +1,5 @@
 "use client";
-import { User } from "@/dbtypes";
+import { Professional } from "@/dbtypes";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import React, { useCallback, useEffect, useState } from "react";
 
@@ -15,58 +15,19 @@ interface Form {
   phone: string | null;
 }
 
-const PersonalInformation = ({ user }: { user: any | null }) => {
+const PersonalInformation = ({ user }: { user: Professional }) => {
   const supabase = createClientComponentClient();
   const [formData, setFormData] = useState<Form>({
-    first_name: null,
-    last_name: null,
-    email: null,
+    first_name: user.first_name,
+    last_name: user.last_name,
+    email: user.email,
     country: "United States",
-    street: null,
-    city: null,
-    state: null,
-    zip: null,
-    phone: null,
+    street: user.street,
+    city: user.city,
+    state: user.state,
+    zip: user.zip,
+    phone: user.phone,
   });
-
-  const getPersonalData = useCallback(async () => {
-    try {
-      const { data, error } = await supabase
-        .from("professionals")
-        .select(
-          "first_name, last_name, email, country, street, city, state, zip, phone"
-        )
-        .eq("id", user.id);
-
-      if (error) {
-        console.error("Error:", error);
-        throw error;
-      }
-
-      if (data && data.length > 0) {
-        const profileData = data[0];
-
-        setFormData({
-          first_name: profileData?.first_name || null,
-          last_name: profileData?.last_name || null,
-          email: profileData?.email || null,
-          country: profileData?.country || null,
-          street: profileData?.street || null,
-          city: profileData?.city || null,
-          state: profileData?.state || null,
-          zip: profileData?.zip || null,
-          phone: profileData?.phone || null,
-        });
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      throw error;
-    }
-  }, [supabase, user.id]);
-
-  useEffect(() => {
-    getPersonalData();
-  }, [getPersonalData]);
 
   async function updatePersonalInformation() {
     try {

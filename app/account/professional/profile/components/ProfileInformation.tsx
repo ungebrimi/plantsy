@@ -1,7 +1,7 @@
 "use client";
 import React, { useCallback, useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { User } from "@/dbtypes";
+import { Professional } from "@/dbtypes";
 import Avatar from "./Avatar";
 
 interface Form {
@@ -10,44 +10,13 @@ interface Form {
   profile_picture: string | null;
 }
 
-const ProfileInformation = ({ user }: { user: any | null }) => {
+const ProfileInformation = ({ user }: { user: Professional }) => {
   const supabase = createClientComponentClient();
   const [formData, setFormData] = useState<Form>({
-    website: null,
-    about: null,
-    profile_picture: null,
+    website: user.website,
+    about: user.about,
+    profile_picture: user.profile_picture,
   });
-
-  const getProfileData = useCallback(async () => {
-    if (!user) return;
-    try {
-      const { data, error } = await supabase
-        .from("professionals")
-        .select("website, about, profile_picture")
-        .eq("id", user.id);
-
-      if (error) {
-        console.error(error);
-        throw error;
-      }
-
-      if (data && data.length > 0) {
-        setFormData((prevFormData: Form) => ({
-          ...prevFormData,
-          website: data[0].website,
-          about: data[0].about,
-          profile_picture: data[0].profile_picture,
-        }));
-      }
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }, [setFormData, supabase, user]);
-
-  useEffect(() => {
-    getProfileData();
-  }, [getProfileData]);
 
   async function updateProfileInformation() {
     if (!user) return;
