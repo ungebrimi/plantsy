@@ -66,14 +66,14 @@ export default function Register() {
       !numberRegex.test(password)
     ) {
       setMessage(
-        "Password must be at least 8 characters long, contain an uppercase letter, and a number."
+        "Password must be at least 8 characters long, contain an uppercase letter, and a number.",
       );
       return;
     }
 
     if (!email || !password || !acceptTerms || !firstName || !lastName) {
       setMessage(
-        "You need to fill in all required fields and accept the terms and conditions to continue"
+        "You need to fill in all required fields and accept the terms and conditions to continue",
       );
       return;
     }
@@ -276,7 +276,7 @@ export default function Register() {
                                     active
                                       ? "bg-green-600 text-white"
                                       : "text-gray-900",
-                                    "cursor-default select-none p-4 text-sm"
+                                    "cursor-default select-none p-4 text-sm",
                                   )
                                 }
                                 value={option}
@@ -313,7 +313,7 @@ export default function Register() {
                                         active
                                           ? "text-green-200"
                                           : "text-gray-500",
-                                        "mt-2"
+                                        "mt-2",
                                       )}
                                     >
                                       {option.description}
@@ -377,7 +377,7 @@ export default function Register() {
           <p className="mt-10 text-center text-sm text-gray-500">
             Already a member?{" "}
             <Link
-              href="/account/login"
+              href="/account/auth/login"
               className="font-semibold leading-6 text-green-600 hover:text-green-500"
             >
               Go to login

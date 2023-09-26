@@ -3,13 +3,13 @@ import Categories from "./components/home/Categories";
 import Features from "./components/home/Features";
 import Testimonials from "./components/home/Testimonials";
 import Footer from "./layout/Footer";
-import Navbar from "./layout/Navbar";
+import ServerNav from "./layout/ServerNav";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
   return (
     <main>
-      <Navbar />
+      <ServerNav />
       <Hero />
       <Categories />
       <Features />

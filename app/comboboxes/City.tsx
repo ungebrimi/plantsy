@@ -38,7 +38,6 @@ export default function City({ formData, setFormData }: CityProps) {
         setCityList(typed);
       }
     }
-
     getCities();
   }, [query, supabase]);
 
