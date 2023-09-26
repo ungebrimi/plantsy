@@ -2,8 +2,7 @@ import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import React from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import Service from "./Service";
-import Reviews from "./Reviews";
+import ServiceForm from "../../components/ServiceForm";
 
 async function page({ params }: { params: { gig: number } }) {
   const supabase = createServerComponentClient({ cookies });
@@ -27,8 +26,11 @@ async function page({ params }: { params: { gig: number } }) {
   if (!serviceError && !professionalError && service && professional) {
     return (
       <main>
-        <Service service={service} professional={professional} />
-        <Reviews />
+        <ServiceForm
+          professional={professional}
+          service={service}
+          edit={true}
+        />
       </main>
     );
   }

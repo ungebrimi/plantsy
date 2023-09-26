@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import imageCompression from "browser-image-compression";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { FileType } from "@/dbtypes";
@@ -9,10 +9,25 @@ type FileProcessingOptions = {
   useWebWorker: boolean;
 };
 
-const useImageUpload = () => {
+interface useImageUploadProps {
+  loading: boolean;
+  image: FileType | null;
+  setImage: React.Dispatch<SetStateAction<FileType | null>>;
+  images: FileType[];
+  setImages: React.Dispatch<SetStateAction<FileType[]>>;
+  error: any;
+  handleImageUpload: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    path: string,
+    isMultiple: boolean,
+  ) => Promise<void>;
+  removeImage: any;
+}
+
+const useImageUpload = (): useImageUploadProps => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [image, setImage] = useState<any>(null);
-  const [response, setResponse] = useState<FileType[]>([]);
+  const [image, setImage] = useState<FileType | null>(null);
+  const [images, setImages] = useState<FileType[]>([]);
   const [error, setError] = useState<any>(null);
   const supabase = createClientComponentClient();
 
@@ -36,7 +51,7 @@ const useImageUpload = () => {
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
     path: string,
-    isMultiple: boolean = false
+    isMultiple: boolean = false,
   ) => {
     const imageFiles = event.target.files;
     if (!imageFiles) return;
@@ -55,7 +70,7 @@ const useImageUpload = () => {
           Array.from(imageFiles).map(async (imageFile) => {
             const compressedFile = await imageCompression(imageFile, options);
             return compressedFile;
-          })
+          }),
         );
 
         const uploadPromises = compressedFiles.map(async (compressedFile) => {
@@ -85,7 +100,7 @@ const useImageUpload = () => {
         });
 
         const res: any = await Promise.all(uploadPromises);
-        setResponse(res);
+        setImages(res);
       } else {
         const compressedFile = await imageCompression(imageFiles[0], options);
 
@@ -121,12 +136,61 @@ const useImageUpload = () => {
     }
   };
 
+  const removeFromFileTable = async (fileId: number) => {
+    const { error } = await supabase.from("files").delete().eq("id", fileId);
+
+    if (error) {
+      console.error(error);
+    }
+    console.log("file deleted from table");
+  };
+
+  const removeFromStorage = async (path: string) => {
+    const { error } = await supabase.storage
+      .from("professionals")
+      .remove([path]);
+    if (error) {
+      console.error(error);
+    }
+    console.log("file removed from storage");
+  };
+
+  const removeImage = async (
+    fileId: number,
+    path: string,
+    isMultiple: boolean = false,
+  ) => {
+    try {
+      // Remove from the file table
+      await removeFromFileTable(fileId);
+      // Remove from storage
+      await removeFromStorage(path);
+
+      if (!isMultiple) {
+        setImage(null); // Set the image state to null for singular removal
+      } else {
+        // Find the index of the image to remove from the images array
+        const indexToRemove = images.findIndex((img) => img.id === fileId);
+        if (indexToRemove !== -1) {
+          const updatedImages = [...images];
+          updatedImages.splice(indexToRemove, 1);
+          setImages(updatedImages);
+        }
+      }
+    } catch (error) {
+      setError(error);
+    }
+  };
+
   return {
     loading,
     image,
-    response,
+    setImage,
+    images,
+    setImages,
     error,
     handleImageUpload,
+    removeImage,
   };
 };
 

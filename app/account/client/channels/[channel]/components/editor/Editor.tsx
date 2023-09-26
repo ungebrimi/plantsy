@@ -4,6 +4,7 @@ import ImageUpload from "./ImageUpload";
 import Emoji from "./Emoji";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { MessageType, FileType } from "@/dbtypes";
+import Image from "next/image";
 
 export default function Editor({
   session,
@@ -54,7 +55,9 @@ export default function Editor({
     <section className="flex items-start mt-6 sm:space-x-4">
       <div className="flex-shrink-0 hidden sm:block">
         {writer.profile_picture ? (
-          <img
+          <Image
+            width={300}
+            height={300}
             className="inline-block h-10 w-10 rounded-full"
             src={writer.profile_picture}
             alt={writer.first_name + " " + writer.last_name}
@@ -83,11 +86,7 @@ export default function Editor({
           </div>
           <div className="flex justify-between pt-2">
             <div className="flex items-center space-x-2">
-              <ImageUpload
-                images={images}
-                setImages={setImages}
-                session={session}
-              />
+              <ImageUpload setGallery={setImages} session={session} />
               <FileUpload files={files} setFiles={setFiles} session={session} />
               <Emoji message={message} setMessage={setMessage} />
             </div>

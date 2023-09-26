@@ -23,7 +23,7 @@ const Avatar = ({
   const { loading, image, error, handleImageUpload } = useImageUpload();
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    handleImageUpload(event, `${user.id}/avatars`);
+    handleImageUpload(event, `${user.id}/avatars`, false);
   };
 
   React.useEffect(() => {

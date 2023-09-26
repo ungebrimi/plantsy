@@ -5,30 +5,28 @@ import React, { ChangeEvent, SetStateAction, useState } from "react";
 import ImageModal from "./ImageModal";
 
 interface ImageUploadProps {
-  images: FileType[];
-  setImages: React.Dispatch<SetStateAction<FileType[]>>;
+  setGallery: React.Dispatch<SetStateAction<FileType[]>>;
   session: any;
 }
 
-const ImageUpload = ({ images, setImages, session }: ImageUploadProps) => {
+const ImageUpload = ({ setGallery, session }: ImageUploadProps) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const { loading, response, error, handleImageUpload } = useImageUpload();
+  const { loading, images, setImages, error, handleImageUpload } =
+    useImageUpload();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     handleImageUpload(event, `${session.user.id}/files`, true);
   };
 
-  console.log(images);
-
   React.useEffect(() => {
     const handleFormDataUpdate = () => {
       if (error) console.error(error);
-      if (response && !error) {
-        setImages(response);
+      if (images && !error) {
+        setGallery(images);
       }
     };
     handleFormDataUpdate();
-  }, [response, error, setImages]);
+  }, [images, error, setGallery]);
 
   return (
     <div className="flow-root">

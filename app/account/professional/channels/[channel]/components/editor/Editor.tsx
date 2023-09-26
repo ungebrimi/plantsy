@@ -84,8 +84,8 @@ export default function Editor({
           <div className="flex justify-between pt-2">
             <div className="flex items-center space-x-2">
               <ImageUpload
-                images={images}
-                setImages={setImages}
+                gallery={images}
+                setGallery={setImages}
                 session={session}
               />
               <FileUpload files={files} setFiles={setFiles} session={session} />

@@ -71,4 +71,54 @@ interface FileType {
   url: string;
 }
 
-export { MessageType, Client, Professional, FileType };
+interface ServiceType {
+  title: string;
+  thumbnail: JSON | null;
+  images: JSON | [];
+  price: number;
+  vat: number;
+  city: string;
+  state: string;
+  county: string;
+  zip: string;
+  service_category: string | null;
+  keywords: string[];
+  description: string;
+}
+
+interface ServiceCategoryType {
+  created_at: string;
+  id: number;
+  name: string;
+  value: string;
+}
+
+interface CityType {
+  city: string;
+  city_ascii: string;
+  state_id: string;
+  state_name: string;
+  county_fips: number;
+  county_name: string;
+  lat: number;
+  lng: number;
+  population: number;
+  density: number;
+  source: string;
+  military: boolean;
+  incorperated: boolean;
+  timezone: string;
+  ranking: number;
+  zipz: text;
+  id: number;
+}
+
+export {
+  MessageType,
+  Client,
+  Professional,
+  FileType,
+  ServiceType,
+  ServiceCategoryType,
+  CityType,
+};
