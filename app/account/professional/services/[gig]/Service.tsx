@@ -10,6 +10,7 @@ function classNames(...classes: string[]) {
 
 function Service({ service, professional }: any) {
   const [images, setImages] = useState<FileType[]>([]);
+  const profilePicture = JSON.parse(professional.profile_picture);
 
   useEffect(() => {
     if (!service) return;
@@ -17,6 +18,7 @@ function Service({ service, professional }: any) {
     const resistingImages = JSON.parse(service.images);
     setImages([thumbnail, ...resistingImages]);
   }, [service]);
+
   return (
     <section className="mx-auto max-w-7xl sm:px-6 sm:pt-16 lg:px-8">
       <div className="mx-auto max-w-2xl lg:max-w-none">
@@ -78,7 +80,7 @@ function Service({ service, professional }: any) {
                   width={300}
                   height={300}
                   className="mx-auto h-32 w-32 flex-shrink-0 rounded-full"
-                  src={professional.profile_picture}
+                  src={profilePicture.url}
                   alt=""
                 />
                 <h3 className="mt-6 text-sm font-medium text-gray-900">

@@ -59,6 +59,7 @@ export default function Navigation({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [openMessageTab, setOpenMessageTab] = useState<boolean>(false);
+  const profilePicture = JSON.parse(professional.profile_picture);
 
   return (
     <>
@@ -140,7 +141,7 @@ export default function Navigation({
                                         item.current
                                           ? "bg-gray-50 text-green-600"
                                           : "text-gray-700 hover:text-green-600 hover:bg-gray-50",
-                                        "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                                        "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold",
                                       )}
                                     >
                                       <item.icon
@@ -148,7 +149,7 @@ export default function Navigation({
                                           item.current
                                             ? "text-green-600"
                                             : "text-gray-400 group-hover:text-green-600",
-                                          "h-6 w-6 shrink-0"
+                                          "h-6 w-6 shrink-0",
                                         )}
                                         aria-hidden="true"
                                       />
@@ -169,7 +170,7 @@ export default function Navigation({
                                         item.current
                                           ? "bg-gray-50 text-green-600"
                                           : "text-gray-700 hover:text-green-600 hover:bg-gray-50",
-                                        "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                                        "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold",
                                       )}
                                     >
                                       <item.icon
@@ -177,7 +178,7 @@ export default function Navigation({
                                           item.current
                                             ? "text-green-600"
                                             : "text-gray-400 group-hover:text-green-600",
-                                          "h-6 w-6 shrink-0"
+                                          "h-6 w-6 shrink-0",
                                         )}
                                         aria-hidden="true"
                                       />
@@ -224,7 +225,7 @@ export default function Navigation({
                                 item.current
                                   ? "bg-gray-50 text-green-600"
                                   : "text-gray-700 hover:text-green-600 hover:bg-gray-50",
-                                "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                                "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold",
                               )}
                             >
                               <item.icon
@@ -232,7 +233,7 @@ export default function Navigation({
                                   item.current
                                     ? "text-green-600"
                                     : "text-gray-400 group-hover:text-green-600",
-                                  "h-6 w-6 shrink-0"
+                                  "h-6 w-6 shrink-0",
                                 )}
                                 aria-hidden="true"
                               />
@@ -249,7 +250,7 @@ export default function Navigation({
                                 item.current
                                   ? "bg-gray-50 text-green-600"
                                   : "text-gray-700 hover:text-green-600 hover:bg-gray-50",
-                                "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                                "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold",
                               )}
                             >
                               <item.icon
@@ -257,7 +258,7 @@ export default function Navigation({
                                   item.current
                                     ? "text-green-600"
                                     : "text-gray-400 group-hover:text-green-600",
-                                  "h-6 w-6 shrink-0"
+                                  "h-6 w-6 shrink-0",
                                 )}
                                 aria-hidden="true"
                               />
@@ -274,12 +275,12 @@ export default function Navigation({
                     href="#"
                     className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50"
                   >
-                    {professional?.profile_picture ? (
+                    {profilePicture ? (
                       <Image
                         width={300}
                         height={300}
                         className="h-8 w-8 rounded-full bg-gray-50"
-                        src={professional.profile_picture}
+                        src={profilePicture.url}
                         alt=""
                       />
                     ) : (
@@ -315,12 +316,12 @@ export default function Navigation({
           </div>
           <Link href="#">
             <span className="sr-only">Your profile</span>
-            {professional?.profile_picture ? (
+            {profilePicture ? (
               <Image
                 width={300}
                 height={300}
                 className="h-8 w-8 rounded-full bg-gray-50"
-                src={professional.profile_picture}
+                src={profilePicture.url}
                 alt=""
               />
             ) : (

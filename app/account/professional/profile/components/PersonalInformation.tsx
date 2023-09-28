@@ -1,7 +1,12 @@
 "use client";
 import { Professional } from "@/dbtypes";
+import {
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 
 interface Form {
   first_name: string | null;
@@ -17,6 +22,8 @@ interface Form {
 
 const PersonalInformation = ({ user }: { user: Professional }) => {
   const supabase = createClientComponentClient();
+  const [success, setSuccess] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState<Form>({
     first_name: user.first_name,
     last_name: user.last_name,
@@ -46,16 +53,15 @@ const PersonalInformation = ({ user }: { user: Professional }) => {
         })
         .eq("id", user.id)
         .select(
-          "first_name, last_name, email, country, street, city, state, zip, phone"
+          "first_name, last_name, email, country, street, city, state, zip, phone",
         );
 
       if (error) {
-        console.error("Error:", error.message);
-        throw error;
+        setErrorMessage("Error:" + error.message);
       }
-
-      console.log(data);
-      return data;
+      if (data) {
+        setSuccess(true);
+      }
     } catch (error) {
       console.error("Error:", error);
       throw error;
@@ -249,6 +255,61 @@ const PersonalInformation = ({ user }: { user: Professional }) => {
           </div>
         </div>
       </div>
+      {success && (
+        <div className="rounded-md bg-green-50 p-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <CheckCircleIcon
+                className="h-5 w-5 text-green-400"
+                aria-hidden="true"
+              />
+            </div>
+            <div className="ml-3">
+              <p className="text-sm font-medium text-green-800">
+                Personal information has been updated
+              </p>
+            </div>
+            <div className="ml-auto pl-3">
+              <div className="-mx-1.5 -my-1.5">
+                <button
+                  type="button"
+                  className="inline-flex rounded-md bg-green-50 p-1.5 text-green-500 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-green-50"
+                >
+                  <span className="sr-only">Dismiss</span>
+                  <XMarkIcon className="h-5 w-5" aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {errorMessage && (
+        <div className="rounded-md bg-red-50 p-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <ExclamationTriangleIcon
+                className="h-5 w-5 text-red-400"
+                aria-hidden="true"
+              />
+            </div>
+            <div className="ml-3">
+              <p className="text-sm font-medium text-red-800">{errorMessage}</p>
+            </div>
+            <div className="ml-auto pl-3">
+              <div className="-mx-1.5 -my-1.5">
+                <button
+                  type="button"
+                  className="inline-flex rounded-md bg-red-50 p-1.5 text-red-500 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-red-50"
+                >
+                  <span className="sr-only">Dismiss</span>
+                  <XMarkIcon className="h-5 w-5" aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
         <button
           type="button"

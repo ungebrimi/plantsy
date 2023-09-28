@@ -18,6 +18,8 @@ function ProfessionalDropdown({
 }) {
   const supabase = createClientComponentClient();
   const router = useRouter();
+  const profilePicture = JSON.parse(professional.profile_picture);
+
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     router.refresh();
@@ -29,12 +31,12 @@ function ProfessionalDropdown({
         <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
           <span className="absolute -inset-1.5" />
           <span className="sr-only">Open user menu</span>
-          {professional.profile_picture ? (
+          {profilePicture ? (
             <Image
               width={300}
               className="h-8 w-8 rounded-full"
               height={300}
-              src={professional.profile_picture}
+              src={profilePicture.url}
               alt=""
             />
           ) : (

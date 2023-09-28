@@ -1,21 +1,28 @@
 "use client";
 import React, { useCallback, useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { Professional } from "@/dbtypes";
+import { FileType, Professional } from "@/dbtypes";
 import Avatar from "./Avatar";
+import {
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 
 interface Form {
   website: string | null;
   about: string | null;
-  profile_picture: string | null;
+  profile_picture: any;
 }
 
 const ProfileInformation = ({ user }: { user: Professional }) => {
   const supabase = createClientComponentClient();
+  const [success, setSuccess] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState<Form>({
     website: user.website,
     about: user.about,
-    profile_picture: user.profile_picture,
+    profile_picture: JSON.parse(user.profile_picture),
   });
 
   async function updateProfileInformation() {
@@ -26,17 +33,18 @@ const ProfileInformation = ({ user }: { user: Professional }) => {
         .update({
           website: formData.website,
           about: formData.about,
-          profile_picture: formData.profile_picture,
+          profile_picture: JSON.stringify(formData.profile_picture),
         })
         .eq("id", user.id)
-        .select();
+        .select("website, about, profile_picture");
 
       if (error) {
-        console.error("error:", error.message);
+        setErrorMessage("error: " + error.message);
         throw error;
       }
-      console.log("updated profile information successfully");
-      return data;
+      if (data) {
+        setSuccess(true);
+      }
     } catch (error) {
       console.error(error);
       throw error;
@@ -100,6 +108,60 @@ const ProfileInformation = ({ user }: { user: Professional }) => {
           <Avatar formData={formData} setFormData={setFormData} user={user} />
         </div>
       </div>
+      {success && (
+        <div className="rounded-md bg-green-50 p-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <CheckCircleIcon
+                className="h-5 w-5 text-green-400"
+                aria-hidden="true"
+              />
+            </div>
+            <div className="ml-3">
+              <p className="text-sm font-medium text-green-800">
+                Profile information has been updated
+              </p>
+            </div>
+            <div className="ml-auto pl-3">
+              <div className="-mx-1.5 -my-1.5">
+                <button
+                  type="button"
+                  className="inline-flex rounded-md bg-green-50 p-1.5 text-green-500 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-green-50"
+                >
+                  <span className="sr-only">Dismiss</span>
+                  <XMarkIcon className="h-5 w-5" aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {errorMessage && (
+        <div className="rounded-md bg-red-50 p-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <ExclamationTriangleIcon
+                className="h-5 w-5 text-red-400"
+                aria-hidden="true"
+              />
+            </div>
+            <div className="ml-3">
+              <p className="text-sm font-medium text-red-800">{errorMessage}</p>
+            </div>
+            <div className="ml-auto pl-3">
+              <div className="-mx-1.5 -my-1.5">
+                <button
+                  type="button"
+                  className="inline-flex rounded-md bg-red-50 p-1.5 text-red-500 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-red-50"
+                >
+                  <span className="sr-only">Dismiss</span>
+                  <XMarkIcon className="h-5 w-5" aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
         <button
           type="button"
