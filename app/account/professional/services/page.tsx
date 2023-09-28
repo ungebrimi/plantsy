@@ -24,6 +24,7 @@ const Services = async () => {
     .select()
     .eq("professional_id", session?.user.id);
   if (error) console.error(error);
+
   if (!error && gigs) {
     return (
       <main className="-mx-px space-y-4 md:space-y-0 md:space-x-4 grid grid-cols-1 sm:mx-0 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
