@@ -17,6 +17,7 @@ function ProfessionalDropdown({
   professional: Professional;
 }) {
   const supabase = createClientComponentClient();
+
   const router = useRouter();
   const profilePicture = JSON.parse(professional.profile_picture);
 

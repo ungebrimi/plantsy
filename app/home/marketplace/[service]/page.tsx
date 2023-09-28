@@ -4,9 +4,11 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Service from "./Service";
 import Reviews from "./Reviews";
+import { getSession } from "@/app/supabase-server";
 
 async function page({ params }: { params: { service: number } }) {
   const supabase = createServerComponentClient({ cookies });
+  const session = (await getSession()) || null;
 
   const { data: service, error: serviceError } = await supabase
     .from("services")
@@ -27,7 +29,11 @@ async function page({ params }: { params: { service: number } }) {
   if (!serviceError && !professionalError && service && professional) {
     return (
       <main>
-        <Service service={service} professional={professional} />
+        <Service
+          service={service}
+          professional={professional}
+          session={session}
+        />
         <Reviews />
       </main>
     );

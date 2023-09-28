@@ -10,7 +10,7 @@ interface Form {
   sms_notification_messages: boolean;
 }
 
-const Notifications = ({ user }: { user: Client }) => {
+const Notifications = ({ client }: { client: Client }) => {
   const supabase = createClientComponentClient();
   const [formData, setFormData] = useState<Form>({
     email_notification_jobs: false,
@@ -30,11 +30,11 @@ const Notifications = ({ user }: { user: Client }) => {
   const getNotificationData = useCallback(async () => {
     try {
       const { data, error } = await supabase
-        .from("profiles")
+        .from("clients")
         .select(
-          "email_notification_jobs, email_notification_messages, sms_notification_jobs, sms_notification_messages"
+          "email_notification_jobs, email_notification_messages, sms_notification_jobs, sms_notification_messages",
         )
-        .eq("id", user.id);
+        .eq("id", client.id);
 
       if (error) {
         console.error("Error:", error);
@@ -55,7 +55,7 @@ const Notifications = ({ user }: { user: Client }) => {
       console.error("Error:", error);
       throw error;
     }
-  }, [supabase, user.id]);
+  }, [supabase, client.id]);
 
   useEffect(() => {
     getNotificationData();
@@ -64,16 +64,16 @@ const Notifications = ({ user }: { user: Client }) => {
   async function updateNotificationData() {
     try {
       const { data, error } = await supabase
-        .from("profiles")
+        .from("clients")
         .update({
           email_notification_jobs: formData.email_notification_jobs,
           email_notification_messages: formData.email_notification_messages,
           sms_notification_jobs: formData.sms_notification_jobs,
           sms_notification_messages: formData.sms_notification_messages,
         })
-        .eq("id", user.id)
+        .eq("id", client.id)
         .select(
-          "email_notification_messages, sms_notification_messages, email_notification_jobs, sms_notification_jobs"
+          "email_notification_messages, sms_notification_messages, email_notification_jobs, sms_notification_jobs",
         );
 
       if (error) {

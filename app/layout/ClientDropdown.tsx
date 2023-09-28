@@ -1,3 +1,4 @@
+"use client";
 import { Client } from "@/dbtypes";
 import { Menu, Transition } from "@headlessui/react";
 import React, { Fragment } from "react";
@@ -17,6 +18,7 @@ function ClientDropdown({ client }: { client: Client }) {
     await supabase.auth.signOut();
     router.refresh();
   };
+  const profilePicture = JSON.parse(client.profile_picture);
 
   return (
     <Menu as="div" className="relative ml-3">
@@ -29,7 +31,7 @@ function ClientDropdown({ client }: { client: Client }) {
               width={300}
               className="h-8 w-8 rounded-full"
               height={300}
-              src={client.profile_picture}
+              src={profilePicture.url}
               alt=""
             />
           ) : (

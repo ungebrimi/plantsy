@@ -1,20 +1,18 @@
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+export const dynamic = "force-dynamic";
+import Footer from "@/app/layout/Footer";
+import ServerNav from "@/app/layout/ServerNav";
 
 export default async function ProfessionalLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // const supabase = createServerComponentClient<any>({ cookies });
-
-  // const {
-  //   data: { session },
-  // } = await supabase.auth.getSession();
   return (
     <>
       <main className="py-10">
+        <ServerNav />
         <div className="px-4 sm:px-6 lg:px-8">{children}</div>
+        <Footer />
       </main>
     </>
   );

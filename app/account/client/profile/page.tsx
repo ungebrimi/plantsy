@@ -4,24 +4,25 @@ import { redirect } from "next/navigation";
 import ProfileInformation from "./components/ProfileInformation";
 import PersonalInformation from "./components/PersonalInformation";
 import Notifications from "./components/Notifications";
-
-/*
- * this is a server component, where we first create a createServerComponentClient and pass it the cookies from the next headers.
- * this is to check if we have a signed in user session, if not we redirect the user back to home page.
- * */
+import { getSession } from "@/app/supabase-server";
 
 export default async function Profile() {
-  // const supabase = createServerComponentClient<any>({ cookies })
-  //
-  // const {
-  //   data: { session },
-  // } = await supabase.auth.getSession()
-  // const { data: { user } } = await supabase.auth.getUser()
-  let session = null;
-  let user = null;
-
-  if (!session || !user) {
+  const supabase = createServerComponentClient({ cookies });
+  const session = (await getSession()) || null;
+  if (!session) {
     redirect("/");
+  }
+  // console.log(session);
+  //
+  const { data: client, error } = await supabase
+    .from("clients")
+    .select()
+    .eq("id", session.user.id)
+    .single();
+  //
+  if (error) {
+    console.error(error);
+    throw error;
   }
 
   return (
@@ -37,7 +38,7 @@ export default async function Profile() {
               share.
             </p>
           </div>
-          <ProfileInformation user={user} />
+          <ProfileInformation client={client} />
         </div>
 
         <div className="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
@@ -50,7 +51,7 @@ export default async function Profile() {
             </p>
           </div>
 
-          <PersonalInformation user={user} />
+          <PersonalInformation client={client} />
         </div>
 
         <div className="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
@@ -63,7 +64,7 @@ export default async function Profile() {
               pick what else you want to hear about.
             </p>
           </div>
-          <Notifications user={user} />
+          <Notifications client={client} />
         </div>
       </div>
     </main>

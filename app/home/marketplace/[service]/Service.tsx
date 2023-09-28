@@ -4,12 +4,14 @@ import { EnvelopeIcon, PhoneIcon, StarIcon } from "@heroicons/react/24/outline";
 import { Tab } from "@headlessui/react";
 import Image from "next/image";
 import { FileType } from "@/dbtypes";
+import Link from "next/link";
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-function Service({ service, professional }: any) {
+function Service({ service, professional, session }: any) {
   const [images, setImages] = useState<FileType[]>([]);
+  const profilePicture = JSON.parse(professional.profile_picture);
 
   useEffect(() => {
     if (!service) return;
@@ -79,7 +81,7 @@ function Service({ service, professional }: any) {
                   width={300}
                   height={300}
                   className="mx-auto h-32 w-32 flex-shrink-0 rounded-full"
-                  src={professional.profile_picture}
+                  src={profilePicture.url}
                   alt=""
                 />
                 <h3 className="mt-6 text-sm font-medium text-gray-900">
@@ -99,32 +101,36 @@ function Service({ service, professional }: any) {
                 </dl>
               </div>
               <div>
-                <div className="-mt-px flex divide-x divide-gray-200">
-                  <div className="flex w-0 flex-1">
-                    <a
-                      href={`mailto:${professional.email}`}
-                      className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900"
+                {!session && (
+                  <Link
+                    href="/account/auth/register"
+                    className="relative w-full -mr-px inline-flex bg-red-50 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-red-400"
+                  >
+                    Sign up as a client to contact this professional
+                  </Link>
+                )}
+                {session &&
+                  session.user.user_metadata.role === "professional" && (
+                    <Link
+                      href="/account/auth/register"
+                      className="relative -mr-px inline-flex w-full bg-red-50 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-red-400"
                     >
                       <EnvelopeIcon
                         className="h-5 w-5 text-gray-400"
                         aria-hidden="true"
                       />
-                      Email
-                    </a>
-                  </div>
-                  <div className="-ml-px flex w-0 flex-1">
-                    <a
-                      href={`tel:${professional.telephone}`}
-                      className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900"
-                    >
-                      <PhoneIcon
-                        className="h-5 w-5 text-gray-400"
-                        aria-hidden="true"
-                      />
-                      Call
-                    </a>
-                  </div>
-                </div>
+                      You need a client account to contact this professional
+                    </Link>
+                  )}
+                {session && session.user.user_metadata.role === "client" && (
+                  <button className="relative -mr-px inline-flex w-full flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-500">
+                    <EnvelopeIcon
+                      className="h-5 w-5 text-gray-500 "
+                      aria-hidden="true"
+                    />
+                    Get in touch
+                  </button>
+                )}
               </div>
             </div>
 

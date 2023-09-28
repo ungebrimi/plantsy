@@ -6,7 +6,7 @@ interface Client {
   company: string | null;
   website: string | null;
   status: string | null;
-  profile_picture: string | null;
+  profile_picture: any;
   about: string | null;
   zip: string | null;
   city: string | null;

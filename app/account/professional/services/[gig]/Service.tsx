@@ -10,7 +10,7 @@ function classNames(...classes: string[]) {
 
 function Service({ service, professional }: any) {
   const [images, setImages] = useState<FileType[]>([]);
-  const profilePicture = JSON.parse(professional.profile_picture);
+  const [profilePicture, setProfilePicture] = useState<any>(null);
 
   useEffect(() => {
     if (!service) return;
@@ -18,6 +18,12 @@ function Service({ service, professional }: any) {
     const resistingImages = JSON.parse(service.images);
     setImages([thumbnail, ...resistingImages]);
   }, [service]);
+
+  useEffect(() => {
+    if (!professional) return;
+    const parsedProfilePicture = JSON.parse(professional.profile_picture);
+    setProfilePicture(parsedProfilePicture);
+  }, [professional]);
 
   return (
     <section className="mx-auto max-w-7xl sm:px-6 sm:pt-16 lg:px-8">

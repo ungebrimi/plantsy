@@ -8,30 +8,31 @@ import { Client } from "@/dbtypes";
 interface Form {
   website: string | null;
   about: string | null;
-  profile_picture: string | null;
+  profile_picture: any;
 }
 
 const Avatar = ({
   formData,
   setFormData,
-  user,
+  client,
 }: {
   formData: Form;
   setFormData: any;
-  user: Client;
+  client: Client;
 }) => {
   const { loading, image, error, handleImageUpload } = useImageUpload();
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    handleImageUpload(event, `${user.id}/avatars`, false);
+    handleImageUpload(event, `${client.id}/avatars`, false);
   };
+  console.log(formData.profile_picture);
 
   React.useEffect(() => {
     const handleFormDataUpdate = () => {
       if (image && !error) {
         setFormData((prevFormData: Form) => ({
           ...prevFormData,
-          profile_picture: image.url,
+          profile_picture: image,
         }));
       }
     };
@@ -52,7 +53,7 @@ const Avatar = ({
             <Image
               width={300}
               height={300}
-              src={formData.profile_picture}
+              src={formData.profile_picture.url}
               alt="profile picture"
               className="h-12 w-12 text-gray-300 rounded-full"
             />
@@ -95,14 +96,3 @@ const Avatar = ({
 };
 
 export default Avatar;
-// THIS BIT IS FOR IF YOU WANT TO READ THE IMAGE WITHOUT UPLOADING IT
-// const reader = new FileReader();
-// reader.onload = () => {
-//   const imageDataUrl = reader.result as string;
-//   setFormData((prevFormData: Form) => ({
-//     ...prevFormData,
-//     profile_picture: imageDataUrl,
-//   }));
-//   setLoadingImage(false);
-// };
-// reader.readAsDataURL(compressedFile);

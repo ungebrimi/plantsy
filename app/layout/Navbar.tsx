@@ -1,11 +1,10 @@
 "use client";
-import { Fragment, useEffect, useState } from "react";
-import { Disclosure, Menu, Transition } from "@headlessui/react";
+import { useEffect, useState } from "react";
+import { Disclosure } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { usePathname, useRouter } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Client, Professional } from "@/dbtypes";
-import { getSession } from "../supabase-client";
 import ClientDropdown from "./ClientDropdown";
 import ProfessionalDropdown from "./ProfessionalDropdown";
 import Link from "next/link";
@@ -14,7 +13,7 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function NewNavbar({ session }: any) {
+export default function Navbar({ session }: any) {
   const router = useRouter();
   const supabase = createClientComponentClient();
   const [professional, setProfessional] = useState<Professional | null>(null);
@@ -132,14 +131,20 @@ export default function NewNavbar({ session }: any) {
                   <ProfessionalDropdown professional={professional} />
                 )}
                 {!client && !professional && (
-                  <Link href="/account/auth/register">
-                    <button
-                      type="button"
-                      className="ml-2 rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+                  <div className="ml-4 flex items-center gap-x-6">
+                    <Link
+                      href="/account/auth/register"
+                      className="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
                     >
-                      Sign up
-                    </button>
-                  </Link>
+                      Get started
+                    </Link>
+                    <Link
+                      href="/account/auth/login"
+                      className="text-sm font-semibold leading-6 text-gray-900"
+                    >
+                      Log in <span aria-hidden="true">→</span>
+                    </Link>
+                  </div>
                 )}
               </div>
             </div>

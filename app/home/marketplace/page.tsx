@@ -9,7 +9,5 @@ export default async function page() {
   if (error) console.error(error);
   if (data) {
     return <ClientPage serverServices={data} />;
-  } else {
-    return <h1>500</h1>;
   }
 }
