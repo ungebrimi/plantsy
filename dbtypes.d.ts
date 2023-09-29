@@ -91,6 +91,7 @@ interface ServiceCategoryType {
   id: number;
   name: string;
   value: string;
+  checked: boolean;
 }
 
 interface CityType {

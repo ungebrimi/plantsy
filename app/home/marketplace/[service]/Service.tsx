@@ -5,13 +5,19 @@ import { Tab } from "@headlessui/react";
 import Image from "next/image";
 import { FileType } from "@/dbtypes";
 import Link from "next/link";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-function Service({ service, professional, session }: any) {
+function Service({ service, professional, session, client }: any) {
   const [images, setImages] = useState<FileType[]>([]);
-  const profilePicture = JSON.parse(professional.profile_picture);
+  const [clientProfilePicture, setClientProfilePicture] = useState<FileType>(
+    JSON.parse(client.profile_picture),
+  );
+  const [professionalProfilePicture, setProfessionalProfilePicture] =
+    useState<FileType>(JSON.parse(professional.profile_picture));
+  const supabase = createClientComponentClient();
 
   useEffect(() => {
     if (!service) return;
@@ -19,6 +25,30 @@ function Service({ service, professional, session }: any) {
     const resistingImages = JSON.parse(service.images);
     setImages([thumbnail, ...resistingImages]);
   }, [service]);
+
+  console.log(client);
+  async function handleContact() {
+    if (session.user.user_metadata.role !== "client") return;
+
+    const { data, error } = await supabase
+      .from("channels")
+      .insert({
+        client_id: client.id,
+        client_name: client.first_name + " " + client.last_name,
+        client_profile_picture: clientProfilePicture.url,
+        professional_id: professional.id,
+        professional_name:
+          professional.first_name + " " + professional.last_name,
+        professional_profile_picture: professionalProfilePicture.url,
+      })
+      .select()
+      .single();
+
+    if (error) console.error(error);
+    if (data) {
+      console.log(data);
+    }
+  }
 
   return (
     <section className="mx-auto max-w-7xl sm:px-6 sm:pt-16 lg:px-8">
@@ -81,7 +111,7 @@ function Service({ service, professional, session }: any) {
                   width={300}
                   height={300}
                   className="mx-auto h-32 w-32 flex-shrink-0 rounded-full"
-                  src={profilePicture.url}
+                  src={professionalProfilePicture.url}
                   alt=""
                 />
                 <h3 className="mt-6 text-sm font-medium text-gray-900">
@@ -123,7 +153,11 @@ function Service({ service, professional, session }: any) {
                     </Link>
                   )}
                 {session && session.user.user_metadata.role === "client" && (
-                  <button className="relative -mr-px inline-flex w-full flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-500">
+                  <button
+                    onClick={handleContact}
+                    type="button"
+                    className="relative -mr-px inline-flex w-full flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-500"
+                  >
                     <EnvelopeIcon
                       className="h-5 w-5 text-gray-500 "
                       aria-hidden="true"

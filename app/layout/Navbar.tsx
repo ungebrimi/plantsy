@@ -65,11 +65,6 @@ export default function Navbar({ session }: any) {
     }
   }, [session, supabase, router]);
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    router.refresh();
-  };
-
   return (
     <Disclosure as="nav" className="">
       {({ open }) => (
@@ -117,21 +112,21 @@ export default function Navbar({ session }: any) {
                 </div>
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                <button
-                  type="button"
-                  className="relative rounded-full bg-gray-100 p-1 text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                >
-                  <span className="absolute -inset-1.5" />
-                  <span className="sr-only">View notifications</span>
-                  <BellIcon className="h-6 w-6" aria-hidden="true" />
-                </button>
+                {/* <button */}
+                {/*   type="button" */}
+                {/*   className="relative rounded-full bg-gray-100 p-1 text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" */}
+                {/* > */}
+                {/*   <span className="absolute -inset-1.5" /> */}
+                {/*   <span className="sr-only">View notifications</span> */}
+                {/*   <BellIcon className="h-6 w-6" aria-hidden="true" /> */}
+                {/* </button> */}
 
                 {client && <ClientDropdown client={client} />}
                 {professional && (
                   <ProfessionalDropdown professional={professional} />
                 )}
                 {!client && !professional && (
-                  <div className="ml-4 flex items-center gap-x-6">
+                  <div className="ml-2 sm:ml-4 flex flex-col md:flex-row justify-center mt-8 md:mt-0 items-center gap-x-2 sm:gap-x-6">
                     <Link
                       href="/account/auth/register"
                       className="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
