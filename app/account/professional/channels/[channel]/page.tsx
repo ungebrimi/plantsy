@@ -22,7 +22,7 @@ const Channel = async ({ params }: PageProps) => {
   const { data: channel } = await supabase
     .from("channels")
     .select("*")
-    .eq("id", 1)
+    .eq("id", params.channel)
     .single();
 
   const { data: professional } = await supabase

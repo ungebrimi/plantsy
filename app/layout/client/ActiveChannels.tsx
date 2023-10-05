@@ -16,11 +16,7 @@ type Conversation = {
   unread_messages: boolean;
 };
 
-const ActiveConversations = ({
-  professional,
-}: {
-  professional: Professional;
-}) => {
+const ActiveChannels = ({ client }: { client: Client }) => {
   const [activeConversations, setActiveConverstations] = useState<
     Conversation[] | null
   >(null);
@@ -31,7 +27,7 @@ const ActiveConversations = ({
       const { data, error } = await supabase
         .from("channels")
         .select()
-        .eq("professional_id", professional.id);
+        .eq("client_id", client.id);
       if (error) console.error(error);
       return data;
     }
@@ -62,17 +58,17 @@ const ActiveConversations = ({
           <Disclosure.Panel className="pt-6">
             <div className="space-y-4">
               {activeConversations &&
-                activeConversations.map((channel, channelIdx) => (
+                activeConversations.map((channel) => (
                   <Link
                     key={channel.id}
-                    href={`/account/professional/channels/${channel.id}`}
+                    href={`/account/client/channels/${channel.id}`}
                     className="flex items-center hover:bg-gray-100 rounded-xl py-2"
                   >
                     <p className="flex items-center justify-center h-6 w-6 bg-indigo-200 rounded-full text-sm font-semibold">
-                      {channel.client_name?.charAt(0)}
+                      {channel.professional_name?.charAt(0)}
                     </p>
                     <p className="ml-2 text-sm font-medium">
-                      {channel.client_name}
+                      {channel.professional_name}
                     </p>
                     {channel.unread_messages === true && (
                       <span className="rounded-full bg-red-400 text-white w-2 h-2 ml-2"></span>
@@ -87,4 +83,4 @@ const ActiveConversations = ({
   );
 };
 
-export default ActiveConversations;
+export default ActiveChannels;

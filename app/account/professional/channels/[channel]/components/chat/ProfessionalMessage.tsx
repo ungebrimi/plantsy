@@ -1,9 +1,9 @@
-import { MessageType, Professional } from "@/dbtypes";
-import { DocumentIcon } from "@heroicons/react/24/outline";
-import React from "react";
+import { FileType, MessageType, Professional } from "@/dbtypes";
+import React, { useState } from "react";
 import FileDownloader from "./FileDownloader";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import Image from "next/image";
 
 interface ProfessionalMessageProps {
   message: MessageType;
@@ -16,6 +16,9 @@ const ProfessionalMessage = ({
 }: ProfessionalMessageProps) => {
   const messageDate: any = new Date(message.inserted_at);
   const currentDate: any = new Date();
+  const [profilePicture, setProfilePicture] = useState<FileType>(
+    JSON.parse(professional.profile_picture),
+  );
 
   // Calculate the time difference in milliseconds
   const timeDifference = currentDate - messageDate;
@@ -44,19 +47,19 @@ const ProfessionalMessage = ({
   }
 
   return (
-    <div
-      key={message.id}
-      className="col-start-1 lg:col-start-6 col-end-13 p-3 rounded-lg"
-    >
-      <div className="flex items-center justify-self-end flex-row-reverse">
-        {professional.profile_picture ? (
+    <div>
+      <div
+        key={message.id}
+        className="p-3 flex items-center justify-self-end flex-row-reverse"
+      >
+        {profilePicture ? (
           <img
             className="hidden xs:inline-block h-10 w-10 rounded-full"
-            src={professional.profile_picture}
+            src={profilePicture.url}
             alt={professional.first_name + " " + professional.last_name}
           />
         ) : (
-          <p className="hidden xs:flex items-center  hidden sm:block text-white justify-center h-10 w-10 uppercase font-bold rounded-full bg-green-500 flex-shrink-0">
+          <p className="xs:flex items-center  hidden sm:block text-white justify-center h-10 w-10 uppercase font-bold rounded-full bg-green-500 flex-shrink-0">
             {professional.first_name.charAt(0) +
               professional.last_name.charAt(0)}
           </p>
@@ -65,7 +68,7 @@ const ProfessionalMessage = ({
           <h3 className="text-xs mb-1 mr-2 font-medium text-gray-500">
             {professional.first_name + " " + professional.last_name}
           </h3>
-          <div className="relative text-sm bg-green-100 py-2 px-2 shadow rounded-xl">
+          <div className="whitespace-break-spaces relative text-sm bg-green-100 py-2 px-2 shadow rounded-xl">
             <p>{message.message}</p>
           </div>
           {message.files && <FileDownloader urls={message.files} />}
@@ -75,7 +78,13 @@ const ProfessionalMessage = ({
                 <Carousel showThumbs={true} infiniteLoop={true}>
                   {message.images.map((imageUrl, index) => (
                     <div key={index} className="border-b ">
-                      <img src={imageUrl} key={index} alt={`Image ${index}`} />
+                      <Image
+                        width={400}
+                        height={300}
+                        src={imageUrl}
+                        key={index}
+                        alt={`Image ${index}`}
+                      />
                     </div>
                   ))}
                 </Carousel>

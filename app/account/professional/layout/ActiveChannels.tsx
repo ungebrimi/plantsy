@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Fragment, useState } from "react";
 import { Disclosure } from "@headlessui/react";
 import { MinusIcon, PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { Client, Professional } from "@/dbtypes";
 
 type Conversation = {
   id: number;
@@ -14,21 +16,34 @@ type Conversation = {
   unread_messages: boolean;
 };
 
-const ArchivedConversations = () => {
-  const [archivedConversations, setArchivedConverstations] = useState<
+const ActiveChannels = ({ professional }: { professional: Professional }) => {
+  const [activeConversations, setActiveConverstations] = useState<
     Conversation[] | null
   >(null);
 
+  const supabase = createClientComponentClient();
+  useEffect(() => {
+    async function getChannels() {
+      const { data, error } = await supabase
+        .from("channels")
+        .select()
+        .eq("professional_id", professional.id);
+      if (error) console.error(error);
+      return data;
+    }
+    getChannels().then((res) => setActiveConverstations(res));
+  }, [supabase]);
+
   return (
-    <Disclosure as="div" className="border-b border-gray-200 py-6">
+    <Disclosure as="div" defaultOpen className="border-b border-gray-200 py-6">
       {({ open }: any) => (
         <>
           <h3 className="-my-3 flow-root">
             <Disclosure.Button className="flex w-full items-center justify-between bg-white py-2 text-sm text-gray-400 hover:text-gray-500">
               <h2 className="text-sm font-semibold leading-6 text-gray-900">
-                Archived conversations{" "}
-                <span className="text-gray-400">
-                  ({archivedConversations?.length || 0})
+                Active conversations{" "}
+                <span className="text-green-600">
+                  ({activeConversations?.length})
                 </span>
               </h2>
               <span className="flex items-center">
@@ -42,11 +57,11 @@ const ArchivedConversations = () => {
           </h3>
           <Disclosure.Panel className="pt-6">
             <div className="space-y-4">
-              {archivedConversations &&
-                archivedConversations.map((channel, channelIdx) => (
+              {activeConversations &&
+                activeConversations.map((channel, channelIdx) => (
                   <Link
                     key={channel.id}
-                    href={`account/professional/channels/${channel.id}`}
+                    href={`/account/professional/channels/${channel.id}`}
                     className="flex items-center hover:bg-gray-100 rounded-xl py-2"
                   >
                     <p className="flex items-center justify-center h-6 w-6 bg-indigo-200 rounded-full text-sm font-semibold">
@@ -68,4 +83,4 @@ const ArchivedConversations = () => {
   );
 };
 
-export default ArchivedConversations;
+export default ActiveChannels;

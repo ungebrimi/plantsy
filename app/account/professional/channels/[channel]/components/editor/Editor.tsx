@@ -1,4 +1,4 @@
-import { ChangeEvent, SetStateAction, useState } from "react";
+import { SetStateAction, useState } from "react";
 import FileUpload from "./FileUpload";
 import ImageUpload from "./ImageUpload";
 import Emoji from "./Emoji";
@@ -7,18 +7,20 @@ import { MessageType, FileType } from "@/dbtypes";
 
 export default function Editor({
   session,
-  writer,
+  professional,
+  channel,
 }: {
   session: any;
-  channel: number;
-  messages: MessageType[];
-  setMessages: React.Dispatch<SetStateAction<MessageType[]>>;
-  writer: any;
+  channel: any;
+  professional: any;
 }) {
   const supabase = createClientComponentClient();
   const [message, setMessage] = useState<string>("");
   const [files, setFiles] = useState<FileType[]>([]);
   const [images, setImages] = useState<FileType[]>([]);
+  const [profilePicture, setProfilePicture] = useState<FileType>(
+    JSON.parse(professional.profile_picture),
+  );
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -31,7 +33,7 @@ export default function Editor({
         .insert({
           message: message,
           professional_id: session.user.id,
-          channel_id: 1,
+          channel_id: channel.id,
           files: fileUrls.length > 0 ? fileUrls : null,
           images: imageUrls.length > 0 ? imageUrls : null,
         })
@@ -40,7 +42,6 @@ export default function Editor({
       if (error) {
         console.error(error);
       } else {
-        // Process successful response, if needed
         console.log("Message inserted:", data);
       }
 
@@ -53,15 +54,16 @@ export default function Editor({
   return (
     <section className="flex items-start mt-6 sm:space-x-4">
       <div className="flex-shrink-0 hidden sm:block">
-        {writer.profile_picture ? (
+        {profilePicture ? (
           <img
             className="inline-block h-10 w-10 rounded-full"
-            src={writer.profile_picture}
-            alt={writer.first_name + " " + writer.last_name}
+            src={profilePicture.url}
+            alt={professional.first_name + " " + professional.last_name}
           />
         ) : (
           <div className="flex items-center justify-center h-10 w-10 rounded-full bg-green-500 font-bold uppercase text-white flex-shrink-0">
-            {writer.first_name.charAt(0) + writer.last_name.charAt(0)}
+            {professional.first_name.charAt(0) +
+              professional.last_name.charAt(0)}
           </div>
         )}
       </div>

@@ -43,7 +43,7 @@ const ChatPanel = ({
           // Play the notification sound
           const audio = new Audio("/notification.mp3");
           audio.play();
-        }
+        },
       )
       .subscribe();
 
@@ -62,23 +62,19 @@ const ChatPanel = ({
         />
       ) : (
         <div className="flex items-center flex-col py-12">
-          <img
+          <Image
+            width={600}
+            height={500}
             src={"/message-not-found.svg"}
             className="mx-auto max-w-md"
             alt="no message found"
           />
           <h1 className="mx-auto mt-3 text-center md:text-xl text-gray-600">
-            We{`'`}re sorry we could not find any messages
+            Be the first to send a message
           </h1>
         </div>
       )}
-      <Editor
-        session={session}
-        channel={channel}
-        messages={messages}
-        setMessages={setMessages}
-        writer={professional}
-      />
+      <Editor session={session} channel={channel} client={client} />
     </div>
   );
 };

@@ -22,16 +22,9 @@ async function page({ params }: { params: { service: number } }) {
     .eq("id", service.professional_id)
     .single();
 
-  const { data: client, error: clientError } = await supabase
-    .from("professionals")
-    .select()
-    .eq("id", service.professional_id)
-    .single();
-
-  if (serviceError || professionalError || clientError) {
+  if (serviceError || professionalError) {
     console.error(serviceError);
     console.error(professionalError);
-    console.error(clientError);
     // redirect("/");
   }
 
@@ -42,7 +35,6 @@ async function page({ params }: { params: { service: number } }) {
           service={service}
           professional={professional}
           session={session}
-          client={client}
         />
         <Reviews />
       </main>

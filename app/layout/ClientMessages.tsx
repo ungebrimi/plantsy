@@ -2,19 +2,19 @@
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import Profile from "./Profile";
-import ArchivedChannels from "./ArchivedChannels";
-import ActiveChannels from "./ActiveChannels";
-import { Professional } from "@/dbtypes";
+import { Client } from "@/dbtypes";
+import Profile from "./client/Profile";
+import ActiveChannels from "./client/ActiveChannels";
+import ArchivedChannels from "./client/ArchivedChannels";
 
-export default function Sidebar({
+export default function ClientMessages({
   open,
   setOpen,
-  professional,
+  client,
 }: {
   open: boolean;
   setOpen: any;
-  professional: Professional;
+  client: Client;
 }) {
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -71,8 +71,8 @@ export default function Sidebar({
                       </div>
                     </div>
                     <div className="relative mt-6 flex-1 px-4 sm:px-6">
-                      <Profile professional={professional} />
-                      <ActiveChannels professional={professional} />
+                      <Profile client={client} />
+                      <ActiveChannels client={client} />
                       <ArchivedChannels />
                     </div>
                   </div>

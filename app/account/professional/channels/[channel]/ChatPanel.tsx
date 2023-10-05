@@ -43,7 +43,7 @@ const ChatPanel = ({
           // Play the notification sound
           const audio = new Audio("/notification.mp3");
           audio.play();
-        }
+        },
       )
       .subscribe();
 
@@ -72,13 +72,7 @@ const ChatPanel = ({
           </h1>
         </div>
       )}
-      <Editor
-        session={session}
-        channel={channel}
-        messages={messages}
-        setMessages={setMessages}
-        writer={professional}
-      />
+      <Editor session={session} channel={channel} professional={professional} />
     </div>
   );
 };

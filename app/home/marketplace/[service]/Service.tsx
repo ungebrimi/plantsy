@@ -3,21 +3,20 @@ import React, { useEffect, useState } from "react";
 import { EnvelopeIcon, PhoneIcon, StarIcon } from "@heroicons/react/24/outline";
 import { Tab } from "@headlessui/react";
 import Image from "next/image";
-import { FileType } from "@/dbtypes";
+import { Client, FileType } from "@/dbtypes";
 import Link from "next/link";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useRouter } from "next/navigation";
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-function Service({ service, professional, session, client }: any) {
+function Service({ service, professional, session }: any) {
   const [images, setImages] = useState<FileType[]>([]);
-  const [clientProfilePicture, setClientProfilePicture] = useState<FileType>(
-    JSON.parse(client.profile_picture),
-  );
   const [professionalProfilePicture, setProfessionalProfilePicture] =
     useState<FileType>(JSON.parse(professional.profile_picture));
   const supabase = createClientComponentClient();
+  const router = useRouter();
 
   useEffect(() => {
     if (!service) return;
@@ -26,27 +25,27 @@ function Service({ service, professional, session, client }: any) {
     setImages([thumbnail, ...resistingImages]);
   }, [service]);
 
-  console.log(client);
   async function handleContact() {
-    if (session.user.user_metadata.role !== "client") return;
+    if (!session || session.user.user_metadata.role !== "client") return;
 
     const { data, error } = await supabase
       .from("channels")
       .insert({
-        client_id: client.id,
-        client_name: client.first_name + " " + client.last_name,
-        client_profile_picture: clientProfilePicture.url,
+        client_id: session.user.id,
+        client_name:
+          session.user.user_metadata.first_name +
+          " " +
+          session.user.user_metadata.last_name,
         professional_id: professional.id,
         professional_name:
           professional.first_name + " " + professional.last_name,
-        professional_profile_picture: professionalProfilePicture.url,
       })
       .select()
       .single();
 
     if (error) console.error(error);
     if (data) {
-      console.log(data);
+      router.push(`/account/client/channels/${data.id}`);
     }
   }
 

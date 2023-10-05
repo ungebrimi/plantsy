@@ -1,17 +1,20 @@
 "use client";
 import { Client } from "@/dbtypes";
 import { Menu, Transition } from "@headlessui/react";
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
+import ClientMessages from "./ClientMessages";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
 function ClientDropdown({ client }: { client: Client }) {
+  const [openMessagesSidebar, setOpenMessagesSidebar] =
+    useState<boolean>(false);
   const supabase = createClientComponentClient();
   const router = useRouter();
   const handleSignOut = async () => {
@@ -26,7 +29,7 @@ function ClientDropdown({ client }: { client: Client }) {
         <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
           <span className="absolute -inset-1.5" />
           <span className="sr-only">Open user menu</span>
-          {client.profile_picture ? (
+          {profilePicture ? (
             <Image
               width={300}
               className="h-8 w-8 rounded-full"
@@ -57,15 +60,15 @@ function ClientDropdown({ client }: { client: Client }) {
         <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           <Menu.Item>
             {({ active }) => (
-              <Link
-                href="/account/client/messages"
+              <button
+                onClick={() => setOpenMessagesSidebar(!openMessagesSidebar)}
                 className={classNames(
                   active ? "bg-gray-100" : "",
                   "block px-4 py-2 text-sm text-gray-700",
                 )}
               >
                 Messages
-              </Link>
+              </button>
             )}
           </Menu.Item>
           <Menu.Item>
@@ -97,6 +100,11 @@ function ClientDropdown({ client }: { client: Client }) {
           </Menu.Item>
         </Menu.Items>
       </Transition>
+      <ClientMessages
+        open={openMessagesSidebar}
+        setOpen={setOpenMessagesSidebar}
+        client={client}
+      />
     </Menu>
   );
 }

@@ -8,18 +8,20 @@ import Image from "next/image";
 
 export default function Editor({
   session,
-  writer,
+  client,
+  channel,
 }: {
   session: any;
-  channel: number;
-  messages: MessageType[];
-  setMessages: React.Dispatch<SetStateAction<MessageType[]>>;
-  writer: any;
+  channel: any;
+  client: any;
 }) {
   const supabase = createClientComponentClient();
   const [message, setMessage] = useState<string>("");
   const [files, setFiles] = useState<FileType[]>([]);
   const [images, setImages] = useState<FileType[]>([]);
+  const [profilePicture, setProfilePicture] = useState<FileType>(
+    JSON.parse(client.profile_picture),
+  );
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -31,8 +33,8 @@ export default function Editor({
         .from("messages")
         .insert({
           message: message,
-          professional_id: session.user.id,
-          channel_id: 1,
+          client_id: session.user.id,
+          channel_id: channel.id,
           files: fileUrls.length > 0 ? fileUrls : null,
           images: imageUrls.length > 0 ? imageUrls : null,
         })
@@ -54,17 +56,17 @@ export default function Editor({
   return (
     <section className="flex items-start mt-6 sm:space-x-4">
       <div className="flex-shrink-0 hidden sm:block">
-        {writer.profile_picture ? (
+        {profilePicture ? (
           <Image
             width={300}
             height={300}
             className="inline-block h-10 w-10 rounded-full"
-            src={writer.profile_picture}
-            alt={writer.first_name + " " + writer.last_name}
+            src={profilePicture.url}
+            alt={client.first_name + " " + client.last_name}
           />
         ) : (
           <div className="flex items-center justify-center h-10 w-10 rounded-full bg-green-500 font-bold uppercase text-white flex-shrink-0">
-            {writer.first_name.charAt(0) + writer.last_name.charAt(0)}
+            {client.first_name.charAt(0) + client.last_name.charAt(0)}
           </div>
         )}
       </div>
