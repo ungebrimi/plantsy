@@ -1,5 +1,5 @@
 "use client";
-import { Professional } from "@/dbtypes";
+import { Tables } from "@/database";
 import {
   CheckCircleIcon,
   ExclamationTriangleIcon,
@@ -20,20 +20,24 @@ interface Form {
   phone: string | null;
 }
 
-const PersonalInformation = ({ user }: { user: Professional }) => {
+const PersonalInformation = ({
+  professional,
+}: {
+  professional: Tables<"professionals">;
+}) => {
   const supabase = createClientComponentClient();
   const [success, setSuccess] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState<Form>({
-    first_name: user.first_name,
-    last_name: user.last_name,
-    email: user.email,
+    first_name: professional.first_name,
+    last_name: professional.last_name,
+    email: professional.email,
     country: "United States",
-    street: user.street,
-    city: user.city,
-    state: user.state,
-    zip: user.zip,
-    phone: user.phone,
+    street: professional.street,
+    city: professional.city,
+    state: professional.state,
+    zip: professional.zip,
+    phone: professional.phone,
   });
 
   async function updatePersonalInformation() {
@@ -51,7 +55,7 @@ const PersonalInformation = ({ user }: { user: Professional }) => {
           zip: formData.zip,
           phone: formData.phone,
         })
-        .eq("id", user.id)
+        .eq("id", professional.id)
         .select(
           "first_name, last_name, email, country, street, city, state, zip, phone",
         );

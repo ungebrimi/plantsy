@@ -5,11 +5,10 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 import Image from "next/image";
-
 export default function Login() {
   const router = useRouter();
   const supabase = createClientComponentClient();
-  const [error, setError] = useState<string | undefined>(undefined);
+  const [error, setError] = useState<string | null>(null);
   const [captchaToken, setCaptchaToken] = useState<string | undefined>();
   const captcha = useRef<any>();
 

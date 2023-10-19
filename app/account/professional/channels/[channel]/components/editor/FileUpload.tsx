@@ -3,11 +3,11 @@ import { PaperClipIcon } from "@heroicons/react/24/outline";
 import React, { ChangeEvent, SetStateAction, useState } from "react";
 import FileModal from "./FileModal";
 import useFileUpload from "@/hooks/useFileUpload";
-import { FileType } from "@/dbtypes";
+import { Tables } from "@/database";
 
 interface FileUploadProps {
-  files: FileType[];
-  setFiles: React.Dispatch<SetStateAction<FileType[]>>;
+  files: Tables<"files">[];
+  setFiles: React.Dispatch<SetStateAction<Tables<"files">[]>>;
   session: any;
 }
 

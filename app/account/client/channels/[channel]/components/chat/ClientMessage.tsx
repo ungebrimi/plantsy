@@ -1,22 +1,20 @@
-import { MessageType, Client, FileType } from "@/dbtypes";
+import React from "react";
+import { Tables } from "@/database";
 import Image from "next/image";
-import React, { useState } from "react";
 import { Carousel } from "react-responsive-carousel";
 
 interface ClientMessageProps {
-  message: MessageType;
-  client: Client;
+  message: Tables<"messages">;
+  client: Tables<"clients">;
 }
 
 const ClientMessage = ({ message, client }: ClientMessageProps) => {
-  const [profilePicture, setProfilePicture] = useState<FileType>(
-    JSON.parse(client.profile_picture),
-  );
-  const messageDate: any = new Date(message.inserted_at);
-  const currentDate: any = new Date();
+  const profilePicture = JSON.parse(client.profile_picture as string);
+  const messageDate: Date = new Date(message.inserted_at);
+  const currentDate: Date = new Date();
 
   // Calculate the time difference in milliseconds
-  const timeDifference = currentDate - messageDate;
+  const timeDifference: number = currentDate.getTime() - messageDate.getTime();
 
   let formattedDate;
 
@@ -44,7 +42,7 @@ const ClientMessage = ({ message, client }: ClientMessageProps) => {
   return (
     <div
       key={message.id}
-      className="col-start-1 col-end-13 lg:col-end-8 rounded-lg "
+      className="p-3 flex items-center justify-self-start rounded-lg"
     >
       <div className="flex items-center justify-self-start">
         <div className="">
@@ -58,7 +56,8 @@ const ClientMessage = ({ message, client }: ClientMessageProps) => {
             />
           ) : (
             <p className="hidden xs:flex items-center text-white justify-center uppercase font-bold h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
-              {client.first_name.charAt(0) + client.last_name.charAt(0)}
+              {client.first_name?.charAt(0)}
+              {client.last_name?.charAt(0)}
             </p>
           )}
         </div>

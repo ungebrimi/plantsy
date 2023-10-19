@@ -1,14 +1,14 @@
 import { Fragment, SetStateAction, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { PhotoIcon } from "@heroicons/react/24/outline";
-import { FileType } from "@/dbtypes";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { Tables } from "@/database";
 
 type ImageModalProps = {
   open: boolean;
   setOpen: React.Dispatch<SetStateAction<boolean>>;
-  images: FileType[];
-  setImages: React.Dispatch<SetStateAction<FileType[]>>;
+  images: Tables<"files">[];
+  setImages: React.Dispatch<SetStateAction<Tables<"files">[]>>;
 };
 
 export default function ImageModal({
@@ -19,17 +19,16 @@ export default function ImageModal({
 }: ImageModalProps) {
   const cancelButtonRef = useRef(null);
   const supabase = createClientComponentClient();
-
-  const [tempImages, setTempImages] = useState<FileType[]>(images);
+  const [tempImages, setTempImages] = useState<Tables<"files">[]>(images);
 
   async function removeImage(image_id: number) {
     const updatedTempImages = tempImages.filter(
-      (image) => image.id !== image_id
+      (image) => image.id !== image_id,
     );
     setTempImages(updatedTempImages);
   }
 
-  async function removeImageFromDB(image: FileType) {
+  async function removeImageFromDB(image: Tables<"files">) {
     const { error } = await supabase.from("files").delete().eq("id", image.id);
     if (error) {
       console.error(error);
@@ -41,7 +40,7 @@ export default function ImageModal({
   function handleSave() {
     // Find images that were present in the images array but are not in tempImages
     const imagesToRemove = images.filter(
-      (image) => !tempImages.some((tempImage) => tempImage.id === image.id)
+      (image) => !tempImages.some((tempImage) => tempImage.id === image.id),
     );
 
     // Remove those images from the database
@@ -113,7 +112,7 @@ export default function ImageModal({
                             <div className="flex min-w-full gap-x-4">
                               <img
                                 className="w-16 h-16 flex-none rounded-sm bg-gray-50"
-                                src={image.url}
+                                src={image.url as string}
                                 alt=""
                               />
                               <div className="min-w-0 flex-auto">

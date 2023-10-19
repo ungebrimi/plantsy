@@ -1,12 +1,12 @@
 "use client";
-import { Client } from "@/dbtypes";
+import { Tables } from "@/database";
 import {
   CheckCircleIcon,
   ExclamationTriangleIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 
 interface Form {
   first_name: string | null;
@@ -20,7 +20,7 @@ interface Form {
   phone: string | null;
 }
 
-const PersonalInformation = ({ client }: { client: Client }) => {
+const PersonalInformation = ({ client }: { client: Tables<"clients"> }) => {
   const supabase = createClientComponentClient();
   const [success, setSuccess] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);

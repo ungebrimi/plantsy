@@ -2,23 +2,25 @@ import { SetStateAction, useEffect, useState } from "react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { Combobox } from "@headlessui/react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { ServiceCategoryType, ServiceType } from "@/dbtypes";
+import { Tables } from "@/database";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
 interface ServiceCategoryProps {
-  selectedService: string | null;
-  setFormData: React.Dispatch<SetStateAction<ServiceType>>;
+  formData: Tables<"services">;
+  setFormData: React.Dispatch<SetStateAction<Tables<"services">>>;
 }
 
 export default function ServiceCategory({
-  selectedService,
+  formData,
   setFormData,
 }: ServiceCategoryProps) {
-  const [query, setQuery] = useState("");
-  const [serviceList, setServiceList] = useState<ServiceCategoryType[]>([]);
+  const [query, setQuery] = useState<string>("");
+  const [serviceList, setServiceList] = useState<
+    Tables<"service_categories">[]
+  >([]);
   const supabase = createClientComponentClient();
 
   useEffect(() => {
@@ -42,7 +44,7 @@ export default function ServiceCategory({
   return (
     <Combobox
       as="div"
-      value={selectedService}
+      value={formData.service_category}
       onChange={(e: any) =>
         setFormData((formData) => ({ ...formData, service_category: e }))
       }
@@ -55,8 +57,12 @@ export default function ServiceCategory({
           className="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
           onChange={(event) => setQuery(event.target.value)}
           displayValue={(service: any) => service?.name}
+          data-testid="input"
         />
-        <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+        <Combobox.Button
+          data-testid="Open-btn"
+          className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none"
+        >
           <ChevronUpDownIcon
             className="h-5 w-5 text-gray-400"
             aria-hidden="true"
@@ -69,6 +75,7 @@ export default function ServiceCategory({
               <Combobox.Option
                 key={service.id}
                 value={service}
+                data-testid="option"
                 className={({ active }) =>
                   classNames(
                     "relative cursor-default select-none py-2 pl-3 pr-9",

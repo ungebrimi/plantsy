@@ -1,7 +1,7 @@
 import { SetStateAction, useState } from "react";
 import imageCompression from "browser-image-compression";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { FileType } from "@/dbtypes";
+import { DbResult, DbResultErr, DbResultOk, Tables } from "@/database";
 
 type FileProcessingOptions = {
   maxSizeMB: number;
@@ -11,11 +11,11 @@ type FileProcessingOptions = {
 
 interface useImageUploadProps {
   loading: boolean;
-  image: FileType | null;
-  setImage: React.Dispatch<SetStateAction<FileType | null>>;
-  images: FileType[];
-  setImages: React.Dispatch<SetStateAction<FileType[]>>;
-  error: any;
+  image: Tables<"files"> | null;
+  setImage: React.Dispatch<SetStateAction<Tables<"files"> | null>>;
+  images: Tables<"files">[] | null;
+  setImages: React.Dispatch<SetStateAction<Tables<"files">[] | null>>;
+  error: DbResultErr;
   handleImageUpload: (
     event: React.ChangeEvent<HTMLInputElement>,
     path: string,
@@ -26,8 +26,8 @@ interface useImageUploadProps {
 
 const useImageUpload = (): useImageUploadProps => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [image, setImage] = useState<FileType | null>(null);
-  const [images, setImages] = useState<FileType[]>([]);
+  const [image, setImage] = useState<Tables<"files"> | null>(null);
+  const [images, setImages] = useState<Tables<"files">[] | null>(null);
   const [error, setError] = useState<any>(null);
   const supabase = createClientComponentClient();
 
@@ -73,37 +73,40 @@ const useImageUpload = (): useImageUploadProps => {
           }),
         );
 
-        const uploadPromises = compressedFiles.map(async (compressedFile) => {
-          const { error } = await supabase.storage
-            .from("professionals")
-            .upload(`${path}/${compressedFile.name}`, compressedFile, {
-              upsert: true,
-            });
-
-          if (error) {
-            setError(error);
-          } else {
-            const { data } = supabase.storage
+        const uploadPromises: Promise<Tables<"files">>[] = compressedFiles.map(
+          async (compressedFile) => {
+            const { error } = await supabase.storage
               .from("professionals")
-              .getPublicUrl(`${path}/${compressedFile.name}`);
-
-            try {
-              const image = await insertToFileTable({
-                file: compressedFile,
-                url: data.publicUrl,
+              .upload(`${path}/${compressedFile.name}`, compressedFile, {
+                upsert: true,
               });
-              return image;
-            } catch (error) {
-              setError(error);
-            }
-          }
-        });
 
-        const res: any = await Promise.all(uploadPromises);
-        setImages(res);
+            if (error) {
+              setError(error);
+            } else {
+              const { data } = supabase.storage
+                .from("professionals")
+                .getPublicUrl(`${path}/${compressedFile.name}`);
+
+              try {
+                const image = await insertToFileTable({
+                  file: compressedFile,
+                  url: data.publicUrl,
+                });
+                return image;
+              } catch (error) {
+                setError(error);
+              }
+            }
+          },
+        );
+
+        const res = (await Promise.all(uploadPromises)) as DbResultOk<
+          Tables<"files">[]
+        >;
+        return res;
       } else {
         const compressedFile = await imageCompression(imageFiles[0], options);
-
         const { error } = await supabase.storage
           .from("professionals")
           .upload(`${path}/${compressedFile.name}`, compressedFile, {
@@ -122,13 +125,12 @@ const useImageUpload = (): useImageUploadProps => {
               file: compressedFile,
               url: data.publicUrl,
             });
-            setImage(image);
+            return image;
           } catch (error) {
-            setError(error);
+            return error;
           }
         }
       }
-
       setLoading(false);
     } catch (error) {
       setError(error);
@@ -140,7 +142,7 @@ const useImageUpload = (): useImageUploadProps => {
     const { error } = await supabase.from("files").delete().eq("id", fileId);
 
     if (error) {
-      console.error(error);
+      setError(error);
     }
     console.log("file deleted from table");
   };
@@ -150,7 +152,7 @@ const useImageUpload = (): useImageUploadProps => {
       .from("professionals")
       .remove([path]);
     if (error) {
-      console.error(error);
+      setError(error);
     }
     console.log("file removed from storage");
   };
@@ -167,21 +169,27 @@ const useImageUpload = (): useImageUploadProps => {
       await removeFromStorage(path);
 
       if (!isMultiple) {
-        setImage(null); // Set the image state to null for singular removal
+        return null;
       } else {
         // Find the index of the image to remove from the images array
+        if (!images) return;
         const indexToRemove = images.findIndex((img) => img.id === fileId);
+
+        console.log("Index to remove:", indexToRemove);
+
         if (indexToRemove !== -1) {
           const updatedImages = [...images];
           updatedImages.splice(indexToRemove, 1);
-          setImages(updatedImages);
+
+          console.log("Updated images:", updatedImages);
+
+          return updatedImages;
         }
       }
     } catch (error) {
       setError(error);
     }
   };
-
   return {
     loading,
     image,

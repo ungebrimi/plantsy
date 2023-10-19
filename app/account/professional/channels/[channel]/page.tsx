@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import ChatPanel from "./ChatPanel";
-import { MessageType } from "@/dbtypes";
+import { Tables } from "@/database";
 
 interface PageProps {
   params: { channel: string };
@@ -40,7 +40,7 @@ const Channel = async ({ params }: PageProps) => {
   if (!session) {
     redirect("/");
   }
-  const typedServerMessages: MessageType[] = serverMessages || [];
+  const typedServerMessages: Tables<"messages">[] = serverMessages || [];
 
   return (
     <main className="flex flex-auto h-full max-w-7xl mx-auto">

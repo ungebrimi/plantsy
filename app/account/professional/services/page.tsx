@@ -28,10 +28,20 @@ const Services = async () => {
   if (!error && gigs) {
     return (
       <main className="-mx-px space-y-4 md:space-y-0 md:space-x-4 grid grid-cols-1 sm:mx-0 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+        <Link
+          href="services/create-a-service"
+          className="items-center text-gray-400 hover:text-green-500 hover:border-green-500 flex justify-center cursor-pointer shadow border border-dashed border-gray-900/25 px-6 py-10 bg-white"
+        >
+          <div className="text-center">
+            <StarIcon className="mx-auto h-12 w-12" aria-hidden="true" />
+            <h2 className="text-sm font-bold mt-4 leading-5 ">
+              Create a new gig
+            </h2>
+          </div>
+        </Link>
         {gigs &&
           gigs.map((gig: any) => {
             const thumbnail = JSON.parse(gig.thumbnail);
-
             return (
               <div
                 key={gig.id}
@@ -92,17 +102,6 @@ const Services = async () => {
               </div>
             );
           })}
-        <Link
-          href="services/create-a-gig"
-          className="items-center text-gray-400 hover:text-green-500 hover:border-green-500 flex justify-center cursor-pointer shadow border border-dashed border-gray-900/25 px-6 py-10 bg-white"
-        >
-          <div className="text-center">
-            <StarIcon className="mx-auto h-12 w-12" aria-hidden="true" />
-            <h2 className="text-sm font-bold mt-4 leading-5 ">
-              Create a new gig
-            </h2>
-          </div>
-        </Link>
       </main>
     );
   }

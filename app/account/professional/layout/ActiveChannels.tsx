@@ -1,24 +1,18 @@
 import React, { useEffect } from "react";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { Disclosure } from "@headlessui/react";
 import { MinusIcon, PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { Client, Professional } from "@/dbtypes";
+import { Tables } from "@/database";
 
-type Conversation = {
-  id: number;
-  inserted_at: string;
-  client_id: string | null;
-  client_name: string | null;
-  professional_id: string | null;
-  professional_name: string | null;
-  unread_messages: boolean;
-};
-
-const ActiveChannels = ({ professional }: { professional: Professional }) => {
+const ActiveChannels = ({
+  professional,
+}: {
+  professional: Tables<"professionals">;
+}) => {
   const [activeConversations, setActiveConverstations] = useState<
-    Conversation[] | null
+    Tables<"channels">[] | null
   >(null);
 
   const supabase = createClientComponentClient();
@@ -70,9 +64,9 @@ const ActiveChannels = ({ professional }: { professional: Professional }) => {
                     <p className="ml-2 text-sm font-medium">
                       {channel.client_name}
                     </p>
-                    {channel.unread_messages === true && (
-                      <span className="rounded-full bg-red-400 text-white w-2 h-2 ml-2"></span>
-                    )}
+                    {/* {channel.unread_messages === true && ( */}
+                    {/*   <span className="rounded-full bg-red-400 text-white w-2 h-2 ml-2"></span> */}
+                    {/* )} */}
                   </Link>
                 ))}
             </div>

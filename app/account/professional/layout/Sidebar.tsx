@@ -1,11 +1,10 @@
-"use client";
-import { Fragment } from "react";
+import { Fragment, SetStateAction } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import Profile from "./Profile";
 import ArchivedChannels from "./ArchivedChannels";
 import ActiveChannels from "./ActiveChannels";
-import { Professional } from "@/dbtypes";
+import { Tables } from "@/database";
 
 export default function Sidebar({
   open,
@@ -13,8 +12,8 @@ export default function Sidebar({
   professional,
 }: {
   open: boolean;
-  setOpen: any;
-  professional: Professional;
+  setOpen: React.Dispatch<SetStateAction<boolean>>;
+  professional: Tables<"professionals">;
 }) {
   return (
     <Transition.Root show={open} as={Fragment}>

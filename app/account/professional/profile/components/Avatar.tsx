@@ -1,24 +1,24 @@
 "use client";
-import React from "react";
+import React, { SetStateAction } from "react";
 import Image from "next/image";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import useImageUpload from "@/hooks/useImageUpload";
-import { Professional } from "@/dbtypes";
+import { Tables } from "@/database";
 
 interface Form {
   website: string | null;
   about: string | null;
-  profile_picture: any;
+  profile_picture: Tables<"files">;
 }
 
 const Avatar = ({
   formData,
   setFormData,
-  user,
+  professional,
 }: {
   formData: Form;
-  setFormData: any;
-  user: Professional;
+  setFormData: React.Dispatch<SetStateAction<Form>>;
+  professional: Tables<"professionals">;
 }) => {
   const { loading, image, error, handleImageUpload, removeImage } =
     useImageUpload();
@@ -26,8 +26,9 @@ const Avatar = ({
     if (formData.profile_picture) {
       removeImage(formData.profile_picture.id);
     }
-    handleImageUpload(event, `${user.id}/avatars`, false);
+    handleImageUpload(event, `${professional.id}/avatars`, false);
   };
+  const profilePicture = JSON.parse(professional.profile_picture as string);
 
   React.useEffect(() => {
     const handleFormDataUpdate = () => {
@@ -51,12 +52,12 @@ const Avatar = ({
         Photo
       </label>
       <div className="mt-2 flex items-center gap-x-3">
-        {formData.profile_picture ? (
+        {profilePicture ? (
           <>
             <Image
               width={300}
               height={300}
-              src={formData.profile_picture.url}
+              src={profilePicture.url}
               alt="profile picture"
               className="h-12 w-12 text-gray-300 rounded-full"
             />

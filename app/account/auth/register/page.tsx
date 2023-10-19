@@ -31,7 +31,7 @@ function classNames(...classes: string[]) {
 }
 
 export default function Register() {
-  const [message, setMessage] = useState<string | undefined>();
+  const [message, setMessage] = useState<string | null>(null);
   const [acceptTerms, setAcceptTerms] = useState<boolean>(false);
   const [captchaToken, setCaptchaToken] = useState<string | undefined>();
   const [userType, setUserType] = useState(publishingOptions[0]);
@@ -47,7 +47,6 @@ export default function Register() {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
     const values: any = Object.fromEntries(data.entries());
-    setMessage(undefined);
     let email = values.email.trim();
     let password = values.password.trim();
     let confirmPassword = values.confirm_password.trim();

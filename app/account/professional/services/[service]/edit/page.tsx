@@ -4,13 +4,13 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import ServiceForm from "../../components/ServiceForm";
 
-async function page({ params }: { params: { gig: number } }) {
+async function page({ params }: { params: { service: number } }) {
   const supabase = createServerComponentClient({ cookies });
 
   const { data: service, error: serviceError } = await supabase
     .from("services")
     .select()
-    .eq("id", params.gig)
+    .eq("id", params.service)
     .single();
 
   const { data: professional, error: professionalError } = await supabase
@@ -21,9 +21,12 @@ async function page({ params }: { params: { gig: number } }) {
   if (serviceError || professionalError) {
     console.error(serviceError);
     console.error(professionalError);
-    // redirect("/");
+    redirect("/");
   }
-  if (!serviceError && !professionalError && service && professional) {
+
+  if (service && professional) {
+    if (service.thumbnail) service.thumbnail = JSON.parse(service.thumbnail);
+    if (service.images) service.images = JSON.parse(service.images);
     return (
       <main>
         <ServiceForm
@@ -33,6 +36,9 @@ async function page({ params }: { params: { gig: number } }) {
         />
       </main>
     );
+  }
+  if (!service || !professional) {
+    redirect("/");
   }
 }
 

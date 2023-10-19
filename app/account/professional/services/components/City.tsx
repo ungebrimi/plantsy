@@ -2,20 +2,20 @@ import { SetStateAction, useEffect, useState } from "react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { Combobox } from "@headlessui/react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { CityType, ServiceType } from "@/dbtypes";
+import { Tables } from "@/database";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
 interface CityProps {
-  formData: ServiceType;
-  setFormData: React.Dispatch<SetStateAction<ServiceType>>;
+  formData: Tables<"services">;
+  setFormData: React.Dispatch<SetStateAction<Tables<"services">>>;
 }
 
 export default function City({ formData, setFormData }: CityProps) {
   const [query, setQuery] = useState("");
-  const [cityList, setCityList] = useState<CityType[]>([]);
+  const [cityList, setCityList] = useState<Tables<"cities">[]>([]);
   const supabase = createClientComponentClient();
 
   useEffect(() => {
@@ -46,7 +46,7 @@ export default function City({ formData, setFormData }: CityProps) {
       as="div"
       value={formData}
       onChange={(e: any) =>
-        setFormData((data: ServiceType) => ({
+        setFormData((data: Tables<"services">) => ({
           ...data,
           city: e.city,
           county: e.county_name,

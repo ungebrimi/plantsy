@@ -2,25 +2,26 @@ import { SetStateAction, useState } from "react";
 import FileUpload from "./FileUpload";
 import ImageUpload from "./ImageUpload";
 import Emoji from "./Emoji";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { MessageType, FileType } from "@/dbtypes";
+import {
+  Session,
+  createClientComponentClient,
+} from "@supabase/auth-helpers-nextjs";
+import { Tables } from "@/database";
 
 export default function Editor({
   session,
   professional,
   channel,
 }: {
-  session: any;
-  channel: any;
-  professional: any;
+  session: Session;
+  channel: Tables<"channels">;
+  professional: Tables<"professionals">;
 }) {
   const supabase = createClientComponentClient();
   const [message, setMessage] = useState<string>("");
-  const [files, setFiles] = useState<FileType[]>([]);
-  const [images, setImages] = useState<FileType[]>([]);
-  const [profilePicture, setProfilePicture] = useState<FileType>(
-    JSON.parse(professional.profile_picture),
-  );
+  const [files, setFiles] = useState<Tables<"files">[]>([]);
+  const [images, setImages] = useState<Tables<"files">[]>([]);
+  const profilePicture = JSON.parse(professional.profile_picture as string);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -62,8 +63,8 @@ export default function Editor({
           />
         ) : (
           <div className="flex items-center justify-center h-10 w-10 rounded-full bg-green-500 font-bold uppercase text-white flex-shrink-0">
-            {professional.first_name.charAt(0) +
-              professional.last_name.charAt(0)}
+            {professional.first_name?.charAt(0)}
+            {professional.last_name?.charAt(0)}
           </div>
         )}
       </div>

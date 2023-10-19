@@ -3,20 +3,11 @@ import { useState } from "react";
 import { Disclosure } from "@headlessui/react";
 import { MinusIcon, PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
-
-type Conversation = {
-  id: number;
-  inserted_at: string;
-  client_id: string | null;
-  client_name: string | null;
-  professional_id: string | null;
-  professional_name: string | null;
-  unread_messages: boolean;
-};
+import { Tables } from "@/database";
 
 const ArchivedChannels = () => {
   const [archivedChannels, setArchivedChannels] = useState<
-    Conversation[] | null
+    Tables<"channels">[] | null
   >(null);
 
   return (
@@ -55,9 +46,9 @@ const ArchivedChannels = () => {
                     <p className="ml-2 text-sm font-medium">
                       {channel.client_name}
                     </p>
-                    {channel.unread_messages === true && (
-                      <span className="rounded-full bg-red-400 text-white w-2 h-2 ml-2"></span>
-                    )}
+                    {/* {channel.unread_messages === true && ( */}
+                    {/*   <span className="rounded-full bg-red-400 text-white w-2 h-2 ml-2"></span> */}
+                    {/* )} */}
                   </Link>
                 ))}
             </div>

@@ -1,13 +1,14 @@
-import { FileType } from "@/dbtypes";
 import useImageUpload from "@/hooks/useImageUpload";
 import { CameraIcon } from "@heroicons/react/24/outline";
 import React, { ChangeEvent, SetStateAction, useState } from "react";
 import ImageModal from "./ImageModal";
+import { Tables } from "@/database";
+import { Session } from "@supabase/supabase-js";
 
 interface ImageUploadProps {
-  gallery: FileType[];
-  setGallery: React.Dispatch<SetStateAction<FileType[]>>;
-  session: any;
+  gallery: Tables<"files">[];
+  setGallery: React.Dispatch<SetStateAction<Tables<"files">[]>>;
+  session: Session;
 }
 
 // this component has a unfortunate namechange on the props.

@@ -10,10 +10,10 @@ import {
   UserIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { Professional } from "@/dbtypes";
 import Image from "next/image";
 import Sidebar from "./Sidebar";
 import Link from "next/link";
+import { Tables } from "@/database";
 
 const navigation = [
   {
@@ -55,11 +55,11 @@ function classNames(...classes: string[]) {
 export default function Navigation({
   professional,
 }: {
-  professional: Professional;
+  professional: Tables<"professionals">;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [openMessageTab, setOpenMessageTab] = useState<boolean>(false);
-  const profilePicture = JSON.parse(professional.profile_picture);
+  const profilePicture = JSON.parse(professional.profile_picture as string);
 
   return (
     <>
@@ -285,9 +285,8 @@ export default function Navigation({
                       />
                     ) : (
                       <p className="hidden xs:flex items-center text-white justify-center uppercase font-bold h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
-                        {professional &&
-                          professional.first_name.charAt(0) +
-                          professional.last_name.charAt(0)}
+                        {professional.first_name?.charAt(0)}
+                        {professional.last_name?.charAt(0)}
                       </p>
                     )}
 

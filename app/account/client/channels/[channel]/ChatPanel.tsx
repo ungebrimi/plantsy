@@ -2,16 +2,19 @@
 import React, { useState, useEffect } from "react";
 import Inbox from "./components/chat/Inbox";
 import Editor from "./components/editor/Editor";
-import { Client, MessageType, Professional } from "@/dbtypes";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import {
+  Session,
+  createClientComponentClient,
+} from "@supabase/auth-helpers-nextjs";
 import Image from "next/image";
+import { Tables } from "@/database";
 
 type ChatPanelProps = {
-  session: any;
-  serverMessages: MessageType[];
-  channel: any;
-  professional: Professional;
-  client: Client;
+  session: Session;
+  serverMessages: Tables<"messages">[];
+  channel: Tables<"channels">;
+  professional: Tables<"professionals">;
+  client: Tables<"clients">;
 };
 
 const ChatPanel = ({
@@ -21,7 +24,8 @@ const ChatPanel = ({
   professional,
   client,
 }: ChatPanelProps) => {
-  const [messages, setMessages] = useState<MessageType[]>(serverMessages);
+  const [messages, setMessages] =
+    useState<Tables<"messages">[]>(serverMessages);
   const supabase = createClientComponentClient();
 
   useEffect(() => {
@@ -38,7 +42,7 @@ const ChatPanel = ({
           // Use functional update to ensure you're working with the latest state
           setMessages((prevMessages) => [
             ...prevMessages,
-            payload.new as MessageType,
+            payload.new as Tables<"messages">,
           ]);
           // Play the notification sound
           const audio = new Audio("/notification.mp3");

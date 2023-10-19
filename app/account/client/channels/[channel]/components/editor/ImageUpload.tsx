@@ -1,15 +1,14 @@
-import { FileType } from "@/dbtypes";
 import useImageUpload from "@/hooks/useImageUpload";
 import { CameraIcon } from "@heroicons/react/24/outline";
 import React, { ChangeEvent, SetStateAction, useState } from "react";
 import ImageModal from "./ImageModal";
+import { Session } from "@supabase/supabase-js";
 
 interface ImageUploadProps {
-  setGallery: React.Dispatch<SetStateAction<FileType[]>>;
-  session: any;
+  session: Session;
 }
 
-const ImageUpload = ({ setGallery, session }: ImageUploadProps) => {
+const ImageUpload = ({ session }: ImageUploadProps) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const { loading, images, setImages, error, handleImageUpload } =
     useImageUpload();
@@ -17,16 +16,9 @@ const ImageUpload = ({ setGallery, session }: ImageUploadProps) => {
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     handleImageUpload(event, `${session.user.id}/files`, true);
   };
-
-  React.useEffect(() => {
-    const handleFormDataUpdate = () => {
-      if (error) console.error(error);
-      if (images && !error) {
-        setGallery(images);
-      }
-    };
-    handleFormDataUpdate();
-  }, [images, error, setGallery]);
+  if (error) {
+    console.error(error);
+  }
 
   return (
     <div className="flow-root">

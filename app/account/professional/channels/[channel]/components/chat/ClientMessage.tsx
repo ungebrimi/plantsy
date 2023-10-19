@@ -1,23 +1,23 @@
-import { MessageType, Client, FileType } from "@/dbtypes";
 import Image from "next/image";
 import React, { useState } from "react";
 import FileDownloader from "./FileDownloader";
 import { Carousel } from "react-responsive-carousel";
+import { Tables } from "@/database";
 
 interface ClientMessageProps {
-  message: MessageType;
-  client: Client;
+  message: Tables<"messages">;
+  client: Tables<"clients">;
 }
 
 const ClientMessage = ({ message, client }: ClientMessageProps) => {
-  const messageDate: any = new Date(message.inserted_at);
-  const currentDate: any = new Date();
-  const [profilePicture, setProfilePicture] = useState<FileType>(
-    JSON.parse(client.profile_picture),
+  const messageDate: Date = new Date(message.inserted_at);
+  const currentDate: Date = new Date();
+  const profilePicture: Tables<"files"> = JSON.parse(
+    client.profile_picture as string,
   );
 
   // Calculate the time difference in milliseconds
-  const timeDifference = currentDate - messageDate;
+  const timeDifference: number = currentDate.getTime() - messageDate.getTime();
 
   let formattedDate;
 
@@ -44,19 +44,20 @@ const ClientMessage = ({ message, client }: ClientMessageProps) => {
 
   return (
     <div>
-      <div className="p-3 flex items-center justify-self-start">
+      <div className="p-3 flex items-center justify-self-start rounded-lg">
         <div className="">
           {profilePicture ? (
             <Image
               width={100}
               height={100}
               className="hidden xs:inline-block h-10 w-10 rounded-full"
-              src={profilePicture.url}
+              src={profilePicture.url as string}
               alt={client.first_name + " " + client.last_name}
             />
           ) : (
             <p className="hidden xs:flex items-center text-white justify-center uppercase font-bold h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
-              {client.first_name.charAt(0) + client.last_name.charAt(0)}
+              {client.first_name && client.first_name.charAt(0)}
+              {client.last_name && client.last_name.charAt(0)}
             </p>
           )}
         </div>

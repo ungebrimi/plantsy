@@ -1,7 +1,7 @@
+import { Database } from "@/database";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-// import { Database } from "@/types_db";
 export async function getSession() {
-  const supabase = createClientComponentClient();
+  const supabase = createClientComponentClient<Database>();
   try {
     const {
       data: { session },

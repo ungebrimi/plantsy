@@ -1,5 +1,5 @@
 "use client";
-import { Client } from "@/dbtypes";
+import { Tables } from "@/database";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
 
@@ -10,7 +10,7 @@ interface Form {
   sms_notification_messages: boolean;
 }
 
-const Notifications = ({ client }: { client: Client }) => {
+const Notifications = ({ client }: { client: Tables<"clients"> }) => {
   const supabase = createClientComponentClient();
   const [formData, setFormData] = useState<Form>({
     email_notification_jobs: false,

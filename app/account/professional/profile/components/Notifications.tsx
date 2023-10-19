@@ -1,5 +1,5 @@
 "use client";
-import { Professional } from "@/dbtypes";
+import { Tables } from "@/database";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import React, { ChangeEvent, useState } from "react";
 
@@ -10,13 +10,17 @@ interface Form {
   sms_notification_messages: boolean;
 }
 
-const Notifications = ({ user }: { user: Professional }) => {
+const Notifications = ({
+  professional,
+}: {
+  professional: Tables<"professionals">;
+}) => {
   const supabase = createClientComponentClient();
   const [formData, setFormData] = useState<Form>({
-    email_notification_jobs: user.email_notification_jobs,
-    email_notification_messages: user.email_notification_messages,
-    sms_notification_jobs: user.sms_notification_jobs,
-    sms_notification_messages: user.sms_notification_messages,
+    email_notification_jobs: professional.email_notification_jobs,
+    email_notification_messages: professional.email_notification_messages,
+    sms_notification_jobs: professional.sms_notification_jobs,
+    sms_notification_messages: professional.sms_notification_messages,
   });
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -37,9 +41,9 @@ const Notifications = ({ user }: { user: Professional }) => {
           sms_notification_jobs: formData.sms_notification_jobs,
           sms_notification_messages: formData.sms_notification_messages,
         })
-        .eq("id", user.id)
+        .eq("id", professional.id)
         .select(
-          "email_notification_messages, sms_notification_messages, email_notification_jobs, sms_notification_jobs"
+          "email_notification_messages, sms_notification_messages, email_notification_jobs, sms_notification_jobs",
         );
 
       if (error) {

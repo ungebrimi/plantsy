@@ -1,28 +1,28 @@
 "use client";
 import React, { useCallback, useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { Client } from "@/dbtypes";
 import Avatar from "./Avatar";
 import {
   CheckCircleIcon,
   ExclamationTriangleIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { Tables } from "@/database";
 
 interface Form {
   website: string | null;
   about: string | null;
-  profile_picture: string | null;
+  profile_picture: Tables<"files">;
 }
 
-const ProfileInformation = ({ client }: { client: Client }) => {
+const ProfileInformation = ({ client }: { client: Tables<"clients"> }) => {
   const supabase = createClientComponentClient();
   const [success, setSuccess] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState<Form>({
     website: client.website,
     about: client.about,
-    profile_picture: JSON.parse(client.profile_picture),
+    profile_picture: JSON.parse(client.profile_picture as string),
   });
 
   async function updateProfileInformation() {

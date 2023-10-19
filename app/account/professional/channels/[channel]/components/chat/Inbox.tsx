@@ -1,13 +1,13 @@
 "use client";
-import { Client, MessageType, Professional } from "@/dbtypes";
 import React from "react";
 import ClientMessage from "./ClientMessage";
 import ProfessionalMessage from "./ProfessionalMessage";
+import { Tables } from "@/database";
 
 interface InboxProps {
-  messages: MessageType[];
-  client: Client;
-  professional: Professional;
+  messages: Tables<"messages">[];
+  client: Tables<"clients">;
+  professional: Tables<"professionals">;
 }
 
 function classNames(...classes: string[]) {
@@ -15,20 +15,16 @@ function classNames(...classes: string[]) {
 }
 
 const Inbox = ({ messages, client, professional }: InboxProps) => {
-  let alignRight = true;
   return (
     <section className="h-full overflow-x-auto">
       <div className="flex flex-col w-full">
-        {/*I map the messages, and use the client id in the data to see if the message is sent by the client or a professional*/}
         {messages && messages.length > 0 ? (
-          messages.map((message: MessageType, idx) => {
-            console.log(message);
-            alignRight = !alignRight;
+          messages.map((message: Tables<"messages">, idx) => {
             return (
               <div
-                key={idx}
+                key={message.id}
                 className={classNames(
-                  alignRight ? "justify-start" : "justify-end",
+                  idx % 2 === 0 ? "justify-start" : "justify-end",
                   "mb-2",
                 )}
               >

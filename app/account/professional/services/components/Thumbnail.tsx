@@ -1,44 +1,44 @@
-/*
- * THIS COMPONENT IS COMPLETED
- * */
-import { Professional, ServiceType } from "@/dbtypes";
+import { DbResultOk, Tables } from "@/database";
 import useImageUpload from "@/hooks/useImageUpload";
 import { PhotoIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
-import React, { SetStateAction, useEffect, useState } from "react";
+import React, { SetStateAction } from "react";
 
 interface ThumbnailProps {
-  professional: Professional;
-  thumbnail: any;
-  setFormData: React.Dispatch<SetStateAction<ServiceType>>;
+  professional: Tables<"professionals">;
+  formData: Tables<"services">;
+  setFormData: React.Dispatch<SetStateAction<Tables<"services">>>;
 }
 
-function Thumbnail({ professional, thumbnail, setFormData }: ThumbnailProps) {
-  const { loading, image, setImage, error, handleImageUpload, removeImage } =
-    useImageUpload();
-  const [edit, setEdit] = useState<boolean>(false);
+function Thumbnail({ professional, formData, setFormData }: ThumbnailProps) {
+  const { loading, error, handleImageUpload, removeImage } = useImageUpload();
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    handleImageUpload(event, `${professional.id}/images`, false);
-    setEdit(false);
+  const handleImageChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    try {
+      (await handleImageUpload(
+        event,
+        `${professional.id}/images`,
+        false,
+      )) as DbResultOk<Tables<"files">>;
+      setFormData({ ...formData, thumbnail: null });
+    } catch (error) {
+      console.error("Error uploading the image:", error);
+    }
   };
 
-  useEffect(() => {
-    if (error) console.error(error);
-    if (image && !thumbnail) {
-      setFormData((formData: any) => ({ ...formData, thumbnail: image }));
-    }
-    if (thumbnail && !image) {
-      setImage(thumbnail);
-    }
-    if (thumbnail && image && !edit) {
-      return;
-    }
-    if (thumbnail && image && edit) {
-      setImage(null);
+  const handleRemoveImage = async (image: Tables<"files">) => {
+    try {
+      // Attempt to remove the image
+      await removeImage(image?.id, `${professional.id}/images/${image?.name}`);
+      // If removal is successful, reset the states
       setFormData((formData: any) => ({ ...formData, thumbnail: null }));
+    } catch (error) {
+      // Handle the error, e.g., display an error message
+      console.error("Error removing the image:", error);
     }
-  }, [image, error, thumbnail]);
+  };
 
   return (
     <div className="col-span-full">
@@ -49,34 +49,38 @@ function Thumbnail({ professional, thumbnail, setFormData }: ThumbnailProps) {
         Cover photo
       </label>
       <div
-        className={`mt-2 flex justify-center rounded-lg border-dashed border border-gray-900/25
-                    ${thumbnail === null ? "px-2 py-10" : "px-6 py-10"}`}
+        className={`mt-2 flex justify-center rounded-lg border-dashed border border-gray-900/25 ${formData.thumbnail === null ? "px-2 py-10" : "px-6 py-10"
+          }`}
       >
-        {thumbnail ? (
+        {formData.thumbnail &&
+          typeof formData.thumbnail === "object" &&
+          "url" in formData.thumbnail ? (
           <div className="relative">
             <button
+              data-testid="delete"
               type="button"
-              onClick={() => {
-                setEdit(true);
-                removeImage(
-                  thumbnail.id,
-                  `${professional.id}/images/${thumbnail.name}`,
-                );
-              }}
+              onClick={() =>
+                handleRemoveImage(formData.thumbnail as Tables<"files">)
+              }
               className="absolute top-2 right-2"
             >
+              <span className="sr-only">Remove uploaded thumbnail</span>
               <XMarkIcon className="w-6 text-gray-600"></XMarkIcon>
             </button>
             <Image
               width={400}
               height={300}
-              alt={thumbnail.name}
-              src={thumbnail.url}
+              alt={formData.thumbnail.name as string}
+              src={formData.thumbnail.url as string}
               className="max-w-sm h-64 object-contain"
+              data-testid="thumbnail"
             />
           </div>
         ) : (
-          <div className={`text-center ${loading && "animate-pulse"}`}>
+          <div
+            data-testid={loading && "loading"}
+            className={`text-center ${loading && "animate-pulse"}`}
+          >
             <PhotoIcon
               className="mx-auto h-12 w-12 text-gray-300"
               aria-hidden="true"
@@ -86,7 +90,7 @@ function Thumbnail({ professional, thumbnail, setFormData }: ThumbnailProps) {
                 htmlFor="image-upload"
                 className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
               >
-                <span>Upload a file</span>
+                Upload a file
                 <input
                   id="image-upload"
                   name="image-upload"
@@ -102,6 +106,11 @@ function Thumbnail({ professional, thumbnail, setFormData }: ThumbnailProps) {
             <p className="text-xs leading-5 text-gray-600">
               PNG, JPG, GIF up to 10MB
             </p>
+            {error && (
+              <p className="text-sm leading-6 font-medium text-red-500">
+                {error.message}
+              </p>
+            )}
           </div>
         )}
       </div>

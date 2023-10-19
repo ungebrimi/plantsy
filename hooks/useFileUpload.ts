@@ -1,24 +1,30 @@
 import { useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { FileType } from "@/dbtypes";
+import { DbResultErr, Tables } from "@/database";
 
 type FileUploadHookResult = {
   loading: boolean;
-  response: FileType[];
-  error: any;
+  response: Tables<"files">[];
+  error: DbResultErr;
   handleFileUpload: (
     event: React.ChangeEvent<HTMLInputElement>,
-    path: string
+    path: string,
   ) => Promise<void>;
 };
 
 const useFileUpload = (): FileUploadHookResult => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [response, setResponse] = useState<FileType[]>([]);
+  const [response, setResponse] = useState<Tables<"files">[]>([]);
   const [error, setError] = useState<any>(null);
   const supabase = createClientComponentClient();
 
-  const insertToFileTable = async ({ file, url }: any) => {
+  const insertToFileTable = async ({
+    file,
+    url,
+  }: {
+    file: File;
+    url: string;
+  }) => {
     const { data, error } = await supabase
       .from("files")
       .insert({
@@ -35,7 +41,7 @@ const useFileUpload = (): FileUploadHookResult => {
 
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
-    path: string
+    path: string,
   ) => {
     //@ts-ignore
     const newFiles = Array.from(event.target.files) || [];

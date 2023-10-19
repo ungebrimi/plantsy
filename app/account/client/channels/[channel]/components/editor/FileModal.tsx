@@ -1,19 +1,14 @@
-// MISSING FUNCTIONALITY THAT REMOVES THE FILE FROM STORAGE AND FILE TABLE: THIS IS ONLY VISUAL ATM
 import { Fragment, SetStateAction, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import {
-  DocumentIcon,
-  FolderIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
-import { FileType } from "@/dbtypes";
+import { DocumentIcon, FolderIcon } from "@heroicons/react/24/outline";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { Tables } from "@/database";
 
 type FileModalProps = {
   open: boolean;
   setOpen: React.Dispatch<SetStateAction<boolean>>;
-  files: FileType[];
-  setFiles: React.Dispatch<SetStateAction<FileType[]>>;
+  files: Tables<"files">[];
+  setFiles: React.Dispatch<SetStateAction<Tables<"files">[]>>;
 };
 
 export default function FileModal({
@@ -23,7 +18,7 @@ export default function FileModal({
   setFiles,
 }: FileModalProps) {
   const cancelButtonRef = useRef(null);
-  const [tempFiles, setTempFiles] = useState<FileType[]>(files);
+  const [tempFiles, setTempFiles] = useState<Tables<"files">[]>(files);
   const supabase = createClientComponentClient();
 
   async function removeFile(file_id: number) {
@@ -31,7 +26,7 @@ export default function FileModal({
     setTempFiles(updatedTempFiles);
   }
 
-  async function removeImageFromDB(file: FileType) {
+  async function removeImageFromDB(file: Tables<"files">) {
     const { error } = await supabase.from("files").delete().eq("id", file.id);
     if (error) {
       console.error(error);
@@ -43,7 +38,7 @@ export default function FileModal({
   function handleSave() {
     // Find images that were present in the images array but are not in tempImages
     const filesToRemove = files.filter(
-      (file) => !tempFiles.some((tempFile) => tempFile.id === file.id)
+      (file) => !tempFiles.some((tempFile) => tempFile.id === file.id),
     );
 
     // Remove those images from the database
@@ -104,7 +99,7 @@ export default function FileModal({
                         Manage files
                       </Dialog.Title>
                       <ul role="list" className="divide-y divide-gray-100 mt-4">
-                        {tempFiles.map((file: FileType) => (
+                        {tempFiles.map((file: Tables<"files">) => (
                           <li
                             key={file.id}
                             className="flex items-center justify-between gap-x-6 py-5"

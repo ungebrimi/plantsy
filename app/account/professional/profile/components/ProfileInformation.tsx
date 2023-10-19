@@ -1,13 +1,13 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { FileType, Professional } from "@/dbtypes";
 import Avatar from "./Avatar";
 import {
   CheckCircleIcon,
   ExclamationTriangleIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { Tables } from "@/database";
 
 interface Form {
   website: string | null;
@@ -15,18 +15,22 @@ interface Form {
   profile_picture: any;
 }
 
-const ProfileInformation = ({ user }: { user: Professional }) => {
+const ProfileInformation = ({
+  professional,
+}: {
+  professional: Tables<"professionals">;
+}) => {
   const supabase = createClientComponentClient();
   const [success, setSuccess] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState<Form>({
-    website: user.website,
-    about: user.about,
-    profile_picture: JSON.parse(user.profile_picture),
+    website: professional.website,
+    about: professional.about,
+    profile_picture: JSON.parse(professional.profile_picture as string),
   });
 
   async function updateProfileInformation() {
-    if (!user) return;
+    if (!professional) return;
     try {
       const { data, error } = await supabase
         .from("professionals")
@@ -35,7 +39,7 @@ const ProfileInformation = ({ user }: { user: Professional }) => {
           about: formData.about,
           profile_picture: JSON.stringify(formData.profile_picture),
         })
-        .eq("id", user.id)
+        .eq("id", professional.id)
         .select("website, about, profile_picture");
 
       if (error) {
@@ -105,7 +109,11 @@ const ProfileInformation = ({ user }: { user: Professional }) => {
               Write a few sentences about yourself.
             </p>
           </div>
-          <Avatar formData={formData} setFormData={setFormData} user={user} />
+          <Avatar
+            formData={formData}
+            setFormData={setFormData}
+            professional={professional}
+          />
         </div>
       </div>
       {success && (

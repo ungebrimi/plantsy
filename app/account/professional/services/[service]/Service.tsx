@@ -3,14 +3,14 @@ import React, { useEffect, useState } from "react";
 import { EnvelopeIcon, PhoneIcon, StarIcon } from "@heroicons/react/24/outline";
 import { Tab } from "@headlessui/react";
 import Image from "next/image";
-import { FileType } from "@/dbtypes";
+import { Tables } from "@/database";
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
 function Service({ service, professional }: any) {
-  const [images, setImages] = useState<FileType[]>([]);
-  const [profilePicture, setProfilePicture] = useState<any>(null);
+  const [images, setImages] = useState<Tables<"files">[]>([]);
+  const profilePicture = JSON.parse(professional.profile_picture as string);
 
   useEffect(() => {
     if (!service) return;
@@ -18,12 +18,6 @@ function Service({ service, professional }: any) {
     const resistingImages = JSON.parse(service.images);
     setImages([thumbnail, ...resistingImages]);
   }, [service]);
-
-  useEffect(() => {
-    if (!professional) return;
-    const parsedProfilePicture = JSON.parse(professional.profile_picture);
-    setProfilePicture(parsedProfilePicture);
-  }, [professional]);
 
   return (
     <section className="mx-auto max-w-7xl sm:px-6 sm:pt-16 lg:px-8">
@@ -35,7 +29,7 @@ function Service({ service, professional }: any) {
             <div className="mx-auto mt-6 hidden w-full max-w-2xl sm:block lg:max-w-none">
               <Tab.List className="grid grid-cols-4 gap-6">
                 {images &&
-                  images.map((image: FileType, idx: number) => (
+                  images.map((image: Tables<"files">, idx: number) => (
                     <Tab
                       key={idx}
                       className="relative flex h-24 cursor-pointer items-center justify-center rounded-md bg-white text-sm font-medium uppercase text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-offset-4"
@@ -44,7 +38,7 @@ function Service({ service, professional }: any) {
                         <>
                           <span className="absolute inset-0 overflow-hidden rounded-md">
                             <img
-                              src={image.url}
+                              src={image.url as string}
                               alt=""
                               className="h-full w-full object-cover object-center"
                             />
@@ -64,10 +58,10 @@ function Service({ service, professional }: any) {
             </div>
             <Tab.Panels className="aspect-h-1 aspect-w-1 w-full">
               {images &&
-                images.map((image: FileType, idx: number) => (
+                images.map((image: Tables<"files">, idx: number) => (
                   <Tab.Panel key={idx}>
                     <img
-                      src={image.url}
+                      src={image.url as string}
                       alt="#"
                       className="h-full w-full object-cover object-center sm:rounded-lg"
                     />
@@ -86,7 +80,7 @@ function Service({ service, professional }: any) {
                   width={300}
                   height={300}
                   className="mx-auto h-32 w-32 flex-shrink-0 rounded-full"
-                  src={profilePicture.url}
+                  src={profilePicture.url as string}
                   alt=""
                 />
                 <h3 className="mt-6 text-sm font-medium text-gray-900">

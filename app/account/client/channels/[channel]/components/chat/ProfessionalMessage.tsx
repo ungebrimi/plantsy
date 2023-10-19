@@ -1,28 +1,25 @@
-import { FileType, MessageType, Professional } from "@/dbtypes";
-import { DocumentIcon } from "@heroicons/react/24/outline";
-import React, { useState } from "react";
+import React from "react";
 import FileDownloader from "./FileDownloader";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Image from "next/image";
+import { Tables } from "@/database";
 
 interface ProfessionalMessageProps {
-  message: MessageType;
-  professional: Professional;
+  message: Tables<"messages">;
+  professional: Tables<"professionals">;
 }
 
 const ProfessionalMessage = ({
   message,
   professional,
 }: ProfessionalMessageProps) => {
-  const [profilePicture, setProfilePicture] = useState<FileType>(
-    professional.profile_picture,
-  );
-  const messageDate: any = new Date(message.inserted_at);
-  const currentDate: any = new Date();
+  const messageDate: Date = new Date(message.inserted_at);
+  const currentDate: Date = new Date();
+  const profilePicture = JSON.parse(professional.profile_picture as string);
 
   // Calculate the time difference in milliseconds
-  const timeDifference = currentDate - messageDate;
+  const timeDifference: number = currentDate.getTime() - messageDate.getTime();
 
   let formattedDate;
 
@@ -46,15 +43,14 @@ const ProfessionalMessage = ({
       day: "numeric",
     });
   }
-  console.log(profilePicture);
 
   return (
     <div
       key={message.id}
-      className="col-start-1 lg:col-start-6 col-end-13 p-3 rounded-lg"
+      className="p-3 flex items-center justify-self-end rounded-lg"
     >
       <div className="flex items-center justify-self-end flex-row-reverse">
-        {profilePicture ? (
+        {professional.profile_picture ? (
           <Image
             width={150}
             height={150}
@@ -64,8 +60,8 @@ const ProfessionalMessage = ({
           />
         ) : (
           <p className="xs:flex items-center hidden sm:block text-white justify-center h-10 w-10 uppercase font-bold rounded-full bg-green-500 flex-shrink-0">
-            {professional.first_name.charAt(0) +
-              professional.last_name.charAt(0)}
+            {professional.first_name?.charAt(0)}
+            {professional.last_name?.charAt(0)}
           </p>
         )}
         <article className="mr-3 max-w-xl flex flex-col justify-end items-end">

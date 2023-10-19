@@ -1,14 +1,14 @@
 "use client";
-import React from "react";
+import React, { SetStateAction } from "react";
 import Image from "next/image";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import useImageUpload from "@/hooks/useImageUpload";
-import { Client } from "@/dbtypes";
+import { Tables } from "@/database";
 
 interface Form {
   website: string | null;
   about: string | null;
-  profile_picture: any;
+  profile_picture: Tables<"files">;
 }
 
 const Avatar = ({
@@ -17,15 +17,14 @@ const Avatar = ({
   client,
 }: {
   formData: Form;
-  setFormData: any;
-  client: Client;
+  setFormData: React.Dispatch<SetStateAction<Form>>;
+  client: Tables<"clients">;
 }) => {
   const { loading, image, error, handleImageUpload } = useImageUpload();
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     handleImageUpload(event, `${client.id}/avatars`, false);
   };
-  console.log(formData.profile_picture);
 
   React.useEffect(() => {
     const handleFormDataUpdate = () => {
@@ -53,7 +52,7 @@ const Avatar = ({
             <Image
               width={300}
               height={300}
-              src={formData.profile_picture.url}
+              src={formData.profile_picture.url as string}
               alt="profile picture"
               className="h-12 w-12 text-gray-300 rounded-full"
             />

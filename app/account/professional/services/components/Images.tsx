@@ -1,28 +1,55 @@
-import { FileType } from "@/dbtypes";
+import { DbResultOk, Tables } from "@/database";
 import useImageUpload from "@/hooks/useImageUpload";
 import { PhotoIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
-import React, { useEffect } from "react";
+import React, { SetStateAction, useEffect } from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
-function Images({ professional, gallery, setFormData }: any) {
-  const { loading, images, error, handleImageUpload, removeImage } =
-    useImageUpload();
+interface ImagesProps {
+  professional: Tables<"professionals">;
+  formData: Tables<"services">;
+  setFormData: React.Dispatch<SetStateAction<Tables<"services">>>;
+}
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    handleImageUpload(event, `${professional.id}/files`, true);
+function Images({ professional, formData, setFormData }: ImagesProps) {
+  const { loading, error, handleImageUpload, removeImage } = useImageUpload();
+
+  const handleImageChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    try {
+      const images = (await handleImageUpload(
+        event,
+        `${professional.id}/images`,
+        true,
+      )) as DbResultOk<Tables<"files">>;
+      setFormData({ ...formData, images: images });
+      console.log(images);
+    } catch (error) {
+      console.error("Error uploading the image:", error);
+    }
   };
 
-  console.log();
+  const handleRemoveImage = async (image: Tables<"files">) => {
+    try {
+      const images = await removeImage(
+        image?.id,
+        `${professional.id}/images/${image?.name}`,
+        true,
+      );
 
-  useEffect(() => {
-    if (!error && images.length > 0) {
-      setFormData((formData: any) => ({ ...formData, images: images }));
-    } else if (images.length === 0 || gallery.images === 0) {
-      setFormData((formData: any) => ({ ...formData, images: [] }));
+      // Debug output
+      console.log("Updated images:", images);
+
+      setFormData({ ...formData, images: images });
+
+      // Debug output
+      console.log("Updated formData:", { ...formData, images: images });
+    } catch (error) {
+      console.error("Error removing the image:", error);
     }
-  }, [images, error]);
+  };
 
   return (
     <div className="col-span-full">
@@ -32,9 +59,15 @@ function Images({ professional, gallery, setFormData }: any) {
       >
         Pictures of your work
       </label>
-      {gallery && gallery.length > 0 ? (
+      {formData.images &&
+        Array.isArray(formData.images) &&
+        formData.images.every(
+          (image) =>
+            image !== null && typeof image === "object" && "url" in image,
+        ) &&
+        formData.images.length > 0 ? (
         <Carousel showThumbs={false} infiniteLoop={true}>
-          {gallery.map((image: FileType) => {
+          {formData.images.map((image: any) => {
             return (
               <div
                 key={image.id}
@@ -43,21 +76,17 @@ function Images({ professional, gallery, setFormData }: any) {
                 <button
                   type="button"
                   className="absolute top-4 right-8"
-                  onClick={() =>
-                    removeImage(
-                      image.id,
-                      `${professional.id}/images/${image.name}`,
-                      true,
-                    )
-                  }
+                  data-testid="delete"
+                  onClick={() => handleRemoveImage(image as Tables<"files">)}
                 >
                   <XMarkIcon className="w-6 h-6 hover:text-gray-500"></XMarkIcon>
                 </button>
                 <div className="relative">
                   <Image
+                    data-testid={image.id as number}
                     height={400}
                     width={400}
-                    src={image.url}
+                    src={image.url as string}
                     className="h-96 object-contain"
                     alt={`Image ${image.id}`}
                   />
@@ -68,7 +97,10 @@ function Images({ professional, gallery, setFormData }: any) {
         </Carousel>
       ) : (
         <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-          <div className={`text-center ${loading && "animate-pulse"}`}>
+          <div
+            data-testid={loading && "loading"}
+            className={`text-center ${loading && "animate-pulse"}`}
+          >
             <PhotoIcon
               className="mx-auto h-12 w-12 text-gray-300"
               aria-hidden="true"
