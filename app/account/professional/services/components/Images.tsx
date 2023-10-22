@@ -2,7 +2,7 @@ import { DbResultOk, Tables } from "@/database";
 import useImageUpload from "@/hooks/useImageUpload";
 import { PhotoIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
-import React, { SetStateAction, useEffect } from "react";
+import React, { SetStateAction } from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
@@ -13,16 +13,15 @@ interface ImagesProps {
 }
 
 function Images({ professional, formData, setFormData }: ImagesProps) {
-  const { loading, error, handleImageUpload, removeImage } = useImageUpload();
+  const { loading, handleMultipleImagesUpload, removeImage } = useImageUpload();
 
   const handleImageChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     try {
-      const images = (await handleImageUpload(
+      const images = (await handleMultipleImagesUpload(
         event,
         `${professional.id}/images`,
-        true,
       )) as DbResultOk<Tables<"files">>;
       setFormData({ ...formData, images: images });
       console.log(images);
@@ -33,19 +32,18 @@ function Images({ professional, formData, setFormData }: ImagesProps) {
 
   const handleRemoveImage = async (image: Tables<"files">) => {
     try {
-      const images = await removeImage(
+      await removeImage(
         image?.id,
         `${professional.id}/images/${image?.name}`,
-        true,
       );
 
-      // Debug output
-      console.log("Updated images:", images);
+      const images = formData.images as Tables<"files">[]
+      const indexToRemove = images.findIndex((img: Tables<"files">) => img.id === image.id);
 
+      if (indexToRemove !== -1) {
+        images.splice(indexToRemove, 1);
+      }
       setFormData({ ...formData, images: images });
-
-      // Debug output
-      console.log("Updated formData:", { ...formData, images: images });
     } catch (error) {
       console.error("Error removing the image:", error);
     }

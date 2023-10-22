@@ -1,9 +1,11 @@
 export const dynamic = "force-dynamic";
+import React from "react";
 import { getSession } from "@/app/supabase-server";
 import Navigation from "./layout/Navigation";
 import { redirect } from "next/navigation";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
+import { NotificationProvider } from '@/context/NotificationContext';
 
 export default async function ProfessionalLayout({
   children,
@@ -19,7 +21,7 @@ export default async function ProfessionalLayout({
   }
 
   if (session.user.user_metadata.role !== "professional") {
-    console.log("You do not have a professsional account");
+    console.log("You do not have a professional account");
     redirect("/");
   }
 

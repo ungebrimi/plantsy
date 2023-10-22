@@ -1,7 +1,8 @@
-export const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic"
+import React from "react";
 import Footer from "@/app/layout/Footer";
 import "@/app/globals.css";
-import Navbar from "@/app/layout/Navbar";
+import ServerNav from "@/app/layout/ServerNav";
 
 export const metadata = {
   title: "Plantsy",
@@ -15,7 +16,7 @@ export default async function AuthLayout({
 }) {
   return (
     <>
-      <Navbar />
+      <ServerNav />
       {children}
       <Footer />
     </>

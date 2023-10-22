@@ -1,5 +1,5 @@
-export const dynamic = "force-dynamic";
-
+export const dynamic = "force-dynamic"
+import React from "react";
 import Footer from "../layout/Footer";
 import "../globals.css";
 import ServerNav from "../layout/ServerNav";

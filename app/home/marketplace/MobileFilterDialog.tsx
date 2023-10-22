@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 import { Dialog, Disclosure, Menu, Tab, Transition } from "@headlessui/react";
 import { MinusIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { ServiceCategoryType } from "@/dbtypes";
+import {Tables} from "@/database";
 
 function MobileFilterDialog({
   mobileFiltersOpen,
@@ -85,7 +85,7 @@ function MobileFilterDialog({
                         <div className="space-y-6">
                           {categories.map(
                             (
-                              option: ServiceCategoryType,
+                              option: Tables<"service_categories">,
                               optionIdx: number,
                             ) => (
                               <div
@@ -95,7 +95,7 @@ function MobileFilterDialog({
                                 <input
                                   id={`filter-mobile-${option.id}-${optionIdx}`}
                                   name={`${option.id}[]`}
-                                  defaultValue={option.value}
+                                  //defaultValue={option.value}
                                   type="checkbox"
                                   defaultChecked={option.checked}
                                   className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"

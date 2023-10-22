@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { Disclosure } from "@headlessui/react";
 import { MinusIcon, PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { Client, Professional } from "@/dbtypes";
+import {Tables} from "@/database";
 
 type Conversation = {
   id: number;
@@ -16,8 +16,8 @@ type Conversation = {
   unread_messages: boolean;
 };
 
-const ActiveChannels = ({ client }: { client: Client }) => {
-  const [activeConversations, setActiveConverstations] = useState<
+const ActiveChannels = ({ client }: { client: Tables<"clients"> }) => {
+  const [activeConversations, setActiveConversations] = useState<
     Conversation[] | null
   >(null);
 
@@ -31,8 +31,8 @@ const ActiveChannels = ({ client }: { client: Client }) => {
       if (error) console.error(error);
       return data;
     }
-    getChannels().then((res) => setActiveConverstations(res));
-  }, [supabase]);
+    getChannels().then((res) => setActiveConversations(res));
+  }, [supabase, client.id]);
 
   return (
     <Disclosure as="div" defaultOpen className="border-b border-gray-200 py-6">
@@ -70,7 +70,7 @@ const ActiveChannels = ({ client }: { client: Client }) => {
                     <p className="ml-2 text-sm font-medium">
                       {channel.professional_name}
                     </p>
-                    {channel.unread_messages === true && (
+                    {channel.unread_messages && (
                       <span className="rounded-full bg-red-400 text-white w-2 h-2 ml-2"></span>
                     )}
                   </Link>

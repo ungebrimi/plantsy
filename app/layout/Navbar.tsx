@@ -1,24 +1,30 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Disclosure } from "@headlessui/react";
-import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { usePathname, useRouter } from "next/navigation";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { Client, Professional } from "@/dbtypes";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { usePathname } from "next/navigation";
+
 import ClientDropdown from "./ClientDropdown";
 import ProfessionalDropdown from "./ProfessionalDropdown";
 import Link from "next/link";
+import {Tables} from "@/database";
+import Image from "next/image";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
+type NavType = {
+  name: string;
+  href: string;
+  current: boolean
+}
 
-export default function Navbar({ session }: any) {
-  const router = useRouter();
-  const supabase = createClientComponentClient();
-  const [professional, setProfessional] = useState<Professional | null>(null);
-  const [client, setClient] = useState<Client | null>(null);
-  const [navigation, setNavigation] = useState<any>([
+type NavbarProps = {
+  client: Tables<"clients"> | null
+  professional: Tables<"professionals"> |null
+}
+export default function Navbar({ client, professional }: NavbarProps) {
+  const [navigation, setNavigation] = useState<NavType[]>([
     { name: "Home", href: "/", current: true },
     { name: "Marketplace", href: "/home/marketplace", current: false },
     { name: "Company", href: "/home/company", current: false },
@@ -36,34 +42,7 @@ export default function Navbar({ session }: any) {
       current: item.href === currentPathname,
     }));
     setNavigation(updatedNavigation);
-  }, [currentPathname]);
-
-  useEffect(() => {
-    async function getClient() {
-      const { data, error } = await supabase
-        .from("clients")
-        .select()
-        .eq("id", session.user.id)
-        .single();
-      if (error) console.error(error);
-      if (data) setClient(data);
-    }
-    async function getProfessional() {
-      const { data, error } = await supabase
-        .from("professionals")
-        .select()
-        .eq("id", session.user.id)
-        .single();
-      if (error) console.error(error);
-      if (data) setProfessional(data);
-    }
-    if (session && session.user.user_metadata.role === "professional") {
-      getProfessional();
-    }
-    if (session && session.user.user_metadata.role === "client") {
-      getClient();
-    }
-  }, [session, supabase, router]);
+  }, [currentPathname, navigation]);
 
   return (
     <Disclosure as="nav" className="">
@@ -85,9 +64,11 @@ export default function Navbar({ session }: any) {
               </div>
               <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                 <div className="flex flex-shrink-0 items-center">
-                  <img
+                  <Image
                     className="h-8 w-auto"
                     src="/plantsy.png"
+                    width={300}
+                    height={300}
                     alt="Your Company"
                   />
                 </div>
@@ -128,13 +109,13 @@ export default function Navbar({ session }: any) {
                 {!client && !professional && (
                   <div className="ml-2 sm:ml-4 flex flex-col md:flex-row justify-center mt-8 md:mt-0 items-center gap-x-2 sm:gap-x-6">
                     <Link
-                      href="/account/auth/register"
+                      href={"/account/auth/register"}
                       className="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
                     >
                       Get started
                     </Link>
                     <Link
-                      href="/account/auth/login"
+                      href={"/account/auth/login"}
                       className="text-sm font-semibold leading-6 text-gray-900"
                     >
                       Log in <span aria-hidden="true">→</span>

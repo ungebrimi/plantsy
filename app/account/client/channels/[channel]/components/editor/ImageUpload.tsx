@@ -3,22 +3,38 @@ import { CameraIcon } from "@heroicons/react/24/outline";
 import React, { ChangeEvent, SetStateAction, useState } from "react";
 import ImageModal from "./ImageModal";
 import { Session } from "@supabase/supabase-js";
+import {Tables} from "@/database";
+import {StorageError} from "@supabase/storage-js";
 
 interface ImageUploadProps {
-  session: Session;
+  client: Tables<"clients">;
+  images: Tables<"files">[]
+  setImages: React.Dispatch<SetStateAction<Tables<"files">[]>>
 }
 
-const ImageUpload = ({ session }: ImageUploadProps) => {
+const ImageUpload = ({client, images, setImages }: ImageUploadProps) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const { loading, images, setImages, error, handleImageUpload } =
+  const { loading, handleMultipleImagesUpload } =
     useImageUpload();
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    handleImageUpload(event, `${session.user.id}/files`, true);
+  const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    try {
+      const result = await handleMultipleImagesUpload(event, `${client.id}/files`);
+
+      if (Array.isArray(result)) {
+        // It's an array of images, set it to state
+        setImages(result);
+      } else if (result instanceof StorageError) {
+        // Handle the storage error here
+        console.error(result);
+      } else {
+        // Handle the undefined case here
+        console.error('No images uploaded');
+      }
+    } catch (e) {
+      console.error(e);
+    }
   };
-  if (error) {
-    console.error(error);
-  }
 
   return (
     <div className="flow-root">

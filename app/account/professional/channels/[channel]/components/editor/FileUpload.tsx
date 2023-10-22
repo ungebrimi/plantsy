@@ -8,15 +8,15 @@ import { Tables } from "@/database";
 interface FileUploadProps {
   files: Tables<"files">[];
   setFiles: React.Dispatch<SetStateAction<Tables<"files">[]>>;
-  session: any;
+  professional: Tables<"professionals">;
 }
 
-const FileUpload = ({ files, setFiles, session }: FileUploadProps) => {
+const FileUpload = ({ files, setFiles, professional }: FileUploadProps) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const { loading, response, error, handleFileUpload } = useFileUpload();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    handleFileUpload(event, `${session.user.id}/files`);
+    handleFileUpload(event, `${professional.id}/files`);
   };
 
   React.useEffect(() => {

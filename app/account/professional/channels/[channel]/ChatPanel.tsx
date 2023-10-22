@@ -78,7 +78,7 @@ const ChatPanel = ({
           </h1>
         </div>
       )}
-      <Editor session={session} channel={channel} professional={professional} />
+      <Editor channel={channel} professional={professional} />
     </div>
   );
 };

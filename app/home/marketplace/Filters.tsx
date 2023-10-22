@@ -1,9 +1,9 @@
 import React from "react";
 import { Disclosure } from "@headlessui/react";
 import { MinusIcon, PlusIcon } from "@heroicons/react/20/solid";
-import { ServiceCategoryType } from "@/dbtypes";
+import {Tables} from "@/database";
 
-function Filters({ categories }: any) {
+function Filters({ categories }: {categories: Tables<"service_categories">[]}) {
   return (
     <form className="hidden lg:block">
       <h3 className="sr-only">Categories</h3>
@@ -28,12 +28,12 @@ function Filters({ categories }: any) {
             <Disclosure.Panel className="pt-6">
               <div className="space-y-4">
                 {categories.map(
-                  (option: ServiceCategoryType, optionIdx: number) => (
+                  (option: Tables<"service_categories">, optionIdx: number) => (
                     <div key={option.value} className="flex items-center">
                       <input
                         id={`filter-${optionIdx}`}
                         name={`${option.id}[]`}
-                        defaultValue={option.value}
+                        defaultValue={option.value as string}
                         type="checkbox"
                         defaultChecked={option.checked}
                         className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"

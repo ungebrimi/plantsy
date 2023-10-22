@@ -1,4 +1,4 @@
-import { DbResultOk, Tables } from "@/database";
+import { DbResultOk, Tables} from "@/database";
 import useImageUpload from "@/hooks/useImageUpload";
 import { PhotoIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
@@ -11,20 +11,19 @@ interface ThumbnailProps {
 }
 
 function Thumbnail({ professional, formData, setFormData }: ThumbnailProps) {
-  const { loading, error, handleImageUpload, removeImage } = useImageUpload();
-
+  const { loading, handleSingleImageUpload, removeImage } = useImageUpload();
   const handleImageChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     try {
-      (await handleImageUpload(
+      const image = await handleSingleImageUpload(
         event,
         `${professional.id}/images`,
-        false,
-      )) as DbResultOk<Tables<"files">>;
-      setFormData({ ...formData, thumbnail: null });
+      ) as DbResultOk<Tables<"files">>;
+      setFormData({ ...formData, thumbnail: image });
     } catch (error) {
-      console.error("Error uploading the image:", error);
+      console.log("There was an error uploading the image")
+        console.error(error)
     }
   };
 
@@ -35,8 +34,8 @@ function Thumbnail({ professional, formData, setFormData }: ThumbnailProps) {
       // If removal is successful, reset the states
       setFormData((formData: any) => ({ ...formData, thumbnail: null }));
     } catch (error) {
-      // Handle the error, e.g., display an error message
-      console.error("Error removing the image:", error);
+      console.log("There was an error when removing the image");
+      console.error(error)
     }
   };
 
@@ -96,9 +95,7 @@ function Thumbnail({ professional, formData, setFormData }: ThumbnailProps) {
                   name="image-upload"
                   type="file"
                   className="sr-only"
-                  onChange={(e) => {
-                    handleImageChange(e);
-                  }}
+                  onChange={(e) =>handleImageChange(e)}
                 />
               </label>
               <p className="pl-1">or drag and drop</p>
@@ -106,11 +103,6 @@ function Thumbnail({ professional, formData, setFormData }: ThumbnailProps) {
             <p className="text-xs leading-5 text-gray-600">
               PNG, JPG, GIF up to 10MB
             </p>
-            {error && (
-              <p className="text-sm leading-6 font-medium text-red-500">
-                {error.message}
-              </p>
-            )}
           </div>
         )}
       </div>

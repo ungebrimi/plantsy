@@ -1,37 +1,40 @@
 import useImageUpload from "@/hooks/useImageUpload";
 import { CameraIcon } from "@heroicons/react/24/outline";
-import React, { ChangeEvent, SetStateAction, useState } from "react";
-import ImageModal from "./ImageModal";
+import React, {ChangeEvent, SetStateAction, useState} from "react";
 import { Tables } from "@/database";
-import { Session } from "@supabase/supabase-js";
+import ImageModal from "./ImageModal";
+import {StorageError} from "@supabase/storage-js";
+
 
 interface ImageUploadProps {
-  gallery: Tables<"files">[];
-  setGallery: React.Dispatch<SetStateAction<Tables<"files">[]>>;
-  session: Session;
+  professional: Tables<"professionals">;
+  images: Tables<"files">[]
+  setImages: React.Dispatch<SetStateAction<Tables<"files">[]>>
 }
 
-// this component has a unfortunate namechange on the props.
-// this is due to my hook returns images when there is more than one image uploaded.
-// DON'T CHANGE THE HOOK it affects many components.
-const ImageUpload = ({ setGallery, session }: ImageUploadProps) => {
+const ImageUpload = ({professional, images, setImages }: ImageUploadProps) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const { loading, images, setImages, error, handleImageUpload } =
+  const { loading, handleMultipleImagesUpload } =
     useImageUpload();
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    handleImageUpload(event, `${session.user.id}/files`, true);
-  };
+  const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    try {
+      const result = await handleMultipleImagesUpload(event, `${professional.id}/files`);
 
-  React.useEffect(() => {
-    const handleFormDataUpdate = () => {
-      if (error) console.error(error);
-      if (images && !error) {
-        setGallery(images);
+      if (Array.isArray(result)) {
+        // It's an array of images, set it to state
+        setImages(result);
+      } else if (result instanceof StorageError) {
+        // Handle the storage error here
+        console.error(result);
+      } else {
+        // Handle the undefined case here
+        console.error('No images uploaded');
       }
-    };
-    handleFormDataUpdate();
-  }, [images, error, setGallery]);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   return (
     <div className="flow-root">

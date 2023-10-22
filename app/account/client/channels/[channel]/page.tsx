@@ -31,7 +31,7 @@ const Channel = async ({ params }: PageProps) => {
     .eq("id", channel.professional_id)
     .single();
 
-  const { data: client } = await supabase
+  const { data: client, error: clientError } = await supabase
     .from("clients")
     .select()
     .eq("id", channel.client_id)
@@ -42,17 +42,23 @@ const Channel = async ({ params }: PageProps) => {
   }
   const typedServerMessages: Tables<"messages">[] = serverMessages || [];
 
-  return (
-    <main className="flex flex-auto h-full max-w-7xl mx-auto">
-      <ChatPanel
-        session={session}
-        serverMessages={typedServerMessages}
-        channel={channel}
-        professional={professional}
-        client={client}
-      />
-    </main>
-  );
+  if(client && !clientError) {
+    if(client.profile_picture) {
+      JSON.parse(client.profile_picture)
+    }
+    return (
+        <main className="flex flex-auto h-full max-w-7xl mx-auto">
+          <ChatPanel
+              serverMessages={typedServerMessages}
+              channel={channel}
+              professional={professional}
+              client={client}
+          />
+        </main>
+    );
+  } else {
+    redirect("/")
+  }
 };
 
 export default Channel;

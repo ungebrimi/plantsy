@@ -1,11 +1,11 @@
 "use client";
-import { Professional } from "@/dbtypes";
 import Image from "next/image";
 import { Menu, Transition } from "@headlessui/react";
 import React, { Fragment } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import {Tables} from "@/database";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -14,13 +14,11 @@ function classNames(...classes: string[]) {
 function ProfessionalDropdown({
   professional,
 }: {
-  professional: Professional;
+  professional: Tables<"professionals">;
 }) {
   const supabase = createClientComponentClient();
 
   const router = useRouter();
-  const profilePicture = JSON.parse(professional.profile_picture);
-
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     router.refresh();
@@ -32,12 +30,13 @@ function ProfessionalDropdown({
         <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
           <span className="absolute -inset-1.5" />
           <span className="sr-only">Open user menu</span>
-          {profilePicture ? (
+          {professional.profile_picture && typeof professional.profile_picture === "object" &&
+            "url" in professional.profile_picture  ? (
             <Image
               width={300}
               className="h-8 w-8 rounded-full"
               height={300}
-              src={profilePicture.url}
+              src={professional.profile_picture.url  as string}
               alt=""
             />
           ) : (
@@ -64,7 +63,7 @@ function ProfessionalDropdown({
           <Menu.Item>
             {({ active }) => (
               <Link
-                href="/account/professional"
+                href={"/account/professional"}
                 className={classNames(
                   active ? "bg-gray-100" : "",
                   "block px-4 py-2 text-sm text-gray-700",

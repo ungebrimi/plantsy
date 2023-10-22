@@ -1,4 +1,4 @@
-import { Fragment, SetStateAction } from "react";
+import React, { Fragment, SetStateAction } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import Profile from "./Profile";

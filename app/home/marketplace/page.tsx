@@ -1,6 +1,7 @@
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import ClientPage from "./ClientPage";
 import { cookies } from "next/headers";
+import {redirect} from "next/navigation";
 
 export default async function page() {
   const supabase = createServerComponentClient({ cookies });
@@ -12,7 +13,11 @@ export default async function page() {
     .select();
 
   if (servicesError) console.error(servicesError);
-  if (services) {
+  if(categoriesError) console.error(categoriesError)
+  if (services && categories) {
     return <ClientPage serverServices={services} categories={categories} />;
+  }
+  else {
+    redirect("/")
   }
 }

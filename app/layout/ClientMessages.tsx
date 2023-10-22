@@ -1,11 +1,10 @@
-"use client";
-import { Fragment } from "react";
+import React, {Fragment, SetStateAction} from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { Client } from "@/dbtypes";
 import Profile from "./client/Profile";
 import ActiveChannels from "./client/ActiveChannels";
 import ArchivedChannels from "./client/ArchivedChannels";
+import {Tables} from "@/database";
 
 export default function ClientMessages({
   open,
@@ -13,8 +12,8 @@ export default function ClientMessages({
   client,
 }: {
   open: boolean;
-  setOpen: any;
-  client: Client;
+  setOpen: React.Dispatch<SetStateAction<boolean>>;
+  client: Tables<"clients">;
 }) {
   return (
     <Transition.Root show={open} as={Fragment}>

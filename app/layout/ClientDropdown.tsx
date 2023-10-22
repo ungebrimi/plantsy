@@ -1,5 +1,4 @@
 "use client";
-import { Client } from "@/dbtypes";
 import { Menu, Transition } from "@headlessui/react";
 import React, { Fragment, useState } from "react";
 import Image from "next/image";
@@ -7,12 +6,13 @@ import Link from "next/link";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import ClientMessages from "./ClientMessages";
+import {Tables} from "@/database";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-function ClientDropdown({ client }: { client: Client }) {
+function ClientDropdown({ client }: { client: Tables<"clients"> }) {
   const [openMessagesSidebar, setOpenMessagesSidebar] =
     useState<boolean>(false);
   const supabase = createClientComponentClient();
@@ -21,7 +21,6 @@ function ClientDropdown({ client }: { client: Client }) {
     await supabase.auth.signOut();
     router.refresh();
   };
-  const profilePicture = JSON.parse(client.profile_picture);
 
   return (
     <Menu as="div" className="relative ml-3">
@@ -29,12 +28,13 @@ function ClientDropdown({ client }: { client: Client }) {
         <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
           <span className="absolute -inset-1.5" />
           <span className="sr-only">Open user menu</span>
-          {profilePicture ? (
+          {client.profile_picture && typeof client.profile_picture === "object" &&
+          "url" in client.profile_picture  ? (
             <Image
               width={300}
               className="h-8 w-8 rounded-full"
               height={300}
-              src={profilePicture.url}
+              src={client.profile_picture.url as string}
               alt=""
             />
           ) : (
@@ -74,7 +74,7 @@ function ClientDropdown({ client }: { client: Client }) {
           <Menu.Item>
             {({ active }) => (
               <Link
-                href="/account/client/profile"
+                href={"/account/client/profile"}
                 className={classNames(
                   active ? "bg-gray-100" : "",
                   "block px-4 py-2 text-sm text-gray-700",

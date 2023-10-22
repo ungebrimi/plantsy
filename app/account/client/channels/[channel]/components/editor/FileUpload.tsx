@@ -1,6 +1,6 @@
 "use client";
 import { PaperClipIcon } from "@heroicons/react/24/outline";
-import React, { ChangeEvent, SetStateAction, useState } from "react";
+import React, {ChangeEvent, SetStateAction, useEffect, useState} from "react";
 import FileModal from "./FileModal";
 import useFileUpload from "@/hooks/useFileUpload";
 import { Tables } from "@/database";
@@ -9,18 +9,18 @@ import { Session } from "@supabase/supabase-js";
 interface FileUploadProps {
   files: Tables<"files">[];
   setFiles: React.Dispatch<SetStateAction<Tables<"files">[]>>;
-  session: Session;
+  client: Tables<"clients">;
 }
 
-const FileUpload = ({ files, setFiles, session }: FileUploadProps) => {
+const FileUpload = ({ files, setFiles, client }: FileUploadProps) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const { loading, response, error, handleFileUpload } = useFileUpload();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    handleFileUpload(event, `${session.user.id}/files`);
+    handleFileUpload(event, `${client.id}/files`);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleFormDataUpdate = () => {
       if (error) console.error(error);
       if (response && !error) {

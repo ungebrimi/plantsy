@@ -143,6 +143,7 @@ export interface Database {
       clients: {
         Row: {
           about: string | null;
+          active: boolean;
           city: string | null;
           company: string | null;
           country: string | null;
@@ -168,6 +169,7 @@ export interface Database {
         };
         Insert: {
           about?: string | null;
+          active: boolean;
           city?: string | null;
           company?: string | null;
           country?: string | null;
@@ -193,6 +195,7 @@ export interface Database {
         };
         Update: {
           about?: string | null;
+          active: boolean;
           city?: string | null;
           company?: string | null;
           country?: string | null;

@@ -1,27 +1,34 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { EnvelopeIcon, PhoneIcon, StarIcon } from "@heroicons/react/24/outline";
+import { EnvelopeIcon } from "@heroicons/react/24/outline";
 import { Tab } from "@headlessui/react";
 import Image from "next/image";
-import { Client, FileType } from "@/dbtypes";
 import Link from "next/link";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import {createClientComponentClient, Session} from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
+import {Tables} from "@/database";
+import {getSession} from "@/app/supabase-client";
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-function Service({ service, professional, session }: any) {
-  const [images, setImages] = useState<FileType[]>([]);
+interface ServiceProps {
+  service: Tables<"services">
+  professional: Tables<"professionals">
+  session: Session | null
+}
+
+function Service({ service, professional, session }: ServiceProps) {
+  const [images, setImages] = useState<Tables<"files">[]>([]);
   const [professionalProfilePicture, setProfessionalProfilePicture] =
-    useState<FileType>(JSON.parse(professional.profile_picture));
+    useState<Tables<"files">>(JSON.parse(professional.profile_picture as string));
   const supabase = createClientComponentClient();
   const router = useRouter();
 
   useEffect(() => {
     if (!service) return;
-    const thumbnail = JSON.parse(service.thumbnail);
-    const resistingImages = JSON.parse(service.images);
+    const thumbnail = JSON.parse(service.thumbnail as string);
+    const resistingImages = JSON.parse(service.images as string);
     setImages([thumbnail, ...resistingImages]);
   }, [service]);
 
@@ -59,7 +66,7 @@ function Service({ service, professional, session }: any) {
             <div className="mx-auto mt-6 hidden w-full max-w-2xl sm:block lg:max-w-none">
               <Tab.List className="grid grid-cols-4 gap-6">
                 {images &&
-                  images.map((image: FileType, idx: number) => (
+                  images.map((image: Tables<"files">, idx: number) => (
                     <Tab
                       key={idx}
                       className="relative flex h-24 cursor-pointer items-center justify-center rounded-md bg-white text-sm font-medium uppercase text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-offset-4"
@@ -67,8 +74,10 @@ function Service({ service, professional, session }: any) {
                       {({ selected }) => (
                         <>
                           <span className="absolute inset-0 overflow-hidden rounded-md">
-                            <img
-                              src={image.url}
+                            <Image
+                                width={300}
+                                height={400}
+                              src={image.url as string}
                               alt=""
                               className="h-full w-full object-cover object-center"
                             />
@@ -88,10 +97,12 @@ function Service({ service, professional, session }: any) {
             </div>
             <Tab.Panels className="aspect-h-1 aspect-w-1 w-full">
               {images &&
-                images.map((image: FileType, idx: number) => (
+                images.map((image: Tables<"files">, idx: number) => (
                   <Tab.Panel key={idx}>
-                    <img
-                      src={image.url}
+                    <Image
+                      src={image.url as string}
+                      width={300}
+                      height={400}
                       alt="#"
                       className="h-full w-full object-cover object-center sm:rounded-lg"
                     />
@@ -110,7 +121,7 @@ function Service({ service, professional, session }: any) {
                   width={300}
                   height={300}
                   className="mx-auto h-32 w-32 flex-shrink-0 rounded-full"
-                  src={professionalProfilePicture.url}
+                  src={professionalProfilePicture.url as string}
                   alt=""
                 />
                 <h3 className="mt-6 text-sm font-medium text-gray-900">
@@ -132,7 +143,7 @@ function Service({ service, professional, session }: any) {
               <div>
                 {!session && (
                   <Link
-                    href="/account/auth/register"
+                    href={"/account/auth/register"}
                     className="relative w-full -mr-px inline-flex bg-red-50 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-red-400"
                   >
                     Sign up as a client to contact this professional
@@ -141,7 +152,7 @@ function Service({ service, professional, session }: any) {
                 {session &&
                   session.user.user_metadata.role === "professional" && (
                     <Link
-                      href="/account/auth/register"
+                      href={"/account/auth/register"}
                       className="relative -mr-px inline-flex w-full bg-red-50 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-red-400"
                     >
                       <EnvelopeIcon

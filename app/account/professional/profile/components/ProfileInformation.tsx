@@ -9,10 +9,10 @@ import {
 } from "@heroicons/react/24/outline";
 import { Tables } from "@/database";
 
-interface Form {
+type Form = {
   website: string | null;
   about: string | null;
-  profile_picture: any;
+  profile_picture: Tables<"files"> | null;
 }
 
 const ProfileInformation = ({
@@ -26,7 +26,7 @@ const ProfileInformation = ({
   const [formData, setFormData] = useState<Form>({
     website: professional.website,
     about: professional.about,
-    profile_picture: JSON.parse(professional.profile_picture as string),
+    profile_picture: professional.profile_picture as Tables<"files">| null,
   });
 
   async function updateProfileInformation() {

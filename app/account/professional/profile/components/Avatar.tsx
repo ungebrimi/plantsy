@@ -3,16 +3,15 @@ import React, { SetStateAction } from "react";
 import Image from "next/image";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import useImageUpload from "@/hooks/useImageUpload";
-import { Tables } from "@/database";
+import {Tables} from "@/database";
 
 interface Form {
   website: string | null;
   about: string | null;
-  profile_picture: Tables<"files">;
+  profile_picture: Tables<"files"> | null
 }
-
 const Avatar = ({
-  formData,
+    formData,
   setFormData,
   professional,
 }: {
@@ -20,28 +19,28 @@ const Avatar = ({
   setFormData: React.Dispatch<SetStateAction<Form>>;
   professional: Tables<"professionals">;
 }) => {
-  const { loading, image, error, handleImageUpload, removeImage } =
+  const { loading, handleSingleImageUpload, removeImage } =
     useImageUpload();
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (formData.profile_picture) {
-      removeImage(formData.profile_picture.id);
+  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      const image = await handleSingleImageUpload(event, `${professional.id}/avatars`);
+      setFormData({...formData, profile_picture: image as Tables<"files">});
+    } catch (e) {
+      console.error(e)
     }
-    handleImageUpload(event, `${professional.id}/avatars`, false);
   };
-  const profilePicture = JSON.parse(professional.profile_picture as string);
+  const handleRemoveImage = async (image: Tables<"files">) => {
+    try {
+      // Attempt to remove the image
+      await removeImage(image?.id, `${professional.id}/images/${image?.name}`);
+      setFormData((formData: any) => ({ ...formData, profile_picture: null }));
+    } catch (error) {
+      console.log("There was an error when removing the image");
+      console.error(error)
+    }
+  };
 
-  React.useEffect(() => {
-    const handleFormDataUpdate = () => {
-      if (error) console.error(error);
-      if (image && !error) {
-        setFormData((prevFormData: Form) => ({
-          ...prevFormData,
-          profile_picture: image,
-        }));
-      }
-    };
-    handleFormDataUpdate();
-  }, [image, error, setFormData]);
+
 
   return (
     <div className="col-span-full">
@@ -52,12 +51,14 @@ const Avatar = ({
         Photo
       </label>
       <div className="mt-2 flex items-center gap-x-3">
-        {profilePicture ? (
+        {professional.profile_picture &&
+        typeof professional.profile_picture === "object" &&
+        "url" in professional.profile_picture ? (
           <>
             <Image
               width={300}
               height={300}
-              src={profilePicture.url}
+              src={professional.profile_picture.url as string}
               alt="profile picture"
               className="h-12 w-12 text-gray-300 rounded-full"
             />
@@ -94,7 +95,6 @@ const Avatar = ({
         )}
       </div>
       {loading && <p>Loading image...</p>}
-      {error && <p>Error uploading image.</p>}
     </div>
   );
 };

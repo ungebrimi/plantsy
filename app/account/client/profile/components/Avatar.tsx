@@ -3,12 +3,12 @@ import React, { SetStateAction } from "react";
 import Image from "next/image";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import useImageUpload from "@/hooks/useImageUpload";
-import { Tables } from "@/database";
+import {Tables} from "@/database";
 
 interface Form {
   website: string | null;
   about: string | null;
-  profile_picture: Tables<"files">;
+  profile_picture: Tables<"files"> | null
 }
 
 const Avatar = ({
@@ -20,23 +20,16 @@ const Avatar = ({
   setFormData: React.Dispatch<SetStateAction<Form>>;
   client: Tables<"clients">;
 }) => {
-  const { loading, image, error, handleImageUpload } = useImageUpload();
+  const { loading, handleSingleImageUpload } = useImageUpload();
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    handleImageUpload(event, `${client.id}/avatars`, false);
+  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      const image = await handleSingleImageUpload(event, `${client.id}/avatars`);
+      setFormData({...formData, profile_picture: image as Tables<"files">});
+    } catch (e) {
+      console.error(e)
+    }
   };
-
-  React.useEffect(() => {
-    const handleFormDataUpdate = () => {
-      if (image && !error) {
-        setFormData((prevFormData: Form) => ({
-          ...prevFormData,
-          profile_picture: image,
-        }));
-      }
-    };
-    handleFormDataUpdate();
-  }, [image, error, setFormData]);
 
   return (
     <div className="col-span-full">
@@ -47,7 +40,7 @@ const Avatar = ({
         Photo
       </label>
       <div className="mt-2 flex items-center gap-x-3">
-        {formData.profile_picture ? (
+        {formData.profile_picture && typeof formData.profile_picture === "object" && "url" in formData.profile_picture ? (
           <>
             <Image
               width={300}
@@ -89,7 +82,6 @@ const Avatar = ({
         )}
       </div>
       {loading && <p>Loading image...</p>}
-      {error && <p>Error uploading image.</p>}
     </div>
   );
 };

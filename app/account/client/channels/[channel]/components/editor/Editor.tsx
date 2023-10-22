@@ -11,31 +11,29 @@ import useImageUpload from "@/hooks/useImageUpload";
 import { Tables } from "@/database";
 
 export default function Editor({
-  session,
   client,
   channel,
 }: {
-  session: Session;
   channel: Tables<"channels">;
   client: Tables<"clients">;
 }) {
   const supabase = createClientComponentClient();
   const [message, setMessage] = useState<string>("");
   const [files, setFiles] = useState<Tables<"files">[]>([]);
-  const profilePicture = JSON.parse(client.profile_picture as string);
-  const { images, setImages } = useImageUpload();
-
+  const [images, setImages] = useState<Tables<"files">[]>([]);
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    if (message !== "") {
+    const fileUrls = files.map((file) => file.url); // Assuming files have a "url" property
+    const imageUrls = images.map((image) => image.url); // Assuming images have a "url" property
+
       const { data, error } = await supabase
         .from("messages")
         .insert({
           message: message,
-          client_id: session.user.id,
+          client_id: client.id,
           channel_id: channel.id,
-          files: files.length > 0 ? JSON.stringify(files) : null,
-          images: images.length > 0 ? JSON.stringify(images) : null,
+          files: fileUrls.length > 0 ? fileUrls : null,
+          images: imageUrls.length > 0 ? imageUrls : null,
         })
         .select();
 
@@ -48,19 +46,19 @@ export default function Editor({
       setFiles([]);
       setImages([]);
     }
-  };
 
   return (
     <section className="flex items-start mt-6 sm:space-x-4">
       {client && (
         <>
           <div className="flex-shrink-0 hidden sm:block">
-            {client.profile_picture ? (
+            {client.profile_picture && typeof client.profile_picture === "object" &&
+            "url" in client.profile_picture ? (
               <Image
                 width={300}
                 height={300}
                 className="inline-block h-10 w-10 rounded-full"
-                src={profilePicture.url}
+                src={client.profile_picture.url as string}
                 alt={client.first_name + " " + client.last_name}
               />
             ) : (
@@ -88,11 +86,11 @@ export default function Editor({
               </div>
               <div className="flex justify-between pt-2">
                 <div className="flex items-center space-x-2">
-                  <ImageUpload session={session} />
+                  <ImageUpload client={client} images={images} setImages={setImages}/>
                   <FileUpload
                     files={files}
                     setFiles={setFiles}
-                    session={session}
+                    client={client}
                   />
                   <Emoji message={message} setMessage={setMessage} />
                 </div>
@@ -110,5 +108,5 @@ export default function Editor({
         </>
       )}
     </section>
-  );
+  )
 }

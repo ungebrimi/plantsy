@@ -29,7 +29,7 @@ const Services = async () => {
     return (
       <main className="-mx-px space-y-4 md:space-y-0 md:space-x-4 grid grid-cols-1 sm:mx-0 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         <Link
-          href="services/create-a-service"
+          href={"services/create-a-service"}
           className="items-center text-gray-400 hover:text-green-500 hover:border-green-500 flex justify-center cursor-pointer shadow border border-dashed border-gray-900/25 px-6 py-10 bg-white"
         >
           <div className="text-center">

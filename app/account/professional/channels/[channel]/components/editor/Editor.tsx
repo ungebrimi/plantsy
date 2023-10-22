@@ -9,11 +9,9 @@ import {
 import { Tables } from "@/database";
 
 export default function Editor({
-  session,
   professional,
   channel,
 }: {
-  session: Session;
   channel: Tables<"channels">;
   professional: Tables<"professionals">;
 }) {
@@ -25,7 +23,6 @@ export default function Editor({
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    if (message !== "") {
       const fileUrls = files.map((file) => file.url); // Assuming files have a "url" property
       const imageUrls = images.map((image) => image.url); // Assuming images have a "url" property
 
@@ -33,7 +30,7 @@ export default function Editor({
         .from("messages")
         .insert({
           message: message,
-          professional_id: session.user.id,
+          professional_id: professional.id,
           channel_id: channel.id,
           files: fileUrls.length > 0 ? fileUrls : null,
           images: imageUrls.length > 0 ? imageUrls : null,
@@ -49,7 +46,6 @@ export default function Editor({
       setMessage("");
       setFiles([]);
       setImages([]);
-    }
   };
 
   return (
@@ -87,11 +83,11 @@ export default function Editor({
           <div className="flex justify-between pt-2">
             <div className="flex items-center space-x-2">
               <ImageUpload
-                gallery={images}
-                setGallery={setImages}
-                session={session}
+                images={images}
+                setImages={setImages}
+                professional={professional}
               />
-              <FileUpload files={files} setFiles={setFiles} session={session} />
+              <FileUpload files={files} setFiles={setFiles} professional={professional} />
               <Emoji message={message} setMessage={setMessage} />
             </div>
             <div className="flex-shrink-0">

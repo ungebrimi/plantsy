@@ -3,14 +3,12 @@ import React, { useState, useEffect } from "react";
 import Inbox from "./components/chat/Inbox";
 import Editor from "./components/editor/Editor";
 import {
-  Session,
   createClientComponentClient,
 } from "@supabase/auth-helpers-nextjs";
 import Image from "next/image";
 import { Tables } from "@/database";
 
 type ChatPanelProps = {
-  session: Session;
   serverMessages: Tables<"messages">[];
   channel: Tables<"channels">;
   professional: Tables<"professionals">;
@@ -18,7 +16,6 @@ type ChatPanelProps = {
 };
 
 const ChatPanel = ({
-  session,
   serverMessages,
   channel,
   professional,
@@ -27,6 +24,16 @@ const ChatPanel = ({
   const [messages, setMessages] =
     useState<Tables<"messages">[]>(serverMessages);
   const supabase = createClientComponentClient();
+  async function playAudio() {
+    const audio = new Audio('audio-file.mp3');
+    try {
+      await audio.play();
+      console.log('Audio played successfully');
+      // Perform any other actions after the audio has finished playing.
+    } catch (error) {
+      console.error('Error playing audio:', error);
+    }
+  }
 
   useEffect(() => {
     const channel = supabase
@@ -45,8 +52,7 @@ const ChatPanel = ({
             payload.new as Tables<"messages">,
           ]);
           // Play the notification sound
-          const audio = new Audio("/notification.mp3");
-          audio.play();
+          playAudio()
         },
       )
       .subscribe();
@@ -78,7 +84,7 @@ const ChatPanel = ({
           </h1>
         </div>
       )}
-      <Editor session={session} channel={channel} client={client} />
+      <Editor channel={channel} client={client} />
     </div>
   );
 };

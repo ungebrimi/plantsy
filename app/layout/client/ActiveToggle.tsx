@@ -2,13 +2,13 @@
 import { useState } from "react";
 import { Switch } from "@headlessui/react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { Client } from "@/dbtypes";
+import {Tables} from "@/database";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function ActiveToggle({ client }: { client: Client }) {
+export default function ActiveToggle({ client }: { client: Tables<"clients"> }) {
   const [enabled, setEnabled] = useState(client.active);
   const supabase = createClientComponentClient();
 
@@ -18,9 +18,10 @@ export default function ActiveToggle({ client }: { client: Client }) {
         .from("clients")
         .update({ active: !enabled }) // Toggle the active status
         .eq("id", client.id)
-        .select("active");
-      if (error) throw error;
-      return data[0].active; // Return the updated active status from the database
+        .select("active")
+          .single();
+      if (error) console.error(error);
+      return data?.active; // Return the updated active status from the database
     } catch (error) {
       console.error(error);
       return enabled; // Return the original state if an error occurs

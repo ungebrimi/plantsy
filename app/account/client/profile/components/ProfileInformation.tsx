@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import Avatar from "./Avatar";
 import {
@@ -12,7 +12,7 @@ import { Tables } from "@/database";
 interface Form {
   website: string | null;
   about: string | null;
-  profile_picture: Tables<"files">;
+  profile_picture: Tables<"files"> | null;
 }
 
 const ProfileInformation = ({ client }: { client: Tables<"clients"> }) => {
@@ -22,7 +22,7 @@ const ProfileInformation = ({ client }: { client: Tables<"clients"> }) => {
   const [formData, setFormData] = useState<Form>({
     website: client.website,
     about: client.about,
-    profile_picture: JSON.parse(client.profile_picture as string),
+    profile_picture: client.profile_picture as Tables<"files">| null,
   });
 
   async function updateProfileInformation() {
@@ -40,7 +40,7 @@ const ProfileInformation = ({ client }: { client: Tables<"clients"> }) => {
 
       if (error) {
         setErrorMessage("error: " + error.message);
-        throw error;
+        console.error(error);
       }
       if (data) {
         setSuccess(true);

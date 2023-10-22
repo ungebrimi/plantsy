@@ -1,7 +1,8 @@
-import { SetStateAction, useState } from "react";
+import React, {useState} from "react";
 import imageCompression from "browser-image-compression";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { DbResult, DbResultErr, DbResultOk, Tables } from "@/database";
+import {createClientComponentClient} from "@supabase/auth-helpers-nextjs";
+import {Tables} from "@/database";
+import {StorageError} from "@supabase/storage-js";
 
 type FileProcessingOptions = {
   maxSizeMB: number;
@@ -11,24 +12,19 @@ type FileProcessingOptions = {
 
 interface useImageUploadProps {
   loading: boolean;
-  image: Tables<"files"> | null;
-  setImage: React.Dispatch<SetStateAction<Tables<"files"> | null>>;
-  images: Tables<"files">[] | null;
-  setImages: React.Dispatch<SetStateAction<Tables<"files">[] | null>>;
-  error: DbResultErr;
-  handleImageUpload: (
-    event: React.ChangeEvent<HTMLInputElement>,
-    path: string,
-    isMultiple: boolean,
-  ) => Promise<void>;
+    handleSingleImageUpload: (
+        event: React.ChangeEvent<HTMLInputElement>,
+        path: string
+    ) => Promise<Tables<"files"> | undefined | StorageError>;
+    handleMultipleImagesUpload: (
+        event: React.ChangeEvent<HTMLInputElement>,
+        path: string
+    ) => Promise<Tables<"files">[] | undefined | StorageError>;
   removeImage: any;
 }
 
 const useImageUpload = (): useImageUploadProps => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [image, setImage] = useState<Tables<"files"> | null>(null);
-  const [images, setImages] = useState<Tables<"files">[] | null>(null);
-  const [error, setError] = useState<any>(null);
   const supabase = createClientComponentClient();
 
   const insertToFileTable = async ({ file, url }: any) => {
@@ -48,14 +44,47 @@ const useImageUpload = (): useImageUploadProps => {
     return data;
   };
 
-  const handleImageUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-    path: string,
-    isMultiple: boolean = false,
-  ) => {
-    const imageFiles = event.target.files;
-    if (!imageFiles) return;
+  const handleSingleImageUpload = async (
+      event: React.ChangeEvent<HTMLInputElement>,
+      path: string,
+  ): Promise<Tables<"files"> | undefined | StorageError> => {
+    setLoading(true);
+    const imageFile = event.target?.files;
+    const options: FileProcessingOptions = {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+    };
 
+      if (!imageFile) return
+    try {
+        const compressedFile = await imageCompression(imageFile[0], options);
+        const {error} = await supabase.storage
+            .from("professionals")
+            .upload(`${path}/${compressedFile.name}`, compressedFile, {
+              upsert: true,
+            });
+        if (error) throw error
+        const {data} = supabase.storage
+            .from("professionals")
+            .getPublicUrl(`${path}/${compressedFile.name}`);
+
+        return await insertToFileTable({
+          file: compressedFile,
+          url: data.publicUrl,
+        });
+      }
+      catch (error) {
+      throw error
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleMultipleImagesUpload = async (
+      event: React.ChangeEvent<HTMLInputElement>,
+      path: string
+  ): Promise<Tables<"files">[] | undefined | StorageError> => {
     setLoading(true);
 
     const options: FileProcessingOptions = {
@@ -64,85 +93,57 @@ const useImageUpload = (): useImageUploadProps => {
       useWebWorker: true,
     };
 
-    try {
-      if (isMultiple) {
+    if (event.target.files) {
+      try {
         const compressedFiles = await Promise.all(
-          Array.from(imageFiles).map(async (imageFile) => {
-            const compressedFile = await imageCompression(imageFile, options);
-            return compressedFile;
-          }),
+            Array.from(event.target.files).map(async (imageFile) => {
+              return await imageCompression(imageFile, options);
+            })
         );
 
         const uploadPromises: Promise<Tables<"files">>[] = compressedFiles.map(
-          async (compressedFile) => {
-            const { error } = await supabase.storage
-              .from("professionals")
-              .upload(`${path}/${compressedFile.name}`, compressedFile, {
-                upsert: true,
-              });
+            async (compressedFile) => {
+              const { error } = await supabase.storage
+                  .from("professionals")
+                  .upload(`${path}/${compressedFile.name}`, compressedFile, {
+                    upsert: true,
+                  });
 
-            if (error) {
-              setError(error);
-            } else {
-              const { data } = supabase.storage
-                .from("professionals")
-                .getPublicUrl(`${path}/${compressedFile.name}`);
+              if (error) {
+                throw error;
+              } else {
+                const { data } = supabase.storage
+                    .from("professionals")
+                    .getPublicUrl(`${path}/${compressedFile.name}`);
 
-              try {
-                const image = await insertToFileTable({
+                return await insertToFileTable({
                   file: compressedFile,
                   url: data.publicUrl,
                 });
-                return image;
-              } catch (error) {
-                setError(error);
               }
             }
-          },
         );
 
-        const res = (await Promise.all(uploadPromises)) as DbResultOk<
-          Tables<"files">[]
-        >;
-        return res;
-      } else {
-        const compressedFile = await imageCompression(imageFiles[0], options);
-        const { error } = await supabase.storage
-          .from("professionals")
-          .upload(`${path}/${compressedFile.name}`, compressedFile, {
-            upsert: true,
-          });
-
-        if (error) {
-          setError(error);
-        } else {
-          const { data } = supabase.storage
-            .from("professionals")
-            .getPublicUrl(`${path}/${compressedFile.name}`);
-
-          try {
-            const image = await insertToFileTable({
-              file: compressedFile,
-              url: data.publicUrl,
-            });
-            return image;
-          } catch (error) {
-            return error;
-          }
-        }
+        const results = await Promise.all(uploadPromises);
+        setLoading(false);
+        // filter so if any attempts that does not work out and returns undefined, gets removed from result
+        return results.filter((result) => result) as Tables<"files">[];
+      } catch (error) {
+        throw error;
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
-    } catch (error) {
-      setError(error);
-      setLoading(false);
     }
+    // Change the return type here to match your new requirement
+    return [];
   };
+
 
   const removeFromFileTable = async (fileId: number) => {
     const { error } = await supabase.from("files").delete().eq("id", fileId);
 
     if (error) {
-      setError(error);
+      throw error;
     }
     console.log("file deleted from table");
   };
@@ -152,52 +153,28 @@ const useImageUpload = (): useImageUploadProps => {
       .from("professionals")
       .remove([path]);
     if (error) {
-      setError(error);
+      throw error;
     }
     console.log("file removed from storage");
   };
 
-  const removeImage = async (
-    fileId: number,
-    path: string,
-    isMultiple: boolean = false,
-  ) => {
+  const removeImage = async (fileId: number, path: string) => {
     try {
       // Remove from the file table
       await removeFromFileTable(fileId);
       // Remove from storage
       await removeFromStorage(path);
 
-      if (!isMultiple) {
-        return null;
-      } else {
-        // Find the index of the image to remove from the images array
-        if (!images) return;
-        const indexToRemove = images.findIndex((img) => img.id === fileId);
-
-        console.log("Index to remove:", indexToRemove);
-
-        if (indexToRemove !== -1) {
-          const updatedImages = [...images];
-          updatedImages.splice(indexToRemove, 1);
-
-          console.log("Updated images:", updatedImages);
-
-          return updatedImages;
-        }
-      }
+      return null;
     } catch (error) {
-      setError(error);
+      throw error;
     }
   };
+
   return {
     loading,
-    image,
-    setImage,
-    images,
-    setImages,
-    error,
-    handleImageUpload,
+    handleSingleImageUpload,
+    handleMultipleImagesUpload,
     removeImage,
   };
 };

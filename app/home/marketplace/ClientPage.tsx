@@ -5,17 +5,17 @@ import Grid from "./Grid";
 import MobileFilterDialog from "./MobileFilterDialog";
 import Filters from "./Filters";
 import ActionGroup from "./ActionGroup";
-import { ServiceCategoryType, ServiceType } from "@/dbtypes";
+import {Tables} from "@/database";
 
 const ClientPage = ({
   serverServices,
   categories,
 }: {
-  serverServices: ServiceType[];
-  categories: any;
+  serverServices: Tables<"services">[];
+  categories: Tables<"service_categories">[];
 }) => {
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const [services, setServices] = useState<any>(serverServices);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState<boolean>(false);
+  const [services, setServices] = useState<Tables<"services">[]>(serverServices);
   return (
     <div>
       {/* Mobile filter dialog */}
