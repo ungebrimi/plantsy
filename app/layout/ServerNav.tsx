@@ -1,4 +1,4 @@
-
+export const dynamic = "force-dynamic"
 import React from "react";
 import Navbar from "./Navbar";
 import { getSession } from "../supabase-server";
@@ -30,24 +30,21 @@ async function ServerNav() {
 
     if (professional && professional.profile_picture) {
         professional.profile_picture = JSON.parse(professional.profile_picture)
+        return (
+            <header>
+                <Navbar client={null} professional={professional} />
+            </header>
+        )
     }
 
     if(client && client.profile_picture) {
         client.profile_picture = JSON.parse(client.profile_picture)
+        return (
+            <header>
+                     <Navbar client={client} professional={null} />
+            </header>
+        )
     }
-
-    if (clientError) {
-        console.error(clientError);
-    }
-    if (professionalError) {
-        console.error(professionalError);
-    }
-
-    return (
-        <header>
-            <Navbar client={client} professional={professional} />
-        </header>
-    );
 }
 
 export default ServerNav;

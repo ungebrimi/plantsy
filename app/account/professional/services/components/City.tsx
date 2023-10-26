@@ -1,4 +1,4 @@
-import { SetStateAction, useEffect, useState } from "react";
+import React, { SetStateAction, useEffect, useState } from "react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { Combobox } from "@headlessui/react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
@@ -11,9 +11,10 @@ function classNames(...classes: string[]) {
 interface CityProps {
   formData: Tables<"services">;
   setFormData: React.Dispatch<SetStateAction<Tables<"services">>>;
+  setZipList: React.Dispatch<SetStateAction<string[]>>
 }
 
-export default function City({ formData, setFormData }: CityProps) {
+export default function City({ formData, setFormData, setZipList }: CityProps) {
   const [query, setQuery] = useState("");
   const [cityList, setCityList] = useState<Tables<"cities">[]>([]);
   const supabase = createClientComponentClient();
@@ -27,7 +28,7 @@ export default function City({ formData, setFormData }: CityProps) {
 
       const { data, error } = await supabase
         .from("cities")
-        .select("city, county_name, state_name, id")
+        .select("city, county_name, state_name, id, zips")
         .textSearch("city", query)
         .range(0, 50); // Fetch 50 related cities
       if (error) {
@@ -45,14 +46,17 @@ export default function City({ formData, setFormData }: CityProps) {
     <Combobox
       as="div"
       value={formData}
-      onChange={(e: any) =>
+      onChange={(e: any) => {
+        const zipsArray = e.zips.split(" ");
+        setZipList(zipsArray);
         setFormData((data: Tables<"services">) => ({
           ...data,
           city: e.city,
           county: e.county_name,
           state: e.state_name,
-        }))
-      }
+          zip: zipsArray[0]
+        }));
+      }}
     >
       <Combobox.Label className="block text-sm font-medium leading-6 text-gray-900">
         City

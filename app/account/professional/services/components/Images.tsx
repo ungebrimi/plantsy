@@ -5,6 +5,7 @@ import Image from "next/image";
 import React, { SetStateAction } from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import {useNotification} from "@/context/NotificationContext";
 
 interface ImagesProps {
   professional: Tables<"professionals">;
@@ -14,7 +15,7 @@ interface ImagesProps {
 
 function Images({ professional, formData, setFormData }: ImagesProps) {
   const { loading, handleMultipleImagesUpload, removeImage } = useImageUpload();
-
+  const { addError } = useNotification()
   const handleImageChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -24,9 +25,13 @@ function Images({ professional, formData, setFormData }: ImagesProps) {
         `${professional.id}/images`,
       )) as DbResultOk<Tables<"files">>;
       setFormData({ ...formData, images: images });
-      console.log(images);
-    } catch (error) {
-      console.error("Error uploading the image:", error);
+    } catch (error: any) {
+      if(error.status_code === "409") {
+        addError(error.message + "rename the duplicated file to proceed")
+      }
+      else {
+        addError("We've encountered an issue with uploading your image: " + error.message)
+      }
     }
   };
 

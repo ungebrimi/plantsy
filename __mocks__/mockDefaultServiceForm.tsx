@@ -2,7 +2,7 @@ import { Tables } from "@/database";
 
 const mockDefaultServiceForm: Tables<"services"> = {
   city: "",
-  county: null,
+  county: "",
   created_at: null,
   description: "",
   id: 0,
@@ -11,12 +11,12 @@ const mockDefaultServiceForm: Tables<"services"> = {
   price: 0,
   professional_id: "",
   service_category: "",
-  state: null,
+  state: "",
   thumbnail: null,
   title: "",
-  vat: null,
+  vat: 0,
   vat_included: false,
-  zip: null,
+  zip: "",
 };
 
 export default mockDefaultServiceForm;

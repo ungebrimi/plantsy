@@ -3,6 +3,7 @@ import useImageUpload from "@/hooks/useImageUpload";
 import { PhotoIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import React, { SetStateAction } from "react";
+import {useNotification} from "@/context/NotificationContext";
 
 interface ThumbnailProps {
   professional: Tables<"professionals">;
@@ -12,6 +13,7 @@ interface ThumbnailProps {
 
 function Thumbnail({ professional, formData, setFormData }: ThumbnailProps) {
   const { loading, handleSingleImageUpload, removeImage } = useImageUpload();
+  const { addError } = useNotification()
   const handleImageChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -21,9 +23,13 @@ function Thumbnail({ professional, formData, setFormData }: ThumbnailProps) {
         `${professional.id}/images`,
       ) as DbResultOk<Tables<"files">>;
       setFormData({ ...formData, thumbnail: image });
-    } catch (error) {
-      console.log("There was an error uploading the image")
-        console.error(error)
+    } catch (error: any) {
+        if(error.status_code === "409") {
+            addError("We've encountered an issue with uploading your image: " + error.message + "rename the file to proceed")
+        }
+        else {
+            addError("We've encountered an issue with uploading your image: " + error.message)
+        }
     }
   };
 

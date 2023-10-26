@@ -42,7 +42,7 @@ export default function Navbar({ client, professional }: NavbarProps) {
       current: item.href === currentPathname,
     }));
     setNavigation(updatedNavigation);
-  }, [currentPathname, navigation]);
+  }, [currentPathname]);
 
   return (
     <Disclosure as="nav" className="">

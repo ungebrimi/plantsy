@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import {getSession} from "@/app/supabase-server";
 import Service from "@/app/home/marketplace/[service]/Service";
 import Reviews from "@/app/home/marketplace/[service]/Reviews";
+import {Tables} from "@/database";
 
 const reviews = {
   average: 4,
@@ -31,10 +32,6 @@ const reviews = {
   ],
 };
 
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
-}
-
 async function page({ params }: { params: { service: number } }) {
   const supabase = createServerComponentClient({ cookies });
   const session = (await getSession()) || null;
@@ -52,16 +49,29 @@ async function page({ params }: { params: { service: number } }) {
     .single();
 
   if (!serviceError && !professionalError && service && professional) {
+    let images: Tables<"files">[] = []
     if (professional.profile_picture)
-      professional.profile_picture = JSON.parse(professional.profile_picture);
-    if (service.thumbnail) service.thumbnail = JSON.parse(service.thumbnail);
-    if (service.images) service.images = JSON.parse(service.images);
-
-    const images = [service.thumbnail, ...service.images];
+      professional.profile_picture = JSON.parse(professional.profile_picture)  as Tables<"files">;
+    if (service.thumbnail) {
+      try {
+        service.thumbnail = JSON.parse(service.thumbnail) as Tables<"files">;
+        images = [service.thumbnail]
+      } catch (e) {
+        console.error(e)
+      }
+    }
+    if (service.images) {
+      try {
+        service.images = JSON.parse(service.images) as Tables<"files">[];
+        images = [service.thumbnail, ...service.images]
+      } catch (e) {
+        console.error(e)
+      }
+    }
 
     return (
       <main>
-        <Service service={service} professional={professional} session={session}/>
+        <Service service={service} professional={professional} session={session} images={images}/>
         <Reviews />
       </main>
     );

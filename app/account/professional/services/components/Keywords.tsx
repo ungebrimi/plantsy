@@ -79,7 +79,7 @@ function Keywords({ formData, setFormData }: KeywordsProps) {
             {keywords.map((word: string, idx: number) => (
               <span
                 key={idx}
-                className="inline-flex items-cerounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10"
+                className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10"
               >
                 {word}
                 <button

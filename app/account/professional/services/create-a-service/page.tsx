@@ -32,7 +32,7 @@ export default async function page() {
     state: "",
     thumbnail: null,
     title: "",
-    vat: 0,
+    vat: 25,
     vat_included: false,
     zip: "",
   };

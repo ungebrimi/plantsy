@@ -61,9 +61,7 @@ const useImageUpload = (): useImageUploadProps => {
         const compressedFile = await imageCompression(imageFile[0], options);
         const {error} = await supabase.storage
             .from("professionals")
-            .upload(`${path}/${compressedFile.name}`, compressedFile, {
-              upsert: true,
-            });
+            .upload(`${path}/${compressedFile.name}`, compressedFile);
         if (error) throw error
         const {data} = supabase.storage
             .from("professionals")
@@ -105,9 +103,7 @@ const useImageUpload = (): useImageUploadProps => {
             async (compressedFile) => {
               const { error } = await supabase.storage
                   .from("professionals")
-                  .upload(`${path}/${compressedFile.name}`, compressedFile, {
-                    upsert: true,
-                  });
+                  .upload(`${path}/${compressedFile.name}`, compressedFile);
 
               if (error) {
                 throw error;

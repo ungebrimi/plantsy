@@ -10,7 +10,8 @@ import { redirect, useRouter } from "next/navigation";
 import { Tables } from "@/database";
 import Keywords from "./Keywords";
 import TextInput from "./inputs/TextInput";
-
+import {useNotification} from "@/context/NotificationContext";
+import Zip from "@/app/account/professional/services/components/Zip";
 interface CardInformationProps {
   professional: Tables<"professionals">;
   service: Tables<"services">;
@@ -20,21 +21,57 @@ interface CardInformationProps {
 function ServiceForm({ professional, service, edit }: CardInformationProps) {
   const supabase = createClientComponentClient();
   const router = useRouter();
-  //states
-  const [serviceCategory, setServiceCategory] = useState({
-    name: service.service_category,
-    value: service.service_category,
-  });
   const [formData, setFormData] = useState<Tables<"services">>(service);
+  const [ zipList, setZipList ] = useState<string[]>([])
   // ref
   const formRef = useRef<HTMLFormElement>(null);
+  const { addError } = useNotification()
 
+  function checkForm(formData: Tables<"services">) {
+    switch (true) {
+      case !formData.service_category:
+        addError("Service category is required.");
+        return false;
+      case !formData.title:
+        addError("Title is required.");
+        return false;
+      case !formData.description:
+        addError("Description is required.");
+        return false;
+        // Add cases for other mandatory fields here.
+      case !formData.thumbnail:
+        addError("A thumbnail is required")
+            return false
+      case !formData.price:
+        addError("Price is required")
+            return false
+      case !formData.vat:
+        addError("VAT percentage is required")
+            return false
+      case !formData.city:
+        addError("City is required")
+            return false
+      case !formData.county:
+        addError("County is required")
+            return false
+      case !formData.state:
+        addError("State is required")
+            return false
+      case !formData.zip:
+        addError("ZIP is required")
+            return false
+      default:
+    }
+    return true
+  }
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    if (!formData.service_category) {
-      console.log("service category has not been selected");
+    if (!checkForm(formData)) {
+      // break the function if form is not valid
+      return;
     }
+
 
     if (edit) {
       const { data, error } = await supabase
@@ -51,14 +88,13 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
           county: formData.county,
           state: formData.state,
           zip: formData.zip,
-          service_category: serviceCategory.value,
+          service_category: formData.service_category,
           keywords: formData.keywords,
         })
         .eq("id", service.id)
         .select("*")
         .single();
       if (error) console.error(error);
-      setFormData(data);
       router.push("/account/professional/services");
     } else {
       const { error } = await supabase
@@ -75,8 +111,7 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
           county: formData.county,
           state: formData.state,
           zip: formData.zip,
-          //@ts-ignore
-          service_category: serviceCategory.value,
+          service_category: formData.service_category,
           keywords: formData.keywords,
         })
         .select()
@@ -217,7 +252,7 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
             </div>
 
             <div className="sm:col-span-3 sm:col-start-1">
-              <City formData={formData} setFormData={setFormData} />
+              <City formData={formData} setFormData={setFormData} setZipList={setZipList}/>
             </div>
 
             {/* STATE */}
@@ -246,14 +281,15 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
 
             {/* POSTAL CODE / ZIP */}
             <div className="sm:col-span-2">
-              <TextInput
+              {/*<TextInput
                 label={"ZIP / Postal code"}
                 name={"zip"}
                 placeholder={""}
                 value={formData.zip as string}
                 formData={formData}
                 setFormData={setFormData}
-              />
+              />*/}
+              <Zip formData={formData} setFormData={setFormData} zipList={zipList}/>
             </div>
 
             <div className="sm:col-span-4">

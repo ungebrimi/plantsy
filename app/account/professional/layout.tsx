@@ -1,3 +1,5 @@
+import ErrorNotifications from "@/app/account/professional/layout/ErrorNotifications";
+
 export const dynamic = "force-dynamic";
 import React from "react";
 import { getSession } from "@/app/supabase-server";
@@ -22,7 +24,7 @@ export default async function ProfessionalLayout({
 
   if (session.user.user_metadata.role !== "professional") {
     console.log("You do not have a professional account");
-    redirect("/");
+    redirect('/');
   }
 
   const { data: professional, error } = await supabase
@@ -37,10 +39,13 @@ export default async function ProfessionalLayout({
 
   return (
     <>
+      <NotificationProvider>
       <Navigation professional={professional} />
       <main className="py-10 lg:pl-72">
         <div className="px-4 sm:px-6 lg:px-8">{children}</div>
       </main>
+        <ErrorNotifications />
+      </NotificationProvider>
     </>
   );
 }

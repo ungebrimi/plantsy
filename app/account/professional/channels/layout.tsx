@@ -1,3 +1,5 @@
+import React from "react";
+
 export const metadata = {
   title: "Plantsy | Channels",
   description: "Your messages with clients",

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { EnvelopeIcon } from "@heroicons/react/24/outline";
 import { Tab } from "@headlessui/react";
 import Image from "next/image";
@@ -7,7 +7,6 @@ import Link from "next/link";
 import {createClientComponentClient, Session} from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import {Tables} from "@/database";
-import {getSession} from "@/app/supabase-client";
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
@@ -16,21 +15,12 @@ interface ServiceProps {
   service: Tables<"services">
   professional: Tables<"professionals">
   session: Session | null
+  images: Tables<"files">[]
 }
 
-function Service({ service, professional, session }: ServiceProps) {
-  const [images, setImages] = useState<Tables<"files">[]>([]);
-  const [professionalProfilePicture, setProfessionalProfilePicture] =
-    useState<Tables<"files">>(JSON.parse(professional.profile_picture as string));
+function Service({ service, professional, session, images }: ServiceProps) {
   const supabase = createClientComponentClient();
   const router = useRouter();
-
-  useEffect(() => {
-    if (!service) return;
-    const thumbnail = JSON.parse(service.thumbnail as string);
-    const resistingImages = JSON.parse(service.images as string);
-    setImages([thumbnail, ...resistingImages]);
-  }, [service]);
 
   async function handleContact() {
     if (!session || session.user.user_metadata.role !== "client") return;
@@ -65,7 +55,7 @@ function Service({ service, professional, session }: ServiceProps) {
             {/* Image selector */}
             <div className="mx-auto mt-6 hidden w-full max-w-2xl sm:block lg:max-w-none">
               <Tab.List className="grid grid-cols-4 gap-6">
-                {images &&
+                {images && images.length > 0 &&
                   images.map((image: Tables<"files">, idx: number) => (
                     <Tab
                       key={idx}
@@ -96,7 +86,7 @@ function Service({ service, professional, session }: ServiceProps) {
               </Tab.List>
             </div>
             <Tab.Panels className="aspect-h-1 aspect-w-1 w-full">
-              {images &&
+              {images && images.length > 0 &&
                 images.map((image: Tables<"files">, idx: number) => (
                   <Tab.Panel key={idx}>
                     <Image
@@ -117,13 +107,20 @@ function Service({ service, professional, session }: ServiceProps) {
 
             <div className="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-white text-center shadow">
               <div className="flex flex-1 flex-col p-8">
-                <Image
-                  width={300}
-                  height={300}
-                  className="mx-auto h-32 w-32 flex-shrink-0 rounded-full"
-                  src={professionalProfilePicture.url as string}
-                  alt=""
-                />
+                {professional.profile_picture && typeof professional.profile_picture === "object" && "url" in professional.profile_picture ? (
+                    <Image
+                        width={300}
+                        height={300}
+                        className="mx-auto h-32 w-32 flex-shrink-0 rounded-full"
+                        src={professional.profile_picture.url as string}
+                        alt=""
+                    />
+                ) : (
+                    <p className="hidden xs:flex items-center text-white justify-center uppercase font-bold h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
+                      {professional.first_name && professional.first_name.charAt(0)}
+                      {professional.last_name && professional.last_name.charAt(0)}
+                    </p>
+                )}
                 <h3 className="mt-6 text-sm font-medium text-gray-900">
                   {professional.first_name} {professional.last_name}
                 </h3>
