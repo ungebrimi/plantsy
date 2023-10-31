@@ -1,13 +1,16 @@
 "use client";
 import Link from "next/link";
 import { useRef, useState } from "react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 import Image from "next/image";
+import {createBrowserClient} from "@supabase/ssr";
 export default function Login() {
   const router = useRouter();
-  const supabase = createClientComponentClient();
+  const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
   const [error, setError] = useState<string | null>(null);
   const [captchaToken, setCaptchaToken] = useState<string | undefined>();
   const captcha = useRef<any>();
@@ -108,21 +111,6 @@ export default function Login() {
                 <p className="text-red-500 font-medium text-sm">{error}</p>
               )}
               <div className="flex items-center justify-between">
-                {/*
-                  // hidden for now not sure if is usefull
-                <div className="flex items-center">
-                  <input
-                    id="remember-me"
-                    name="remember-me"
-                    type="checkbox"
-                    className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-600"
-                  />
-                  <label htmlFor="remember-me" className="ml-3 block text-sm leading-6 text-gray-900">
-                    Remember me
-                  </label>
-                </div>
-                */}
-
                 <div className="text-sm leading-6">
                   <Link
                     href="/account/auth/reset-password"

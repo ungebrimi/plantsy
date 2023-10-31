@@ -1,10 +1,9 @@
 import React from "react";
 import Link from "next/link";
-import { getSession } from "@/app/supabase-server";
-import { redirect } from "next/navigation";
+import {getServerSession} from "@/app/supabase-server";
 
 const ThankYou = async () => {
-  const session = (await getSession()) || null;
+  const { session } = await getServerSession()
 
   if (!session) {
     return <h1>loading...</h1>;
@@ -25,14 +24,8 @@ const ThankYou = async () => {
           take a few minutes to get you started.
         </p>
         <div className="mt-10 flex items-center justify-center gap-x-6">
-          <Link
-            href={`/account/${session.user.user_metadata.role}`}
-            className="rounded-md bg-green-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-          >
-            Show me the ropes!
-          </Link>
           <Link href="/" className="text-sm font-semibold text-gray-900">
-            I can manage myself thanks.
+            Head back home
           </Link>
         </div>
       </div>

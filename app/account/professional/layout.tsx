@@ -1,11 +1,9 @@
-import ErrorNotifications from "@/app/account/professional/layout/ErrorNotifications";
-
 export const dynamic = "force-dynamic";
+import ErrorNotifications from "@/app/account/professional/layout/ErrorNotifications";
 import React from "react";
-import { getSession } from "@/app/supabase-server";
+import {getServerSession } from "@/app/supabase-server";
 import Navigation from "./layout/Navigation";
 import { redirect } from "next/navigation";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { NotificationProvider } from '@/context/NotificationContext';
 
@@ -14,10 +12,9 @@ export default async function ProfessionalLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = (await getSession()) || null;
-  const supabase = createServerComponentClient({ cookies });
+  const { session, supabase, error } = await getServerSession()
 
-  if (!session) {
+  if (!session || error) {
     console.log("session is missing");
     redirect("/");
   }
@@ -27,7 +24,7 @@ export default async function ProfessionalLayout({
     redirect('/');
   }
 
-  const { data: professional, error } = await supabase
+  const { data: professional, error: professionalError } = await supabase
     .from("professionals")
     .select("*")
     .eq("id", session.user.id)
@@ -36,16 +33,20 @@ export default async function ProfessionalLayout({
     console.error(error);
     return;
   }
-
-  return (
-    <>
-      <NotificationProvider>
-      <Navigation professional={professional} />
-      <main className="py-10 lg:pl-72">
-        <div className="px-4 sm:px-6 lg:px-8">{children}</div>
-      </main>
-        <ErrorNotifications />
-      </NotificationProvider>
-    </>
-  );
+  if(professional) {
+    return (
+        <>
+          <NotificationProvider>
+            <Navigation professional={professional} />
+            <main className="py-10 lg:pl-72">
+              <div className="px-4 sm:px-6 lg:px-8">{children}</div>
+            </main>
+            <ErrorNotifications />
+          </NotificationProvider>
+        </>
+    );
+  } else {
+    console.log("Professional not found");
+    redirect('/');
+  }
 }

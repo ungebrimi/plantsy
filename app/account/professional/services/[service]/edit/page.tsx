@@ -1,11 +1,11 @@
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import React from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import ServiceForm from "../../components/ServiceForm";
+import {getServerSession} from "@/app/supabase-server";
 
 async function page({ params }: { params: { service: number } }) {
-  const supabase = createServerComponentClient({ cookies });
+  const { supabase } = await getServerSession()
 
   const { data: service, error: serviceError } = await supabase
     .from("services")

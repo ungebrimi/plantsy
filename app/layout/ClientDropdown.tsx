@@ -3,7 +3,7 @@ import { Menu, Transition } from "@headlessui/react";
 import React, { Fragment, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createBrowserClient } from '@supabase/ssr'
 import { useRouter } from "next/navigation";
 import ClientMessages from "./ClientMessages";
 import {Tables} from "@/database";
@@ -15,7 +15,10 @@ function classNames(...classes: string[]) {
 function ClientDropdown({ client }: { client: Tables<"clients"> }) {
   const [openMessagesSidebar, setOpenMessagesSidebar] =
     useState<boolean>(false);
-  const supabase = createClientComponentClient();
+    const supabase = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
   const router = useRouter();
   const handleSignOut = async () => {
     await supabase.auth.signOut();

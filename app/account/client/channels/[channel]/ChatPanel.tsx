@@ -2,11 +2,9 @@
 import React, { useState, useEffect } from "react";
 import Inbox from "./components/chat/Inbox";
 import Editor from "./components/editor/Editor";
-import {
-  createClientComponentClient,
-} from "@supabase/auth-helpers-nextjs";
 import Image from "next/image";
 import { Tables } from "@/database";
+import {createBrowserClient} from "@supabase/ssr";
 
 type ChatPanelProps = {
   serverMessages: Tables<"messages">[];
@@ -23,7 +21,10 @@ const ChatPanel = ({
 }: ChatPanelProps) => {
   const [messages, setMessages] =
     useState<Tables<"messages">[]>(serverMessages);
-  const supabase = createClientComponentClient();
+  const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
   async function playAudio() {
     const audio = new Audio('audio-file.mp3');
     try {

@@ -1,8 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/router";
-
+import {getClientSupabase} from "@/app/supabase-client";
 export default function UpdatePassword() {
   const [event, setEvent] = useState<any>(null);
   const [password, setPassword] = useState("");
@@ -10,14 +9,14 @@ export default function UpdatePassword() {
   const [message, setMessage] = useState("");
   const router = useRouter();
 
-  const supabase = createClientComponentClient();
+  const supabase: any = getClientSupabase();
 
   useEffect(() => {
-    supabase.auth.onAuthStateChange(async (event, session) => {
+    if(!supabase) return
+    supabase.auth.onAuthStateChange(async (event: any, session: any) => {
       setEvent(event);
     });
-  }, []);
-  console.log(event);
+  }, [supabase]);
 
   const handleUpdatePassword = async (e: any) => {
     e.preventDefault();

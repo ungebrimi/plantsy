@@ -2,15 +2,12 @@
 import React, { useState, useEffect } from "react";
 import Inbox from "./components/chat/Inbox";
 import Editor from "./components/editor/Editor";
-import {
-  Session,
-  createClientComponentClient,
-} from "@supabase/auth-helpers-nextjs";
 import Image from "next/image";
 import { Tables } from "@/database";
+import {createBrowserClient} from "@supabase/ssr";
 
 type ChatPanelProps = {
-  session: Session;
+  session: any;
   serverMessages: Tables<"messages">[];
   channel: Tables<"channels">;
   professional: Tables<"professionals">;
@@ -26,7 +23,10 @@ const ChatPanel = ({
 }: ChatPanelProps) => {
   const [messages, setMessages] =
     useState<Tables<"messages">[]>(serverMessages);
-  const supabase = createClientComponentClient();
+  const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
 
   useEffect(() => {
     const channel = supabase

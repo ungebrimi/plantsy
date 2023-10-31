@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 import { Switch } from "@headlessui/react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import {Tables} from "@/database";
+import {createBrowserClient} from "@supabase/ssr";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -10,7 +10,10 @@ function classNames(...classes: string[]) {
 
 export default function ActiveToggle({ client }: { client: Tables<"clients"> }) {
   const [enabled, setEnabled] = useState(client.active);
-  const supabase = createClientComponentClient();
+  const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
 
   async function changeActiveStatus() {
     try {

@@ -1,8 +1,8 @@
 import { SetStateAction, useEffect, useState } from "react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { Combobox } from "@headlessui/react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Tables } from "@/database";
+import {getClientSupabase} from "@/app/supabase-client";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -32,7 +32,7 @@ export default function ServiceCategory({
     name: string;
     value: string;
   }>(initialServiceCategory);
-  const supabase = createClientComponentClient();
+  const { supabase } = getClientSupabase()
 
   useEffect(() => {
     async function getServices() {
@@ -57,7 +57,7 @@ export default function ServiceCategory({
       as="div"
       value={selectedServiceCategory}
       onChange={(e: any) => {
-        setFormData((formData) => ({ ...formData, service_category: e.value }));
+        setFormData((formData) => ({ ...formData, service_category: e.name }));
         setSelectedServiceCategory(e)
       }}
     >

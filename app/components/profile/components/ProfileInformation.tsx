@@ -1,6 +1,5 @@
 "use client";
-import React, { useState } from "react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import React, {useEffect, useState} from "react";
 import Avatar from "./Avatar";
 import {
   CheckCircleIcon,
@@ -8,6 +7,10 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Tables } from "@/database";
+import {useNotification} from "@/context/NotificationContext";
+import {getClientSupabase} from "@/app/supabase-client";
+import useImageUpload from "@/hooks/useImageUpload";
+import Alert from "@/app/components/Alert";
 
 type Form = {
   website: string | null;
@@ -16,43 +19,56 @@ type Form = {
 }
 
 const ProfileInformation = ({
-  professional,
+  user,
+userType,
 }: {
-  professional: Tables<"professionals">;
+  user: Tables<"clients"> | Tables<"professionals">;
+  userType: string;
 }) => {
-  const supabase = createClientComponentClient();
+  const { supabase } = getClientSupabase()
   const [success, setSuccess] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState<Form>({
-    website: professional.website,
-    about: professional.about,
-    profile_picture: professional.profile_picture as Tables<"files">| null,
+    website: user.website,
+    about: user.about,
+    profile_picture: user.profile_picture as Tables<"files">| null,
   });
+  const [ oldImage, setOldImage ] = useState<Tables<"files"> | null>(user.profile_picture as Tables<"files">| null)
+  const originalFormData ={
+    ...formData,
+    website: user.website,
+    about: user.about,
+  };
+  const [cancelWarning, setCancelWarning] = useState<boolean>(false);
+  const { addError } = useNotification()
 
   async function updateProfileInformation() {
-    if (!professional) return;
+    if (!user) return;
     try {
       const { data, error } = await supabase
-        .from("professionals")
+        .from(userType)
         .update({
           website: formData.website,
           about: formData.about,
           profile_picture: JSON.stringify(formData.profile_picture),
         })
-        .eq("id", professional.id)
+        .eq("id", user.id)
         .select("website, about, profile_picture");
 
       if (error) {
         setErrorMessage("error: " + error.message);
-        throw error;
       }
       if (data) {
         setSuccess(true);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      throw error;
+      addError("There was an issue updating your information: " + error.message)
     }
+  }
+
+  const handleCancel = () => {
+    setCancelWarning(true)
   }
 
   return (
@@ -112,7 +128,8 @@ const ProfileInformation = ({
           <Avatar
             formData={formData}
             setFormData={setFormData}
-            professional={professional}
+            user={user}
+            userType={userType}
           />
         </div>
       </div>
@@ -173,6 +190,7 @@ const ProfileInformation = ({
       <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
         <button
           type="button"
+          onClick={handleCancel}
           className="text-sm font-semibold leading-6 text-gray-900"
         >
           Cancel
@@ -185,6 +203,7 @@ const ProfileInformation = ({
           Save
         </button>
       </div>
+      <Alert open={cancelWarning} setOpen={setCancelWarning} setNewData={setFormData} originalData={originalFormData} />
     </form>
   );
 };

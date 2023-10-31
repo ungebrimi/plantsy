@@ -1,14 +1,9 @@
 import React from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { Tab } from "@headlessui/react";
 import { Tables } from "@/database";
-import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/24/outline";
-import Image from "next/image";
-import { StarIcon } from "@heroicons/react/20/solid";
-import {createServerComponentClient} from "@supabase/auth-helpers-nextjs";
 import Service from "@/app/home/marketplace/[service]/Service";
-import {getSession} from "@/app/supabase-server";
+import {getServerSession } from "@/app/supabase-server";
 import Reviews from "@/app/home/marketplace/[service]/Reviews";
 
 const reviews = {
@@ -41,8 +36,8 @@ function classNames(...classes: string[]) {
 }
 
 async function page({ params }: { params: { service: number } }) {
-  const supabase = createServerComponentClient({ cookies });
-  const session = (await getSession()) || null;
+  const { supabase, session } = await getServerSession()
+
   const { data: service, error: serviceError } = await supabase
       .from("services")
       .select()

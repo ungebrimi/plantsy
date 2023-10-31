@@ -1,8 +1,8 @@
 import React, {useState} from "react";
 import imageCompression from "browser-image-compression";
-import {createClientComponentClient} from "@supabase/auth-helpers-nextjs";
 import {Tables} from "@/database";
 import {StorageError} from "@supabase/storage-js";
+import {createBrowserClient} from "@supabase/ssr";
 
 type FileProcessingOptions = {
   maxSizeMB: number;
@@ -25,7 +25,10 @@ interface useImageUploadProps {
 
 const useImageUpload = (): useImageUploadProps => {
   const [loading, setLoading] = useState<boolean>(false);
-  const supabase = createClientComponentClient();
+  const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
 
   const insertToFileTable = async ({ file, url }: any) => {
     const { data, error } = await supabase
@@ -47,6 +50,7 @@ const useImageUpload = (): useImageUploadProps => {
   const handleSingleImageUpload = async (
       event: React.ChangeEvent<HTMLInputElement>,
       path: string,
+      imageNameToCheck: string | null = null
   ): Promise<Tables<"files"> | undefined | StorageError> => {
     setLoading(true);
     const imageFile = event.target?.files;
@@ -82,56 +86,63 @@ const useImageUpload = (): useImageUploadProps => {
   const handleMultipleImagesUpload = async (
       event: React.ChangeEvent<HTMLInputElement>,
       path: string
-  ): Promise<Tables<"files">[] | undefined | StorageError> => {
+  ): Promise<Tables<"files">[] | undefined> => {
     setLoading(true);
-
     const options: FileProcessingOptions = {
       maxSizeMB: 1,
       maxWidthOrHeight: 1920,
       useWebWorker: true,
     };
-
-    if (event.target.files) {
-      try {
-        const compressedFiles = await Promise.all(
-            Array.from(event.target.files).map(async (imageFile) => {
-              return await imageCompression(imageFile, options);
-            })
-        );
-
-        const uploadPromises: Promise<Tables<"files">>[] = compressedFiles.map(
-            async (compressedFile) => {
-              const { error } = await supabase.storage
-                  .from("professionals")
-                  .upload(`${path}/${compressedFile.name}`, compressedFile);
-
-              if (error) {
-                throw error;
-              } else {
-                const { data } = supabase.storage
-                    .from("professionals")
-                    .getPublicUrl(`${path}/${compressedFile.name}`);
-
-                return await insertToFileTable({
-                  file: compressedFile,
-                  url: data.publicUrl,
-                });
-              }
-            }
-        );
-
-        const results = await Promise.all(uploadPromises);
-        setLoading(false);
-        // filter so if any attempts that does not work out and returns undefined, gets removed from result
-        return results.filter((result) => result) as Tables<"files">[];
-      } catch (error) {
-        throw error;
-      } finally {
-        setLoading(false);
-      }
+    if (!event.target.files || event.target.files.length === 0) {
+      setLoading(false);
+      return [];
     }
-    // Change the return type here to match your new requirement
-    return [];
+
+    try {
+      const compressedFiles = await Promise.all(
+          Array.from(event.target.files).map((imageFile) =>
+              imageCompression(imageFile, options)
+          )
+      );
+
+      const uploadPromises = compressedFiles.map(async (compressedFile) => {
+        try {
+          const { error } = await supabase.storage
+              .from("professionals")
+              .upload(`${path}/${compressedFile.name}`, compressedFile);
+
+          if (error) {
+            throw new Error(error.message);
+          }
+
+          const { data} = supabase.storage
+              .from("professionals")
+              .getPublicUrl(`${path}/${compressedFile.name}`);
+
+          const insertResult = await insertToFileTable({
+            file: compressedFile,
+            url: data?.publicUrl,
+          });
+
+          if (!insertResult) {
+            throw new Error("Failed to insert into the files table.");
+          }
+
+          return insertResult;
+        } catch (error) {
+          console.error("Error uploading file:", error);
+          throw error; // Propagate the error to the caller
+        }
+      });
+
+      const results = await Promise.all(uploadPromises);
+      setLoading(false);
+      // Filter out any undefined results
+      return results.filter((result) => result) as Tables<"files">[];
+    } catch (error) {
+      setLoading(false);
+      throw error; // Propagate the error to the caller
+    }
   };
 
 
@@ -139,22 +150,22 @@ const useImageUpload = (): useImageUploadProps => {
     const { error } = await supabase.from("files").delete().eq("id", fileId);
 
     if (error) {
-      throw error;
+      throw new Error(`Error deleting file with ID ${fileId}: ${error.message}`);
     }
-    console.log("file deleted from table");
+    console.log("File deleted from table");
   };
 
   const removeFromStorage = async (path: string) => {
-    const { error } = await supabase.storage
-      .from("professionals")
-      .remove([path]);
+    const { data, error } = await supabase.storage.from("professionals").remove([path]);
     if (error) {
-      throw error;
+      throw new Error(`Error removing file from storage with path ${path}: ${error.message}`);
     }
-    console.log("file removed from storage");
+    console.log(data)
+    console.log("File removed from storage");
   };
 
   const removeImage = async (fileId: number, path: string) => {
+    // it does seem like this not always work
     try {
       // Remove from the file table
       await removeFromFileTable(fileId);

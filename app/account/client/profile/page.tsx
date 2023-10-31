@@ -1,20 +1,16 @@
 "use server";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import ProfileInformation from "./components/ProfileInformation";
-import PersonalInformation from "./components/PersonalInformation";
-import Notifications from "./components/Notifications";
-import { getSession } from "@/app/supabase-server";
-
+import ProfileInformation from "@/app/components/profile/components/ProfileInformation";
+import PersonalInformation from "@/app/components/profile/components/PersonalInformation";
+import {getServerSession} from "@/app/supabase-server";
+import {Tables} from "@/database";
 export default async function Profile() {
-  const supabase = createServerComponentClient({ cookies });
-  const session = (await getSession()) || null;
+  const { supabase, session } = await getServerSession();
+
   if (!session) {
     redirect("/");
   }
-  // console.log(session);
-  //
+
   const { data: client, error } = await supabase
     .from("clients")
     .select()
@@ -38,7 +34,7 @@ export default async function Profile() {
                   share.
                 </p>
               </div>
-              <ProfileInformation client={client} />
+              <ProfileInformation user={client  as Tables<"clients">} userType={"clients"}/>
             </div>
 
             <div className="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
@@ -51,9 +47,10 @@ export default async function Profile() {
                 </p>
               </div>
 
-              <PersonalInformation client={client} />
+              <PersonalInformation user={client as Tables<"clients">} userType={"clients"}/>
             </div>
 
+            {/* HIDDEN as long as we don't have a notification system
             <div className="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
               <div className="px-4 sm:px-0">
                 <h2 className="text-base font-semibold leading-7 text-gray-900">
@@ -64,8 +61,9 @@ export default async function Profile() {
                   pick what else you want to hear about.
                 </p>
               </div>
-              <Notifications client={client} />
+              <Notifications user={client  as Tables<"clients">} userType={"clients"}/>
             </div>
+            */}
           </div>
         </main>
     );

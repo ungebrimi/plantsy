@@ -4,9 +4,10 @@ import { EnvelopeIcon } from "@heroicons/react/24/outline";
 import { Tab } from "@headlessui/react";
 import Image from "next/image";
 import Link from "next/link";
-import {createClientComponentClient, Session} from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import {Tables} from "@/database";
+import {createBrowserClient} from "@supabase/ssr";
+import {Session} from "@supabase/supabase-js";
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
@@ -19,7 +20,10 @@ interface ServiceProps {
 }
 
 function Service({ service, professional, session, images }: ServiceProps) {
-  const supabase = createClientComponentClient();
+  const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
   const router = useRouter();
 
   async function handleContact() {

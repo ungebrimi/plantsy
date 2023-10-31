@@ -1,8 +1,8 @@
 import React, { SetStateAction, useEffect, useState } from "react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { Combobox } from "@headlessui/react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Tables } from "@/database";
+import {createBrowserClient} from "@supabase/ssr";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -17,7 +17,10 @@ interface CityProps {
 export default function City({ formData, setFormData, setZipList }: CityProps) {
   const [query, setQuery] = useState("");
   const [cityList, setCityList] = useState<Tables<"cities">[]>([]);
-  const supabase = createClientComponentClient();
+  const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
 
   useEffect(() => {
     async function getCities() {

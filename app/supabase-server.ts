@@ -1,19 +1,25 @@
-import { cookies } from "next/headers";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { Database } from "@/database";
+import { createServerClient, type CookieOptions } from '@supabase/ssr'
+import { cookies } from 'next/headers'
 
-export const createServerSupabaseClient = () =>
-  createServerComponentClient<Database>({ cookies });
+export const getSupabase = () => {
+  const cookieStore = cookies()
 
-export async function getSession() {
-  const supabase = createServerSupabaseClient();
-  try {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    return session;
-  } catch (error) {
-    console.error("Error:", error);
-    return null;
-  }
+  return createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return cookieStore.get(name)?.value
+          },
+        },
+      }
+  )
+}
+
+export const getServerSession = async () => {
+  const supabase = getSupabase()
+  const { data, error } = await supabase.auth.getSession()
+  const { session } = data
+  return { session, error, supabase }
 }

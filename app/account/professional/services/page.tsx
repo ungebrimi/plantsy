@@ -1,7 +1,6 @@
+
+import {getServerSession} from "@/app/supabase-server";
 import React from "react";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
-import { getSession } from "@/app/supabase-server";
 import {
   StarIcon,
 } from "@heroicons/react/24/outline";
@@ -9,8 +8,7 @@ import Link from "next/link";
 import ServiceGrid from "@/app/account/professional/services/components/ServiceGrid";
 
 const Services = async () => {
-  const supabase = createServerComponentClient({ cookies });
-  const session = (await getSession()) || null;
+  const { supabase, session } = await getServerSession()
 
   const { data: services, error } = await supabase
     .from("services")

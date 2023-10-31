@@ -5,8 +5,10 @@ import {
   ExclamationTriangleIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import React, { useState } from "react";
+import {createBrowserClient} from "@supabase/ssr";
+import {getClientSupabase} from "@/app/supabase-client";
+import Alert from "@/app/components/Alert";
 
 interface Form {
   first_name: string | null;
@@ -21,29 +23,44 @@ interface Form {
 }
 
 const PersonalInformation = ({
-  professional,
+  user,
+  userType
 }: {
-  professional: Tables<"professionals">;
+  user: Tables<"clients"> | Tables<"professionals">;
+  userType: string;
 }) => {
-  const supabase = createClientComponentClient();
+  const { supabase } = getClientSupabase()
   const [success, setSuccess] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [cancelWarning, setCancelWarning] = useState<boolean>(false);
   const [formData, setFormData] = useState<Form>({
-    first_name: professional.first_name,
-    last_name: professional.last_name,
-    email: professional.email,
+    first_name: user.first_name,
+    last_name: user.last_name,
+    email: user.email,
     country: "United States",
-    street: professional.street,
-    city: professional.city,
-    state: professional.state,
-    zip: professional.zip,
-    phone: professional.phone,
+    street: user.street,
+    city: user.city,
+    state: user.state,
+    zip: user.zip,
+    phone: user.phone,
   });
+
+  const originalFormData = {
+    first_name: user.first_name,
+    last_name: user.last_name,
+    email: user.email,
+    country: "United States",
+    street: user.street,
+    city: user.city,
+    state: user.state,
+    zip: user.zip,
+    phone: user.phone,
+  };
 
   async function updatePersonalInformation() {
     try {
       const { data, error } = await supabase
-        .from("professionals")
+        .from(userType)
         .update({
           first_name: formData.first_name,
           last_name: formData.last_name,
@@ -55,7 +72,7 @@ const PersonalInformation = ({
           zip: formData.zip,
           phone: formData.phone,
         })
-        .eq("id", professional.id)
+        .eq("id", user.id)
         .select(
           "first_name, last_name, email, country, street, city, state, zip, phone",
         );
@@ -70,6 +87,9 @@ const PersonalInformation = ({
       console.error("Error:", error);
       throw error;
     }
+  }
+  const handleCancel = () => {
+    setCancelWarning(true)
   }
 
   return (
@@ -317,6 +337,7 @@ const PersonalInformation = ({
       <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
         <button
           type="button"
+          onClick={handleCancel}
           className="text-sm font-semibold leading-6 text-gray-900"
         >
           Cancel
@@ -329,6 +350,7 @@ const PersonalInformation = ({
           Save
         </button>
       </div>
+      <Alert open={cancelWarning} setOpen={setCancelWarning} setNewData={setFormData} originalData={originalFormData} />
     </form>
   );
 };

@@ -1,7 +1,6 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, Fragment } from "react";
 import ServiceCategory from "./ServiceCategory";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import City from "./City";
 import Images from "./Images";
 import Thumbnail from "./Thumbnail";
@@ -12,6 +11,10 @@ import Keywords from "./Keywords";
 import TextInput from "./inputs/TextInput";
 import {useNotification} from "@/context/NotificationContext";
 import Zip from "@/app/account/professional/services/components/Zip";
+import { Dialog, Transition } from '@headlessui/react'
+import { CheckIcon } from '@heroicons/react/24/outline'
+import Link from "next/link";
+import {createBrowserClient} from "@supabase/ssr";
 interface CardInformationProps {
   professional: Tables<"professionals">;
   service: Tables<"services">;
@@ -19,10 +22,14 @@ interface CardInformationProps {
 }
 
 function ServiceForm({ professional, service, edit }: CardInformationProps) {
-  const supabase = createClientComponentClient();
+  const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
   const router = useRouter();
   const [formData, setFormData] = useState<Tables<"services">>(service);
   const [ zipList, setZipList ] = useState<string[]>([])
+  const [open, setOpen] = useState<boolean>(false)
   // ref
   const formRef = useRef<HTMLFormElement>(null);
   const { addError } = useNotification()
@@ -95,7 +102,7 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
         .select("*")
         .single();
       if (error) console.error(error);
-      router.push("/account/professional/services");
+      router.push("/account/professional/services")
     } else {
       const { error } = await supabase
         .from("services")
@@ -117,7 +124,7 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
         .select()
         .single();
       if (error) console.error(error);
-      router.push("/account/professional/services");
+      router.push("/account/professional/services")
     }
   }
 
@@ -150,9 +157,9 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
         className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2"
       >
         <div className="px-4 py-6 sm:p-8">
-          <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
             {/*TITLE */}
-            <div className="sm:col-span-4">
+            <div className="sm:col-span-4 mb-4">
               <TextInput
                 label={"Title"}
                 name={"title"}
@@ -169,7 +176,7 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
               setFormData={setFormData}
             />
 
-            <div className="col-span-full">
+            <div className="col-span-full mt-4">
               <label
                 htmlFor="description"
                 className="block text-sm font-medium leading-6 text-gray-900"
@@ -191,7 +198,7 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
               </p>
             </div>
 
-            <div className="sm:col-span-2">
+            <div className="sm:col-span-2 mt-4">
               <label
                 htmlFor="price"
                 className="block text-sm font-medium leading-6 text-gray-900"
@@ -224,7 +231,7 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
               </div>
             </div>
 
-            <div className="sm:col-span-1">
+            <div className="sm:col-span-1 mt-4">
               <label
                 htmlFor="vat"
                 className="block text-sm font-medium leading-6 text-gray-900"
@@ -251,12 +258,12 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
               </div>
             </div>
 
-            <div className="sm:col-span-3 sm:col-start-1">
+            <div className="sm:col-span-3 sm:col-start-1 mt-4">
               <City formData={formData} setFormData={setFormData} setZipList={setZipList}/>
             </div>
 
             {/* STATE */}
-            <div className="sm:col-span-2">
+            <div className="sm:col-span-2 mt-4">
               <TextInput
                 label={"State"}
                 name={"state"}
@@ -268,7 +275,7 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
             </div>
 
             {/* COUNTY */}
-            <div className="sm:col-span-3">
+            <div className="sm:col-span-3 mt-4">
               <TextInput
                 label={"County"}
                 name={"county"}
@@ -280,24 +287,16 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
             </div>
 
             {/* POSTAL CODE / ZIP */}
-            <div className="sm:col-span-2">
-              {/*<TextInput
-                label={"ZIP / Postal code"}
-                name={"zip"}
-                placeholder={""}
-                value={formData.zip as string}
-                formData={formData}
-                setFormData={setFormData}
-              />*/}
+            <div className="sm:col-span-2 mt-4">
               <Zip formData={formData} setFormData={setFormData} zipList={zipList}/>
             </div>
 
-            <div className="sm:col-span-4">
+            <div className="sm:col-span-4 mt-4">
               <ServiceCategory formData={formData} setFormData={setFormData} />
             </div>
-
+            <div className="sm:col-span-4 my-4">
             <Keywords formData={formData} setFormData={setFormData} />
-
+            </div>
             <Images
               professional={professional}
               formData={formData}
@@ -320,6 +319,62 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
           </button>
         </div>
       </form>
+      <Transition.Root show={open} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={setOpen}>
+          <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+              <Transition.Child
+                  as={Fragment}
+                  enter="ease-out duration-300"
+                  enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                  enterTo="opacity-100 translate-y-0 sm:scale-100"
+                  leave="ease-in duration-200"
+                  leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                  leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              >
+                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
+                  <div>
+                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+                      <CheckIcon className="h-6 w-6 text-green-600" aria-hidden="true" />
+                    </div>
+                    <div className="mt-3 text-center sm:mt-5">
+                      <Dialog.Title as="h3" className="text-base font-semibold leading-6 text-gray-900">
+                        Payment successful
+                      </Dialog.Title>
+                      <div className="mt-2">
+                        <p className="text-sm text-gray-500">
+                          Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur amet labore.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-5 sm:mt-6">
+                    <Link
+                        href={"/account/professional/services"}
+                        replace
+                        className="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+                    >
+                      Go back to service list
+                    </Link>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
     </div>
   );
 }

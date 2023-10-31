@@ -1,14 +1,12 @@
-import { Database } from "@/database";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-export async function getSession() {
-  const supabase = createClientComponentClient<Database>();
-  try {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    return session;
-  } catch (error) {
-    console.error("Error:", error);
-    return null;
-  }
+import { createBrowserClient } from '@supabase/ssr'
+import {Database} from "@/database";
+import {SupabaseClient} from "@supabase/supabase-js";
+
+export const getClientSupabase = () => {
+  // what is the correct type for createBrowserClient?
+  const supabase: SupabaseClient = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+  return { supabase }
 }

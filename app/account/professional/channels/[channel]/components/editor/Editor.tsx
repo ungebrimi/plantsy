@@ -2,11 +2,8 @@ import { SetStateAction, useState } from "react";
 import FileUpload from "./FileUpload";
 import ImageUpload from "./ImageUpload";
 import Emoji from "./Emoji";
-import {
-  Session,
-  createClientComponentClient,
-} from "@supabase/auth-helpers-nextjs";
 import { Tables } from "@/database";
+import {createBrowserClient} from "@supabase/ssr";
 
 export default function Editor({
   professional,
@@ -15,7 +12,10 @@ export default function Editor({
   channel: Tables<"channels">;
   professional: Tables<"professionals">;
 }) {
-  const supabase = createClientComponentClient();
+  const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
   const [message, setMessage] = useState<string>("");
   const [files, setFiles] = useState<Tables<"files">[]>([]);
   const [images, setImages] = useState<Tables<"files">[]>([]);

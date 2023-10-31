@@ -1,18 +1,16 @@
 "use server";
 import { redirect } from "next/navigation";
-import ProfileInformation from "./components/ProfileInformation";
-import PersonalInformation from "./components/PersonalInformation";
-import Notifications from "./components/Notifications";
-import { getSession } from "@/app/supabase-server";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+import ProfileInformation from "@/app/components/profile/components/ProfileInformation";
+import PersonalInformation from "@/app/components/profile/components/PersonalInformation";
+import Notifications from "@/app/components/profile/components/Notifications";
+import {getServerSession} from "@/app/supabase-server";
+import {Tables} from "@/database";
 
 export default async function Profile() {
-  const session = (await getSession()) || null;
+  const { session, supabase } = await getServerSession()
   if (!session) {
-    redirect("/");
+    redirect('/');
   }
-  const supabase = createServerComponentClient({ cookies });
 
   const { data: professional, error } = await supabase
     .from("professionals")
@@ -26,6 +24,7 @@ export default async function Profile() {
   }
   if(professional) {
     if(professional.profile_picture) {
+      console.log("there is a profile picture")
       professional.profile_picture = JSON.parse(professional.profile_picture)
     }
     return (
@@ -41,7 +40,7 @@ export default async function Profile() {
                   share.
                 </p>
               </div>
-              <ProfileInformation professional={professional} />
+              <ProfileInformation user={professional as Tables<"professionals">} userType={"professionals"}/>
             </div>
 
             <div className="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
@@ -54,9 +53,9 @@ export default async function Profile() {
                 </p>
               </div>
 
-              <PersonalInformation professional={professional} />
+              <PersonalInformation user={professional as Tables<"professionals">} userType={"professionals"}/>
             </div>
-
+            {/* Hidden as long as notifications are not setup
             <div className="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
               <div className="px-4 sm:px-0">
                 <h2 className="text-base font-semibold leading-7 text-gray-900">
@@ -67,13 +66,11 @@ export default async function Profile() {
                   pick what else you want to hear about.
                 </p>
               </div>
-              <Notifications professional={professional} />
+              <Notifications user={professional  as Tables<"professionals">} userType={"professionals"}/>
             </div>
+            */}
           </div>
         </main>
     );
-  }
-  else {
-    redirect("/")
   }
 }

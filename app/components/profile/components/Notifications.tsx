@@ -1,7 +1,8 @@
 "use client";
 import { Tables } from "@/database";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
+import React, { ChangeEvent, useState } from "react";
+import {createBrowserClient} from "@supabase/ssr";
+import {getClientSupabase} from "@/app/supabase-client";
 
 interface Form {
   email_notification_jobs: boolean;
@@ -10,13 +11,19 @@ interface Form {
   sms_notification_messages: boolean;
 }
 
-const Notifications = ({ client }: { client: Tables<"clients"> }) => {
-  const supabase = createClientComponentClient();
+const Notifications = ({
+  user,
+    userType
+}: {
+  user: Tables<"clients"> | Tables<"professionals">;
+  userType: string;
+}) => {
+  const { supabase } = getClientSupabase()
   const [formData, setFormData] = useState<Form>({
-    email_notification_jobs: false,
-    email_notification_messages: false,
-    sms_notification_jobs: false,
-    sms_notification_messages: false,
+    email_notification_jobs: user.email_notification_jobs,
+    email_notification_messages: user.email_notification_messages,
+    sms_notification_jobs: user.sms_notification_jobs,
+    sms_notification_messages: user.sms_notification_messages,
   });
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -27,51 +34,17 @@ const Notifications = ({ client }: { client: Tables<"clients"> }) => {
     }));
   };
 
-  const getNotificationData = useCallback(async () => {
-    try {
-      const { data, error } = await supabase
-        .from("clients")
-        .select(
-          "email_notification_jobs, email_notification_messages, sms_notification_jobs, sms_notification_messages",
-        )
-        .eq("id", client.id);
-
-      if (error) {
-        console.error("Error:", error);
-        throw error;
-      }
-
-      if (data && data.length > 0) {
-        const notificationData = data[0];
-        setFormData({
-          email_notification_jobs: notificationData.email_notification_jobs,
-          email_notification_messages:
-            notificationData.email_notification_messages,
-          sms_notification_jobs: notificationData.sms_notification_jobs,
-          sms_notification_messages: notificationData.sms_notification_messages,
-        });
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      throw error;
-    }
-  }, [supabase, client.id]);
-
-  useEffect(() => {
-    getNotificationData();
-  }, [getNotificationData]);
-
   async function updateNotificationData() {
     try {
       const { data, error } = await supabase
-        .from("clients")
+        .from(userType)
         .update({
           email_notification_jobs: formData.email_notification_jobs,
           email_notification_messages: formData.email_notification_messages,
           sms_notification_jobs: formData.sms_notification_jobs,
           sms_notification_messages: formData.sms_notification_messages,
         })
-        .eq("id", client.id)
+        .eq("id", user.id)
         .select(
           "email_notification_messages, sms_notification_messages, email_notification_jobs, sms_notification_jobs",
         );

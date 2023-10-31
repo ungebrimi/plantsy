@@ -1,10 +1,10 @@
 "use client"
 import React, {useState} from 'react'
-import {createClientComponentClient, Session} from "@supabase/auth-helpers-nextjs";
 import {Tables} from "@/database";
 import {archiveData} from "@/utils/archive";
 import {MagnifyingGlassIcon, PencilIcon, StarIcon, TrashIcon} from "@heroicons/react/24/outline";
 import Link from "next/link";
+import {createBrowserClient} from "@supabase/ssr";
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
@@ -14,7 +14,10 @@ type ServiceGridProps = {
     serverServices: Tables<"services">[]
 }
 const ServiceGrid = ({serverServices}: ServiceGridProps) => {
-    const supabase = createClientComponentClient()
+    const supabase = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
     const [services, setServices] = useState<Tables<"services">[]>(serverServices)
 
     const deleteService = async (service: Tables<"services">) => {

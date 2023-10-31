@@ -3,8 +3,8 @@ import { useState } from "react";
 import { Disclosure } from "@headlessui/react";
 import { MinusIcon, PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Tables } from "@/database";
+import {createBrowserClient} from "@supabase/ssr";
 
 const ActiveChannels = ({
   professional,
@@ -15,7 +15,10 @@ const ActiveChannels = ({
     Tables<"channels">[] | null
   >(null);
 
-  const supabase = createClientComponentClient();
+  const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
   useEffect(() => {
     async function getChannels() {
       const { data, error } = await supabase

@@ -22,8 +22,9 @@ type NavType = {
 type NavbarProps = {
   client: Tables<"clients"> | null
   professional: Tables<"professionals"> |null
+  session: any
 }
-export default function Navbar({ client, professional }: NavbarProps) {
+export default function Navbar({ client, professional, session }: NavbarProps) {
   const [navigation, setNavigation] = useState<NavType[]>([
     { name: "Home", href: "/", current: true },
     { name: "Marketplace", href: "/home/marketplace", current: false },

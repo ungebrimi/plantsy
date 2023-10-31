@@ -32,7 +32,7 @@ function Keywords({ formData, setFormData }: KeywordsProps) {
   }
 
   return (
-    <div className="sm:col-span-4">
+      <>
       <label
         htmlFor="keyword"
         className="block text-sm font-medium leading-6 text-gray-900"
@@ -102,7 +102,7 @@ function Keywords({ formData, setFormData }: KeywordsProps) {
           </div>
         )}
       </>
-    </div>
+  </>
   );
 }
 

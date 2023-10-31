@@ -1,16 +1,15 @@
 "use client";
 import { useRef, useState } from "react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 import Image from "next/image";
+import {getClientSupabase} from "@/app/supabase-client";
 
 export default function ResetPassword() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   // const [captchaToken, setCaptchaToken] = useState<string | undefined>();
   // const captcha = useRef<any>();
-
-  const supabase = createClientComponentClient();
+  const { supabase } = getClientSupabase()
 
   const handleResetPassword = async (e: any) => {
     e.preventDefault();

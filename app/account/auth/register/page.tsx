@@ -2,19 +2,20 @@
 import { Fragment, useState, useRef } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 import Image from "next/image";
 import Modal from "./Modal";
+import {getClientSupabase} from "@/app/supabase-client";
+import {SupabaseClient} from "@supabase/supabase-js";
 
 const publishingOptions = [
   {
     title: "Customer",
     role: "client",
     description:
-      "Join as a customer, we have hundreds of proffesionals ready to serve your plants right",
+      "Join as a customer, we have hundreds of professionals ready to serve your plants right",
     current: true,
   },
   {
@@ -39,8 +40,7 @@ export default function Register() {
   const [email, setEmail] = useState<string>("");
   const formRef = useRef<HTMLFormElement>(null);
   const router = useRouter();
-  // should be supabase DB type this any as well
-  const supabase = createClientComponentClient<any>();
+  const supabase: any = getClientSupabase()
   const captcha = useRef<any>();
 
   const handleSignUp = async (e: any) => {

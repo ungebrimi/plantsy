@@ -1,18 +1,16 @@
 import React from "react";
-import { getSession } from "@/app/supabase-server";
 import { redirect } from "next/navigation";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
 import ChatPanel from "./ChatPanel";
 import { Tables } from "@/database";
+import {getServerSession} from "@/app/supabase-server";
 
 interface PageProps {
   params: { channel: string };
 }
 
 const Channel = async ({ params }: PageProps) => {
-  const supabase = createServerComponentClient({ cookies });
-  const session = (await getSession()) || null;
+
+  const { supabase, session } = await getServerSession()
 
   const { data: serverMessages } = await supabase
     .from("messages")

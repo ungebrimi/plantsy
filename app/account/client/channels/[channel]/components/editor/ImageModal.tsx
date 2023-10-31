@@ -1,8 +1,8 @@
 import { Fragment, SetStateAction, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { PhotoIcon } from "@heroicons/react/24/outline";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Tables } from "@/database";
+import {createBrowserClient} from "@supabase/ssr";
 
 type ImageModalProps = {
   open: boolean;
@@ -18,7 +18,10 @@ export default function ImageModal({
   setImages,
 }: ImageModalProps) {
   const cancelButtonRef = useRef(null);
-  const supabase = createClientComponentClient();
+  const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
   const [tempImages, setTempImages] = useState<Tables<"files">[]>(images);
 
   async function removeImage(image_id: number) {
