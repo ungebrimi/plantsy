@@ -113,7 +113,7 @@ export default function Login() {
               <div className="flex items-center justify-between">
                 <div className="text-sm leading-6">
                   <Link
-                    href="/account/auth/reset-password"
+                    href={"/auth/reset-password"}
                     className="font-semibold text-green-600 hover:text-green-500"
                   >
                     Forgot password?

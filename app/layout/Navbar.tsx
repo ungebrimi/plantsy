@@ -110,13 +110,13 @@ export default function Navbar({ client, professional, session }: NavbarProps) {
                 {!client && !professional && (
                   <div className="ml-2 sm:ml-4 flex flex-col md:flex-row justify-center mt-8 md:mt-0 items-center gap-x-2 sm:gap-x-6">
                     <Link
-                      href={"/account/auth/register"}
+                      href={"/auth/register"}
                       className="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
                     >
                       Get started
                     </Link>
                     <Link
-                      href={"/account/auth/login"}
+                      href={"/auth/login"}
                       className="text-sm font-semibold leading-6 text-gray-900"
                     >
                       Log in <span aria-hidden="true">→</span>
