@@ -87,7 +87,7 @@ export default function Register() {
       const { error } = await supabase.auth.signUp({
         email,
         password,
-        options: { // Specify the desired next URL
+        options: {
           captchaToken,
           data: {
             role: userType.role,

@@ -11,7 +11,7 @@ interface PageProps {
 const Channel = async ({ params }: PageProps) => {
 
   const { supabase, session } = await getServerSession()
-
+  https://plantsy.app/auth/confirm?token_hash=pkce_8ba5e9bc1dba87f53b9106690cece66850fd6f2e2769f855058273b5&type=email?next=/account/auth/thank-you
   const { data: serverMessages } = await supabase
     .from("messages")
     .select()

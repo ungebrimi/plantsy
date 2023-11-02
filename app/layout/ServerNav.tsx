@@ -27,8 +27,10 @@ async function ServerNav() {
             .eq("id", session.user.id)
             .single();
 
-        if (professional && professional.profile_picture) {
-            professional.profile_picture = JSON.parse(professional.profile_picture)
+        if (professional) {
+            if(professional.profile_picture) {
+                professional.profile_picture = JSON.parse(professional.profile_picture)
+            }
             return (
                 <header>
                     <Navbar client={null} professional={professional} session={session}/>
@@ -36,8 +38,10 @@ async function ServerNav() {
             )
         }
 
-        if(client && client.profile_picture) {
-            client.profile_picture = JSON.parse(client.profile_picture)
+        if(client) {
+            if(client.profile_picture) {
+                client.profile_picture = JSON.parse(client.profile_picture)
+            }
             return (
                 <header>
                     <Navbar client={client} professional={null} session={session} />
@@ -48,7 +52,7 @@ async function ServerNav() {
         if(!client && !professional) {
             return (
                 <header>
-                    <Navbar client={client} professional={null} session={session}/>
+                    <Navbar client={null} professional={null} session={session}/>
                 </header>
             )
         }
