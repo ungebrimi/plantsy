@@ -9,6 +9,7 @@ import Image from "next/image";
 import Modal from "./Modal";
 import {getClientSupabase} from "@/app/supabase-client";
 import {SupabaseClient} from "@supabase/supabase-js";
+import {getServerSession} from "@/app/supabase-server";
 
 const publishingOptions = [
   {
@@ -40,8 +41,8 @@ export default function Register() {
   const [email, setEmail] = useState<string>("");
   const formRef = useRef<HTMLFormElement>(null);
   const router = useRouter();
-  const supabase: any = getClientSupabase()
   const captcha = useRef<any>();
+  const { supabase } = getClientSupabase()
 
   const handleSignUp = async (e: any) => {
     e.preventDefault();
@@ -86,8 +87,7 @@ export default function Register() {
       const { error } = await supabase.auth.signUp({
         email,
         password,
-        options: {
-          emailRedirectTo: `${location.origin}/auth/callback?next=/account/auth/thank-you`, // Specify the desired next URL
+        options: { // Specify the desired next URL
           captchaToken,
           data: {
             role: userType.role,
@@ -138,7 +138,7 @@ export default function Register() {
               onSubmit={handleSignUp}
               method="POST"
             >
-              <div>
+              <div className="col-span-1">
                 <label
                   htmlFor="first_name"
                   className="block text-sm font-medium leading-6 text-gray-900"
@@ -156,7 +156,7 @@ export default function Register() {
                   />
                 </div>
               </div>
-              <div>
+              <div className="col-span-1">
                 <label
                   htmlFor="last_name"
                   className="block text-sm font-medium leading-6 text-gray-900"

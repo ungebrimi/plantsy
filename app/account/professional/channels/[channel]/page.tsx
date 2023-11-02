@@ -1,6 +1,6 @@
 import React from "react";
 import { redirect } from "next/navigation";
-import ChatPanel from "./ChatPanel";
+import ChatPanel from "@/app/components/messages/components/ChatPanel";
 import { Tables } from "@/database";
 import {getServerSession} from "@/app/supabase-server";
 

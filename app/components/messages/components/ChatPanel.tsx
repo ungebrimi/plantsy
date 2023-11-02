@@ -1,13 +1,15 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Inbox from "./components/chat/Inbox";
-import Editor from "./components/editor/Editor";
+import Inbox from "@/app/components/messages/components/chat/Inbox";
+import Editor from "@/app/components/messages/components/editor/Editor";
 import Image from "next/image";
 import { Tables } from "@/database";
 import {createBrowserClient} from "@supabase/ssr";
+import {Session} from "@supabase/supabase-js";
+import {getClientSupabase} from "@/app/supabase-client";
 
 type ChatPanelProps = {
-  session: any;
+  session: Session;
   serverMessages: Tables<"messages">[];
   channel: Tables<"channels">;
   professional: Tables<"professionals">;
@@ -23,10 +25,7 @@ const ChatPanel = ({
 }: ChatPanelProps) => {
   const [messages, setMessages] =
     useState<Tables<"messages">[]>(serverMessages);
-  const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+  const { supabase } = getClientSupabase()
 
   useEffect(() => {
     const channel = supabase
