@@ -11,7 +11,7 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
-import Sidebar from "./Sidebar";
+import MessageSidebar from "@/app/layout/messaging/MessageSidebar";
 import Link from "next/link";
 import { Tables } from "@/database";
 
@@ -335,10 +335,11 @@ export default function Navigation({
           </Link>
         </div>
       </div>
-      <Sidebar
+      <MessageSidebar
         open={openMessageTab}
         setOpen={setOpenMessageTab}
-        professional={professional}
+        user={professional}
+        userType={"professionals"}
       />
     </>
   );

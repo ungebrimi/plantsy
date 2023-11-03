@@ -1,38 +1,41 @@
 import useImageUpload from "@/hooks/useImageUpload";
 import { CameraIcon } from "@heroicons/react/24/outline";
 import React, {ChangeEvent, SetStateAction, useState} from "react";
-import { Tables } from "@/database";
+import {DbResultOk, Tables} from "@/database";
 import ImageModal from "./ImageModal";
 import {StorageError} from "@supabase/storage-js";
+import {useNotification} from "@/context/NotificationContext";
 
 
 interface ImageUploadProps {
-  professional: Tables<"professionals">;
+  user: Tables<"clients"> | Tables<"professionals">;
   images: Tables<"files">[]
   setImages: React.Dispatch<SetStateAction<Tables<"files">[]>>
+  userType: string;
 }
 
-const ImageUpload = ({professional, images, setImages }: ImageUploadProps) => {
+const ImageUpload = ({user, images, setImages }: ImageUploadProps) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const { loading, handleMultipleImagesUpload } =
     useImageUpload();
+  const { addError } = useNotification()
 
-  const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (
+      event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     try {
-      const result = await handleMultipleImagesUpload(event, `${professional.id}/files`);
-
-      if (Array.isArray(result)) {
-        // It's an array of images, set it to state
-        setImages(result);
-      } else if (result instanceof StorageError) {
-        // Handle the storage error here
-        console.error(result);
-      } else {
-        // Handle the undefined case here
-        console.error('No images uploaded');
+      const res = (await handleMultipleImagesUpload(
+          event,
+          `${user.id}/images`,
+      )) as DbResultOk<Tables<"files">>;
+      setImages(res)
+    } catch (error: any) {
+      if(error.status_code === "409") {
+        addError(error.message + "rename the duplicated file to proceed")
       }
-    } catch (e) {
-      console.error(e);
+      else {
+        addError("We've encountered an issue with uploading your image: " + error.message)
+      }
     }
   };
 
@@ -62,7 +65,7 @@ const ImageUpload = ({professional, images, setImages }: ImageUploadProps) => {
                 type="file"
                 id="imageInput"
                 className="sr-only"
-                onChange={handleChange}
+                onChange={handleImageChange}
                 multiple
                 accept="image/*"
               />

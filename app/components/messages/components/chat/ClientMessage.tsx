@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { useState } from "react";
+import React from "react";
 import FileDownloader from "./FileDownloader";
 import { Carousel } from "react-responsive-carousel";
 import { Tables } from "@/database";
@@ -7,9 +7,14 @@ import { Tables } from "@/database";
 interface ClientMessageProps {
   message: Tables<"messages">;
   client: Tables<"clients">;
+  unoReverse: boolean;
 }
 
-const ClientMessage = ({ message, client }: ClientMessageProps) => {
+function classNames(...classes: string[]) {
+  return classes.filter(Boolean).join(" ");
+}
+
+const ClientMessage = ({ message, client, unoReverse }: ClientMessageProps) => {
   const messageDate: Date = new Date(message.inserted_at);
   const currentDate: Date = new Date();
   const profilePicture: Tables<"files"> = JSON.parse(
@@ -44,7 +49,12 @@ const ClientMessage = ({ message, client }: ClientMessageProps) => {
 
   return (
     <div>
-      <div className="p-3 flex items-center justify-self-start rounded-lg">
+      <div
+        className={classNames(
+          unoReverse ? "justify-self-start" : "justify-self-end",
+          "p-3 flex items-center  flex-row-reverse",
+        )}
+      >
         <div className="">
           {profilePicture ? (
             <Image

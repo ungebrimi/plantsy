@@ -344,7 +344,7 @@ export default function Register() {
                   >
                     By checking I accept Plantsy{`'`}s
                     <Link
-                      href="/legal"
+                      href={"/legal"}
                       className="text-green-500 underline font-bold"
                     >
                       {" "}

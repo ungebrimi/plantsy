@@ -1,66 +1,92 @@
-import { SetStateAction, useState } from "react";
+import { useState } from "react";
 import FileUpload from "./FileUpload";
 import ImageUpload from "./ImageUpload";
 import Emoji from "./Emoji";
 import { Tables } from "@/database";
-import {createBrowserClient} from "@supabase/ssr";
+import {getClientSupabase} from "@/app/supabase-client";
+import Image from "next/image";
 
 export default function Editor({
-  professional,
+  user,
   channel,
+    userType
 }: {
   channel: Tables<"channels">;
-  professional: Tables<"professionals">;
+  user: Tables<"clients"> | Tables<"professionals">;
+  userType: string
 }) {
-  const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+  const { supabase } = getClientSupabase()
   const [message, setMessage] = useState<string>("");
   const [files, setFiles] = useState<Tables<"files">[]>([]);
   const [images, setImages] = useState<Tables<"files">[]>([]);
-  const profilePicture = JSON.parse(professional.profile_picture as string);
+  const profilePicture = JSON.parse(user.profile_picture as string);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-      const fileUrls = files.map((file) => file.url); // Assuming files have a "url" property
-      const imageUrls = images.map((image) => image.url); // Assuming images have a "url" property
+      const fileUrls = files.map((file) => file.url); // Assuming files have an "url" property
+      const imageUrls = images.map((image) => image.url); // Assuming images have an "url" property
 
-      const { data, error } = await supabase
-        .from("messages")
-        .insert({
-          message: message,
-          professional_id: professional.id,
-          channel_id: channel.id,
-          files: fileUrls.length > 0 ? fileUrls : null,
-          images: imageUrls.length > 0 ? imageUrls : null,
-        })
-        .select();
+      if(userType === "clients") {
+        const { data, error } = await supabase
+          .from("messages")
+          .insert({
+            message: message,
+            client_id: user.id,
+            channel_id: channel.id,
+            files: fileUrls.length > 0 ? fileUrls : null,
+            images: imageUrls.length > 0 ? imageUrls : null,
+          })
+          .select();
 
-      if (error) {
-        console.error(error);
-      } else {
-        console.log("Message inserted:", data);
+        if (error) {
+          console.error(error);
+        } else {
+          console.log("Message inserted:", data);
+        }
+
+        setMessage("");
+        setFiles([]);
+        setImages([]);
       }
+      if(userType === "professionals") {
+        const {data, error} = await supabase
+            .from("messages")
+            .insert({
+              message: message,
+              professional_id: user.id,
+              channel_id: channel.id,
+              files: fileUrls.length > 0 ? fileUrls : null,
+              images: imageUrls.length > 0 ? imageUrls : null,
+            })
+            .select();
 
-      setMessage("");
-      setFiles([]);
-      setImages([]);
+        if (error) {
+          console.error(error);
+        } else {
+          console.log("Message inserted:", data);
+        }
+
+        setMessage("");
+        setFiles([]);
+        setImages([]);
+      }
   };
 
   return (
     <section className="flex items-start mt-6 sm:space-x-4">
       <div className="flex-shrink-0 hidden sm:block">
         {profilePicture ? (
-          <img
+          <Image
+              width={profilePicture.width ?? 300}
+                height={profilePicture.height ?? 300}
             className="inline-block h-10 w-10 rounded-full"
             src={profilePicture.url}
-            alt={professional.first_name + " " + professional.last_name}
+            alt={user.first_name + " " + user.last_name}
           />
         ) : (
           <div className="flex items-center justify-center h-10 w-10 rounded-full bg-green-500 font-bold uppercase text-white flex-shrink-0">
-            {professional.first_name?.charAt(0)}
-            {professional.last_name?.charAt(0)}
+            {user.first_name?.charAt(0)}
+            {user.last_name?.charAt(0)}
           </div>
         )}
       </div>
@@ -85,9 +111,10 @@ export default function Editor({
               <ImageUpload
                 images={images}
                 setImages={setImages}
-                professional={professional}
+                user={user}
+                userType={userType}
               />
-              <FileUpload files={files} setFiles={setFiles} professional={professional} />
+              <FileUpload files={files} setFiles={setFiles} user={user} userType={userType}/>
               <Emoji message={message} setMessage={setMessage} />
             </div>
             <div className="flex-shrink-0">

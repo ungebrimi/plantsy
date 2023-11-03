@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Cookies from "@/app/layout/Cookies";
 
 const navigation = {
   solutions: [
@@ -95,6 +96,7 @@ export default function Footer() {
 
   return (
     <footer className="" aria-labelledby="footer-heading">
+      <Cookies />
       <h2 id="footer-heading" className="sr-only">
         Footer
       </h2>

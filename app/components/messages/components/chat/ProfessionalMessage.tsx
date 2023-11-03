@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import FileDownloader from "./FileDownloader";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
@@ -8,11 +8,17 @@ import { Tables } from "@/database";
 interface ProfessionalMessageProps {
   message: Tables<"messages">;
   professional: Tables<"professionals">;
+  unoReverse: boolean;
+}
+
+function classNames(...classes: string[]) {
+  return classes.filter(Boolean).join(" ");
 }
 
 const ProfessionalMessage = ({
   message,
   professional,
+  unoReverse,
 }: ProfessionalMessageProps) => {
   const messageDate: Date = new Date(message.inserted_at);
   const currentDate: Date = new Date();
@@ -48,7 +54,10 @@ const ProfessionalMessage = ({
     <div>
       <div
         key={message.id}
-        className="p-3 flex items-center justify-self-end flex-row-reverse"
+        className={classNames(
+          unoReverse ? "justify-self-end" : "justify-self-start",
+          "p-3 flex items-center  flex-row-reverse",
+        )}
       >
         {profilePicture ? (
           <img

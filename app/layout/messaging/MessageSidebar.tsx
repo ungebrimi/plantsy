@@ -6,14 +6,16 @@ import ArchivedChannels from "./ArchivedChannels";
 import ActiveChannels from "./ActiveChannels";
 import { Tables } from "@/database";
 
-export default function Sidebar({
+export default function MessageSidebar({
   open,
   setOpen,
-  professional,
+  user,
+  userType,
 }: {
   open: boolean;
   setOpen: React.Dispatch<SetStateAction<boolean>>;
-  professional: Tables<"professionals">;
+  user: Tables<"professionals"> | Tables<"clients">;
+  userType: string;
 }) {
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -70,8 +72,8 @@ export default function Sidebar({
                       </div>
                     </div>
                     <div className="relative mt-6 flex-1 px-4 sm:px-6">
-                      <Profile professional={professional} />
-                      <ActiveChannels professional={professional} />
+                      <Profile user={user} userType={userType} />
+                      <ActiveChannels user={user} userType={userType} />
                       <ArchivedChannels />
                     </div>
                   </div>

@@ -1,30 +1,34 @@
 "use client";
 import { useState } from "react";
 import { Switch } from "@headlessui/react";
-import {Tables} from "@/database";
-import {createBrowserClient} from "@supabase/ssr";
+import { Tables } from "@/database";
+import { getClientSupabase } from "@/app/supabase-client";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function ActiveToggle({ client }: { client: Tables<"clients"> }) {
-  const [enabled, setEnabled] = useState(client.active);
-  const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+export default function ActiveToggle({
+  user,
+  userType,
+}: {
+  user: Tables<"professionals"> | Tables<"clients">;
+  userType: string;
+}) {
+  const [enabled, setEnabled] = useState(user.active);
+  const { supabase } = getClientSupabase();
 
   async function changeActiveStatus() {
     try {
       const { data, error } = await supabase
-        .from("clients")
+        .from(userType)
         .update({ active: !enabled }) // Toggle the active status
-        .eq("id", client.id)
+        .eq("id", user.id)
         .select("active")
-          .single();
-      if (error) console.error(error);
-      return data?.active; // Return the updated active status from the database
+        .single();
+      if (data) {
+        return data.active;
+      }
     } catch (error) {
       console.error(error);
       return enabled; // Return the original state if an error occurs

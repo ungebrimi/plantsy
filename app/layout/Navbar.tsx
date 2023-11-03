@@ -35,9 +35,6 @@ export default function Navbar({ client, professional, session }: NavbarProps) {
   const currentPathname = usePathname();
 
   useEffect(() => {
-    // Get the current pathname from the router
-
-    // Update the navigation array to set the 'current' property
     const updatedNavigation = navigation.map((item: any) => ({
       ...item,
       current: item.href === currentPathname,

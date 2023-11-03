@@ -8,13 +8,21 @@ interface InboxProps {
   messages: Tables<"messages">[];
   client: Tables<"clients">;
   professional: Tables<"professionals">;
+  userType: string;
 }
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-const Inbox = ({ messages, client, professional }: InboxProps) => {
+const Inbox = ({ messages, client, professional, userType }: InboxProps) => {
+  // unoReverse is used to reverse the position of the messages. whereas false is professional and true is client
+  // whichever is true is positioned on the right hand side of the screen
+  let unoReverse = false;
+  if (userType === "client") {
+    unoReverse = true;
+  }
+
   return (
     <section className="h-full overflow-x-auto">
       <div className="flex flex-col w-full">
@@ -29,11 +37,16 @@ const Inbox = ({ messages, client, professional }: InboxProps) => {
                 )}
               >
                 {message.client_id ? (
-                  <ClientMessage message={message} client={client} />
+                  <ClientMessage
+                    message={message}
+                    client={client}
+                    unoReverse={unoReverse}
+                  />
                 ) : (
                   <ProfessionalMessage
                     message={message}
                     professional={professional}
+                    unoReverse={unoReverse}
                   />
                 )}
               </div>

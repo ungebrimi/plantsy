@@ -1,12 +1,11 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Inbox from "@/app/components/messages/components/chat/Inbox";
 import Editor from "@/app/components/messages/components/editor/Editor";
 import Image from "next/image";
 import { Tables } from "@/database";
-import {createBrowserClient} from "@supabase/ssr";
-import {Session} from "@supabase/supabase-js";
-import {getClientSupabase} from "@/app/supabase-client";
+import { Session } from "@supabase/supabase-js";
+import { getClientSupabase } from "@/app/supabase-client";
 
 type ChatPanelProps = {
   session: Session;
@@ -25,7 +24,7 @@ const ChatPanel = ({
 }: ChatPanelProps) => {
   const [messages, setMessages] =
     useState<Tables<"messages">[]>(serverMessages);
-  const { supabase } = getClientSupabase()
+  const { supabase } = getClientSupabase();
 
   useEffect(() => {
     const channel = supabase
@@ -45,13 +44,23 @@ const ChatPanel = ({
           ]);
           // Play the notification sound
           const audio = new Audio("/notification.mp3");
-          audio.play();
+          audio.play().then((r) => console.log(r));
         },
       )
       .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(channel).then((r) => {
+        if (r === "error") {
+          console.error("Error removing channel");
+        }
+        if (r === "ok") {
+          console.log("Channel removed");
+        }
+        if (r === "timed out") {
+          console.log("Channel already closed");
+        }
+      });
     };
   }, [supabase]);
 
@@ -62,6 +71,7 @@ const ChatPanel = ({
           messages={messages}
           professional={professional}
           client={client}
+          userType={session.user.user_metadata.role + "s"}
         />
       ) : (
         <div className="flex items-center flex-col py-12">
@@ -77,7 +87,16 @@ const ChatPanel = ({
           </h1>
         </div>
       )}
-      <Editor channel={channel} professional={professional} />
+      {session.user.user_metadata.role === "client" && (
+        <Editor channel={channel} user={client} userType={"clients"} />
+      )}
+      {session.user.user_metadata.role === "professional" && (
+        <Editor
+          channel={channel}
+          user={professional}
+          userType={"professionals"}
+        />
+      )}
     </div>
   );
 };

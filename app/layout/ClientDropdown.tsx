@@ -3,10 +3,10 @@ import { Menu, Transition } from "@headlessui/react";
 import React, { Fragment, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { createBrowserClient } from '@supabase/ssr'
 import { useRouter } from "next/navigation";
-import ClientMessages from "./ClientMessages";
-import {Tables} from "@/database";
+import { Tables } from "@/database";
+import { getClientSupabase } from "@/app/supabase-client";
+import MessageSidebar from "@/app/layout/messaging/MessageSidebar";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -15,10 +15,7 @@ function classNames(...classes: string[]) {
 function ClientDropdown({ client }: { client: Tables<"clients"> }) {
   const [openMessagesSidebar, setOpenMessagesSidebar] =
     useState<boolean>(false);
-    const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    )
+  const { supabase } = getClientSupabase();
   const router = useRouter();
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -31,8 +28,9 @@ function ClientDropdown({ client }: { client: Tables<"clients"> }) {
         <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
           <span className="absolute -inset-1.5" />
           <span className="sr-only">Open user menu</span>
-          {client.profile_picture && typeof client.profile_picture === "object" &&
-          "url" in client.profile_picture  ? (
+          {client.profile_picture &&
+          typeof client.profile_picture === "object" &&
+          "url" in client.profile_picture ? (
             <Image
               width={300}
               className="h-8 w-8 rounded-full"
@@ -103,10 +101,11 @@ function ClientDropdown({ client }: { client: Tables<"clients"> }) {
           </Menu.Item>
         </Menu.Items>
       </Transition>
-      <ClientMessages
+      <MessageSidebar
         open={openMessagesSidebar}
         setOpen={setOpenMessagesSidebar}
-        client={client}
+        user={client}
+        userType={"clients"}
       />
     </Menu>
   );
