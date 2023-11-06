@@ -4,8 +4,8 @@ import { Menu, Transition } from "@headlessui/react";
 import React, { Fragment } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import {Tables} from "@/database";
-import {createBrowserClient} from "@supabase/ssr";
+import { Tables } from "@/database";
+import { getClientSupabase } from "@/app/supabase-client";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -16,14 +16,11 @@ function ProfessionalDropdown({
 }: {
   professional: Tables<"professionals">;
 }) {
-  const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+  const { supabase } = getClientSupabase();
   const router = useRouter();
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    router.refresh();
+    router.push("/");
   };
 
   return (
@@ -32,13 +29,14 @@ function ProfessionalDropdown({
         <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
           <span className="absolute -inset-1.5" />
           <span className="sr-only">Open user menu</span>
-          {professional.profile_picture && typeof professional.profile_picture === "object" &&
-            "url" in professional.profile_picture  ? (
+          {professional.profile_picture &&
+          typeof professional.profile_picture === "object" &&
+          "url" in professional.profile_picture ? (
             <Image
               width={300}
               className="h-8 w-8 rounded-full"
               height={300}
-              src={professional.profile_picture.url  as string}
+              src={professional.profile_picture.url as string}
               alt=""
             />
           ) : (

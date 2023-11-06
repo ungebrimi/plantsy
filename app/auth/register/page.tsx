@@ -1,17 +1,14 @@
 "use client";
-import { Fragment, useState, useRef } from "react";
+import { Fragment } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import Link from "next/link";
-import HCaptcha from "@hcaptcha/react-hcaptcha";
 import Image from "next/image";
 import Modal from "./Modal";
-import {getClientSupabase} from "@/app/supabase-client";
-import {SupabaseClient} from "@supabase/supabase-js";
-import {getServerSession} from "@/app/supabase-server";
+import { createClient } from "@/utils/supabase/client";
 
-const publishingOptions = [
+const roleOptions = [
   {
     title: "Customer",
     role: "client",
@@ -32,30 +29,21 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Register() {
-  const [message, setMessage] = useState<string | null>(null);
-  const [acceptTerms, setAcceptTerms] = useState<boolean>(false);
-  const [captchaToken, setCaptchaToken] = useState<string | undefined>();
-  const [userType, setUserType] = useState(publishingOptions[0]);
-  const [success, setSuccess] = useState<boolean>(false);
-  const [email, setEmail] = useState<string>("");
-  const formRef = useRef<HTMLFormElement>(null);
-  const router = useRouter();
-  const captcha = useRef<any>();
-  const { supabase } = getClientSupabase()
+export default function Register({
+  searchParams,
+}: {
+  searchParams: { message: string; email: string };
+}) {
+  const supabase = createClient();
 
-  const handleSignUp = async (e: any) => {
-    e.preventDefault();
-    const data = new FormData(e.currentTarget);
-    const values: any = Object.fromEntries(data.entries());
-    let email = values.email.trim();
-    let password = values.password.trim();
-    let confirmPassword = values.confirm_password.trim();
-    let firstName = values.first_name.trim();
-    let lastName = values.last_name.trim();
-    // set the email state to the trimmed email from table
-    setEmail(email);
-
+  const handleSignUp = async (formData: FormData) => {
+    let email = formData.get("email") as string;
+    let password = formData.get("password") as string;
+    let confirmPassword = formData.get("confirm_password") as string;
+    let firstName = formData.get("first_name") as string;
+    let lastName = formData.get("last_name") as string;
+    let checked = formData.get("checked") as string;
+    let role = formData.get("role[role]") as string;
     // Password requirements checker
     // Password validation check
     const uppercaseRegex = /[A-Z]/;
@@ -65,48 +53,36 @@ export default function Register() {
       !uppercaseRegex.test(password) ||
       !numberRegex.test(password)
     ) {
-      setMessage(
-        "Password must be at least 8 characters long, contain an uppercase letter, and a number.",
+      return redirect(
+        "/auth/register?message=Password does not meet requirements",
       );
-      return;
     }
 
-    if (!email || !password || !acceptTerms || !firstName || !lastName) {
-      setMessage(
-        "You need to fill in all required fields and accept the terms and conditions to continue",
-      );
-      return;
+    if (!email || !password || !checked || !firstName || !lastName) {
+      return redirect("/auth/register?message=Please fill out all fields");
     }
 
     if (password !== confirmPassword) {
-      setMessage("Passwords don't match");
-      return;
+      return redirect("/auth/register?message=Passwords do not match");
     }
 
     try {
-      const { error } = await supabase.auth.signUp({
+      await supabase.auth.signUp({
         email,
         password,
         options: {
-          captchaToken,
+          // captchaToken,
           data: {
-            role: userType.role,
+            role: role,
             first_name: firstName,
             last_name: lastName,
           },
         },
       });
-
-      if (error) {
-        console.error(error);
-        return null; // Handle the error appropriately
-      }
-      setSuccess(true);
-      // captcha.current.resetCaptcha();
     } catch (error) {
       console.error(error);
-      // Handle the error appropriately
     }
+    return redirect("/auth/register?email=" + email);
   };
 
   return (
@@ -131,13 +107,7 @@ export default function Register() {
         </div>
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
           <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
-            <form
-              className="space-y-6"
-              action="#"
-              ref={formRef}
-              onSubmit={handleSignUp}
-              method="POST"
-            >
+            <form className="space-y-6" action={handleSignUp}>
               <div className="col-span-1">
                 <label
                   htmlFor="first_name"
@@ -231,11 +201,11 @@ export default function Register() {
                 </div>
               </div>
               <div>
-                <Listbox value={userType} onChange={setUserType}>
+                <Listbox defaultValue={roleOptions[0]} name="role">
                   {({ open }) => (
                     <>
                       <Listbox.Label className="block text-sm font-medium leading-6 text-gray-900">
-                        Join as a
+                        Role<span className="text-red-500">*</span>
                       </Listbox.Label>
                       <div className="relative">
                         <div className="inline-flex divide-x divide-green-700 rounded-md shadow-sm">
@@ -244,18 +214,17 @@ export default function Register() {
                               className="-ml-0.5 h-5 w-5"
                               aria-hidden="true"
                             />
-                            <p className="text-sm font-semibold">
-                              {userType.title}
-                            </p>
                           </div>
-                          <Listbox.Button className="inline-flex items-center rounded-l-none rounded-r-md bg-green-600 p-2 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-gray-50">
-                            <span className="sr-only">
-                              Change published status
-                            </span>
-                            <ChevronDownIcon
-                              className="h-5 w-5 text-white"
-                              aria-hidden="true"
-                            />
+                          <Listbox.Button className="inline-flex text-sm font-medium text-white items-center rounded-l-none rounded-r-md bg-green-600 p-2 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-gray-50">
+                            {({ value }) => (
+                              <>
+                                {value.title}
+                                <ChevronDownIcon
+                                  className="h-5 w-5 text-white"
+                                  aria-hidden="true"
+                                />
+                              </>
+                            )}
                           </Listbox.Button>
                         </div>
 
@@ -267,7 +236,7 @@ export default function Register() {
                           leaveTo="opacity-0"
                         >
                           <Listbox.Options className="absolute right-0 z-10 mt-2 w-72 origin-top-right divide-y divide-gray-200 overflow-hidden rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                            {publishingOptions.map((option) => (
+                            {roleOptions.map((option) => (
                               <Listbox.Option
                                 key={option.title}
                                 className={({ active }) =>
@@ -335,7 +304,6 @@ export default function Register() {
                     id="checked"
                     name="checked"
                     type="checkbox"
-                    onChange={() => setAcceptTerms(!acceptTerms)}
                     className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-600"
                   />
                   <label
@@ -353,14 +321,11 @@ export default function Register() {
                   </label>
                 </div>
               </div>
-
-              <HCaptcha
-                sitekey={"8c6238de-63ae-47f6-8007-0421360fb824"}
-                onVerify={(token: string) => {
-                  setCaptchaToken(token);
-                }}
-              />
-
+              {searchParams?.message && (
+                <p className="text-sm font-medium leading-6 mt-4 text-red-500">
+                  {searchParams.message}
+                </p>
+              )}
               <div>
                 <button
                   type="submit"
@@ -370,7 +335,6 @@ export default function Register() {
                 </button>
               </div>
             </form>
-            <p className="text-sm font-medium leading-6 mt-4">{message}</p>
           </div>
 
           <p className="mt-10 text-center text-sm text-gray-500">
@@ -384,7 +348,7 @@ export default function Register() {
           </p>
         </div>
       </div>
-      {success && <Modal email={email} />}
+      {searchParams?.email && <Modal email={searchParams.email} />}
     </main>
   );
 }

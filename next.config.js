@@ -8,9 +8,6 @@ const nextConfig = {
       "production-next-images-cdn.thumbtack.com",
     ],
   },
-  experimental: {
-    serverActions: true,
-  },
 };
 
 module.exports = nextConfig;

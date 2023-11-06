@@ -7,24 +7,33 @@ import { usePathname } from "next/navigation";
 import ClientDropdown from "./ClientDropdown";
 import ProfessionalDropdown from "./ProfessionalDropdown";
 import Link from "next/link";
-import {Tables} from "@/database";
+import { Tables } from "@/database";
 import Image from "next/image";
+import { Session } from "@supabase/supabase-js";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
+
 type NavType = {
   name: string;
   href: string;
-  current: boolean
-}
+  current: boolean;
+};
 
 type NavbarProps = {
-  client: Tables<"clients"> | null
-  professional: Tables<"professionals"> |null
-  session: any
-}
-export default function Navbar({ client, professional, session }: NavbarProps) {
+  serverClient: Tables<"clients"> | null;
+  serverProfessional: Tables<"professionals"> | null;
+  session: Session | null;
+};
+export default function Navbar({
+  serverClient,
+  serverProfessional,
+  session,
+}: NavbarProps) {
+  const [professional, setProfessional] =
+    useState<Tables<"professionals"> | null>(serverProfessional);
+  const [client, setClient] = useState<Tables<"clients"> | null>(serverClient);
   const [navigation, setNavigation] = useState<NavType[]>([
     { name: "Home", href: "/", current: true },
     { name: "Marketplace", href: "/home/marketplace", current: false },

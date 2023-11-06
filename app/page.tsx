@@ -6,15 +6,17 @@ import Testimonials from "./components/home/Testimonials";
 import Footer from "./layout/Footer";
 import ServerNav from "@/app/layout/ServerNav";
 
-export default async function Home() {
+export default function Home() {
   return (
-    <main>
-        <ServerNav />
-      <Hero />
-      <Categories />
-      <Features />
-      <Testimonials />
-      <Footer />
-    </main>
+    <>
+      <ServerNav />
+      <main>
+        <Hero />
+        <Categories />
+        <Features />
+        <Testimonials />
+        <Footer />
+      </main>
+    </>
   );
 }

@@ -1,42 +1,34 @@
-"use client";
 import Link from "next/link";
-import { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
-import HCaptcha from "@hcaptcha/react-hcaptcha";
 import Image from "next/image";
-import {createBrowserClient} from "@supabase/ssr";
-export default function Login() {
-  const router = useRouter();
-  const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
-  const [error, setError] = useState<string | null>(null);
-  const [captchaToken, setCaptchaToken] = useState<string | undefined>();
-  const captcha = useRef<any>();
+import { redirect } from "next/navigation";
+import { createClient } from "@/utils/supabase/server";
+import { cookies } from "next/headers";
 
-  const handleSignIn = async (e: any) => {
-    e.preventDefault();
-    const data = new FormData(e.currentTarget);
-    const values: any = Object.fromEntries(data.entries());
-    const email = values.email;
-    const password = values.password;
+export default function Login({
+  searchParams,
+}: {
+  searchParams: { message: string };
+}) {
+  const signIn = async (formData: FormData) => {
+    "use server";
 
-    await supabase.auth
-      .signInWithPassword({
-        email,
-        password,
-      })
-      .then((res) => {
-        if (res.error) {
-          setError(res.error.message);
-        } else {
-          // captcha.current.resetCaptcha()
-          setTimeout(() => {
-            router.push("/");
-          }, 2000);
-        }
-      });
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const cookieStore = cookies();
+    const supabase = createClient(cookieStore);
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      return redirect(
+        `/auth/login?message=Could not authenticate user: ${error.message}`,
+      );
+    }
+
+    return redirect("/");
   };
 
   return (
@@ -57,12 +49,7 @@ export default function Login() {
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
           <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
-            <form
-              className="space-y-6"
-              action="#"
-              method="POST"
-              onSubmit={handleSignIn}
-            >
+            <form className="space-y-6" action={signIn}>
               <div>
                 <label
                   htmlFor="email"
@@ -100,15 +87,10 @@ export default function Login() {
                   />
                 </div>
               </div>
-
-              <HCaptcha
-                sitekey={"8c6238de-63ae-47f6-8007-0421360fb824"}
-                onVerify={(token: string) => {
-                  setCaptchaToken(token);
-                }}
-              />
-              {error && (
-                <p className="text-red-500 font-medium text-sm">{error}</p>
+              {searchParams?.message && (
+                <p className="text-red-500 font-medium text-sm">
+                  {searchParams.message}
+                </p>
               )}
               <div className="flex items-center justify-between">
                 <div className="text-sm leading-6">
