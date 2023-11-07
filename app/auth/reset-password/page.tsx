@@ -1,32 +1,28 @@
-"use client";
-import { useRef, useState } from "react";
-import HCaptcha from "@hcaptcha/react-hcaptcha";
 import Image from "next/image";
-import {getClientSupabase} from "@/app/supabase-client";
+import { redirect } from "next/navigation";
+import { createClient } from "@/utils/supabase/server";
+import { cookies } from "next/headers";
 
-export default function ResetPassword() {
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  // const [captchaToken, setCaptchaToken] = useState<string | undefined>();
-  // const captcha = useRef<any>();
-  const { supabase } = getClientSupabase()
+export default function ResetPassword({
+  searchParams,
+}: {
+  searchParams: { message: string };
+}) {
+  const resetPassword = async (formData: FormData) => {
+    "use server";
 
-  const handleResetPassword = async (e: any) => {
-    e.preventDefault();
-    try {
-      await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/account/update-password`,
-        // captchaToken,
-      });
-      // captcha.current.resetCaptcha();
-      setMessage(
-        "Reset password email has been sent. Please check your inbox."
+    const email = formData.get("email") as string;
+    const cookieStore = cookies();
+    const supabase = createClient(cookieStore);
+    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    if (error) {
+      return redirect(
+        `/auth/reset-password?message=Error resetting password: ${error.message}`,
       );
-      setEmail("");
-    } catch (error: any) {
-      console.error("Error resetting password:", error.message);
-      setMessage("Error resetting password. Please try again later.");
     }
+    return redirect(
+      "/auth/reset-password?message=Password reset email sent. Please check your inbox./",
+    );
   };
 
   return (
@@ -47,8 +43,8 @@ export default function ResetPassword() {
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
           <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
-            <p>{message}</p>
-            <form className="space-y-6" onSubmit={handleResetPassword}>
+            <p>{searchParams.message && searchParams.message}</p>
+            <form className="space-y-6" action={resetPassword}>
               <div>
                 <label
                   htmlFor="email"
@@ -63,21 +59,10 @@ export default function ResetPassword() {
                     type="email"
                     autoComplete="email"
                     required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
                   />
                 </div>
               </div>
-              {/*
-              <HCaptcha
-                sitekey={"8c6238de-63ae-47f6-8007-0421360fb824"}
-                onVerify={(token: string) => {
-                  setCaptchaToken(token);
-                }}
-              />
-              */}
-
               <div>
                 <button
                   type="submit"

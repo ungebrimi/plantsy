@@ -1,18 +1,16 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import {getClientSupabase} from "@/app/supabase-client";
+import { createClient } from "@/utils/supabase/client";
+
 export default function UpdatePassword() {
   const [event, setEvent] = useState<any>(null);
   const [password, setPassword] = useState("");
   const [confirmedPassword, setConfirmedPassword] = useState("");
   const [message, setMessage] = useState("");
-  const router = useRouter();
-
-  const supabase: any = getClientSupabase();
+  const supabase: any = createClient();
 
   useEffect(() => {
-    if(!supabase) return
+    if (!supabase) return;
     supabase.auth.onAuthStateChange(async (event: any, session: any) => {
       setEvent(event);
     });
@@ -34,7 +32,7 @@ export default function UpdatePassword() {
       !numberRegex.test(password)
     ) {
       setMessage(
-        "Password must be at least 8 characters long, contain an uppercase letter, and a number."
+        "Password must be at least 8 characters long, contain an uppercase letter, and a number.",
       );
       return;
     }
