@@ -4,7 +4,6 @@ import { Dialog, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
   ChatBubbleLeftIcon,
-  CheckBadgeIcon,
   HomeModernIcon,
   PuzzlePieceIcon,
   UserIcon,
@@ -34,12 +33,13 @@ const navigation = [
     icon: PuzzlePieceIcon,
     current: false,
   },
+  /* 
   {
     name: "Orders",
     href: "/account/professional/orders",
     icon: CheckBadgeIcon,
     current: false,
-  },
+  }, */
   {
     name: "Profile",
     href: "/account/professional/profile",

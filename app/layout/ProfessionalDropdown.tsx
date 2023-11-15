@@ -1,11 +1,9 @@
-"use client";
 import Image from "next/image";
 import { Menu, Transition } from "@headlessui/react";
 import React, { Fragment } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Tables } from "@/database";
-import { getClientSupabase } from "@/app/supabase-client";
+import { createClient } from "@/app/utils/supabase/client";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -13,14 +11,17 @@ function classNames(...classes: string[]) {
 
 function ProfessionalDropdown({
   professional,
+  setProfessional,
 }: {
   professional: Tables<"professionals">;
+  setProfessional: React.Dispatch<
+    React.SetStateAction<Tables<"professionals"> | null>
+  >;
 }) {
-  const { supabase } = getClientSupabase();
-  const router = useRouter();
   const handleSignOut = async () => {
+    const supabase = createClient();
     await supabase.auth.signOut();
-    router.push("/");
+    setProfessional(null);
   };
 
   return (

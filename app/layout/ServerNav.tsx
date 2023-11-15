@@ -1,12 +1,13 @@
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-import { getServerSession } from "@/app/supabase-server";
 import React from "react";
-
 import Navbar from "./Navbar";
+import { createClient } from "@/app/utils/supabase/server";
+import { cookies } from "next/headers";
 
 async function ServerNav() {
-  const { session, supabase, error } = await getServerSession();
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+  const { data, error } = await supabase.auth.getSession();
+  const { session } = data;
 
   if (!session) {
     return (
@@ -35,6 +36,7 @@ async function ServerNav() {
       if (professional.profile_picture) {
         professional.profile_picture = JSON.parse(professional.profile_picture);
       }
+
       return (
         <header>
           <Navbar

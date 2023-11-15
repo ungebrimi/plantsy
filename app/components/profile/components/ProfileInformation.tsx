@@ -1,5 +1,5 @@
 "use client";
-import React, {useEffect, useState} from "react";
+import React, { useState } from "react";
 import Avatar from "./Avatar";
 import {
   CheckCircleIcon,
@@ -7,40 +7,41 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Tables } from "@/database";
-import {useNotification} from "@/context/NotificationContext";
-import {getClientSupabase} from "@/app/supabase-client";
-import useImageUpload from "@/hooks/useImageUpload";
+import { useNotification } from "@/context/NotificationContext";
 import Alert from "@/app/components/Alert";
+import { createClient } from "@/app/utils/supabase/client";
 
 type Form = {
   website: string | null;
   about: string | null;
   profile_picture: Tables<"files"> | null;
-}
+};
 
 const ProfileInformation = ({
   user,
-userType,
+  userType,
 }: {
   user: Tables<"clients"> | Tables<"professionals">;
   userType: string;
 }) => {
-  const { supabase } = getClientSupabase()
+  const supabase = createClient();
   const [success, setSuccess] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState<Form>({
     website: user.website,
     about: user.about,
-    profile_picture: user.profile_picture as Tables<"files">| null,
+    profile_picture: user.profile_picture as Tables<"files"> | null,
   });
-  const [ oldImage, setOldImage ] = useState<Tables<"files"> | null>(user.profile_picture as Tables<"files">| null)
-  const originalFormData ={
+  const [oldImage, setOldImage] = useState<Tables<"files"> | null>(
+    user.profile_picture as Tables<"files"> | null,
+  );
+  const originalFormData = {
     ...formData,
     website: user.website,
     about: user.about,
   };
   const [cancelWarning, setCancelWarning] = useState<boolean>(false);
-  const { addError } = useNotification()
+  const { addError } = useNotification();
 
   async function updateProfileInformation() {
     if (!user) return;
@@ -63,13 +64,15 @@ userType,
       }
     } catch (error: any) {
       console.error(error);
-      addError("There was an issue updating your information: " + error.message)
+      addError(
+        "There was an issue updating your information: " + error.message,
+      );
     }
   }
 
   const handleCancel = () => {
-    setCancelWarning(true)
-  }
+    setCancelWarning(true);
+  };
 
   return (
     <form
@@ -203,7 +206,12 @@ userType,
           Save
         </button>
       </div>
-      <Alert open={cancelWarning} setOpen={setCancelWarning} setNewData={setFormData} originalData={originalFormData} />
+      <Alert
+        open={cancelWarning}
+        setOpen={setCancelWarning}
+        setNewData={setFormData}
+        originalData={originalFormData}
+      />
     </form>
   );
 };

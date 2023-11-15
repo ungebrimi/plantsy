@@ -1,21 +1,22 @@
+"use client";
 import { useState } from "react";
 import FileUpload from "./FileUpload";
 import ImageUpload from "./ImageUpload";
 import Emoji from "./Emoji";
 import { Tables } from "@/database";
-import {getClientSupabase} from "@/app/supabase-client";
 import Image from "next/image";
+import { createClient } from "@/app/utils/supabase/client";
 
 export default function Editor({
   user,
   channel,
-    userType
+  userType,
 }: {
   channel: Tables<"channels">;
   user: Tables<"clients"> | Tables<"professionals">;
-  userType: string
+  userType: string;
 }) {
-  const { supabase } = getClientSupabase()
+  const supabase = createClient();
   const [message, setMessage] = useState<string>("");
   const [files, setFiles] = useState<Tables<"files">[]>([]);
   const [images, setImages] = useState<Tables<"files">[]>([]);
@@ -23,53 +24,32 @@ export default function Editor({
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-      const fileUrls = files.map((file) => file.url); // Assuming files have an "url" property
-      const imageUrls = images.map((image) => image.url); // Assuming images have an "url" property
+    // stringify the array of files and images
+    const jsonFiles = files.length > 0 ? JSON.stringify(files) : null;
+    const jsonImages = images.length > 0 ? JSON.stringify(images) : null;
+    const userIdField =
+      userType === "clients" ? "client_id" : "professional_id";
 
-      if(userType === "clients") {
-        const { data, error } = await supabase
-          .from("messages")
-          .insert({
-            message: message,
-            client_id: user.id,
-            channel_id: channel.id,
-            files: fileUrls.length > 0 ? fileUrls : null,
-            images: imageUrls.length > 0 ? imageUrls : null,
-          })
-          .select();
+    try {
+      const { data, error } = await supabase
+        .from("messages")
+        .insert({
+          message: message,
+          [userIdField]: user.id,
+          channel_id: channel.id,
+          files: jsonFiles,
+          images: jsonImages,
+        })
+        .select();
+      if (error) console.error(error);
+      console.log("Message inserted:", data);
+    } catch (error) {
+      console.error(error);
+    }
 
-        if (error) {
-          console.error(error);
-        } else {
-          console.log("Message inserted:", data);
-        }
-
-        setMessage("");
-        setFiles([]);
-        setImages([]);
-      }
-      if(userType === "professionals") {
-        const {data, error} = await supabase
-            .from("messages")
-            .insert({
-              message: message,
-              professional_id: user.id,
-              channel_id: channel.id,
-              files: fileUrls.length > 0 ? fileUrls : null,
-              images: imageUrls.length > 0 ? imageUrls : null,
-            })
-            .select();
-
-        if (error) {
-          console.error(error);
-        } else {
-          console.log("Message inserted:", data);
-        }
-
-        setMessage("");
-        setFiles([]);
-        setImages([]);
-      }
+    setMessage("");
+    setFiles([]);
+    setImages([]);
   };
 
   return (
@@ -77,8 +57,8 @@ export default function Editor({
       <div className="flex-shrink-0 hidden sm:block">
         {profilePicture ? (
           <Image
-              width={profilePicture.width ?? 300}
-                height={profilePicture.height ?? 300}
+            width={profilePicture.width ?? 300}
+            height={profilePicture.height ?? 300}
             className="inline-block h-10 w-10 rounded-full"
             src={profilePicture.url}
             alt={user.first_name + " " + user.last_name}
@@ -114,7 +94,12 @@ export default function Editor({
                 user={user}
                 userType={userType}
               />
-              <FileUpload files={files} setFiles={setFiles} user={user} userType={userType}/>
+              <FileUpload
+                files={files}
+                setFiles={setFiles}
+                user={user}
+                userType={userType}
+              />
               <Emoji message={message} setMessage={setMessage} />
             </div>
             <div className="flex-shrink-0">

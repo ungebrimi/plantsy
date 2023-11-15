@@ -1,16 +1,20 @@
 import React from "react";
 import { redirect } from "next/navigation";
-import ChatPanel from "@/app/components/messages/components/ChatPanel";
 import { Tables } from "@/database";
-import {getServerSession} from "@/app/supabase-server";
+import { cookies } from "next/headers";
+import { createClient } from "@/app/utils/supabase/server";
+import Inbox from "@/app/components/messages/components/chat/Inbox";
+import Editor from "@/app/components/messages/components/editor/Editor";
 
 interface PageProps {
   params: { channel: string };
 }
 
 const Channel = async ({ params }: PageProps) => {
-
-  const { supabase, session } = await getServerSession()
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+  const { data, error } = await supabase.auth.getSession();
+  const { session } = data;
 
   const { data: serverMessages } = await supabase
     .from("messages")
@@ -35,20 +39,26 @@ const Channel = async ({ params }: PageProps) => {
     .eq("id", channel.client_id)
     .single();
 
-  if (!session) {
+  if (!session || !channel) {
     redirect("/");
   }
   const typedServerMessages: Tables<"messages">[] = serverMessages || [];
 
   return (
-    <main className="flex flex-auto h-full max-w-7xl mx-auto">
-      <ChatPanel
-        session={session}
-        serverMessages={typedServerMessages}
-        channel={channel}
-        professional={professional}
-        client={client}
-      />
+    <main className="h-full overflow-x-hidden">
+      <section className="flex-auto flex-wrap h-full rounded-xl bg-gray-100 p-4 py-12">
+        <Inbox
+          serverMessages={typedServerMessages}
+          client={client}
+          professional={professional}
+          userType={"professionals"}
+        />
+        <Editor
+          channel={channel}
+          user={professional}
+          userType={"professionals"}
+        />
+      </section>
     </main>
   );
 };

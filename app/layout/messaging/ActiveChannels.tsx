@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Disclosure } from "@headlessui/react";
 import { MinusIcon, PlusIcon } from "@heroicons/react/20/solid";
-import Link from "next/link";
 import { Tables } from "@/database";
-import { getClientSupabase } from "@/app/supabase-client";
 import { useNotification } from "@/context/NotificationContext";
+import { createClient } from "@/app/utils/supabase/client";
+import { useRouter } from "next/navigation";
 
 const ActiveChannels = ({
   user,
@@ -13,11 +13,12 @@ const ActiveChannels = ({
   user: Tables<"professionals"> | Tables<"clients">;
   userType: string;
 }) => {
-  const { supabase } = getClientSupabase();
+  const supabase = createClient();
   const { addError } = useNotification();
   const [activeConversations, setActiveConversations] = useState<
     Tables<"channels">[] | null
   >(null);
+  const router = useRouter();
 
   useEffect(() => {
     async function getChannels() {
@@ -49,6 +50,27 @@ const ActiveChannels = ({
     );
   }, [supabase, user, userType, addError]);
 
+  async function setMessagesToUnread(channelId: number) {
+    const { error } = await supabase
+      .from("channels")
+      .update({ unread_messages: false })
+      .eq("id", channelId);
+    if (error) {
+      addError(error.message);
+    }
+  }
+
+  // function to navigate to channel and set unread messages to false
+  async function navigateToChannel(channelId: number) {
+    await setMessagesToUnread(channelId);
+    if (userType === "clients") {
+      router.push(`/account/client/channels/${channelId}`);
+    }
+    if (userType === "professionals") {
+      router.push(`/account/professional/channels/${channelId}`);
+    }
+  }
+
   return (
     <Disclosure as="div" defaultOpen className="border-b border-gray-200 py-6">
       {({ open }: any) => (
@@ -73,33 +95,38 @@ const ActiveChannels = ({
           <Disclosure.Panel className="pt-6">
             <div className="space-y-4">
               {activeConversations &&
-                activeConversations.map((channel) => (
-                  <Link
-                    key={channel.id}
-                    href={
-                      userType === "client"
-                        ? `/account/client/channels/${channel.id}`
-                        : `/account/professional/channels/${channel.id}`
-                    }
-                    className="flex items-center hover:bg-gray-100 rounded-xl py-2"
-                  >
-                    <p className="flex items-center justify-center h-6 w-6 bg-indigo-200 rounded-full text-sm font-semibold">
-                      {userType === "clients" &&
-                        `${channel.professional_name?.charAt(
-                          0,
-                        )}${channel.professional_name?.charAt(1)}`}
-                      {userType === "professionals" &&
-                        `${channel.client_name?.charAt(
-                          0,
-                        )}${channel.client_name?.charAt(1)}`}
-                    </p>
-                    <p className="ml-2 text-sm font-medium">
-                      {userType === "clients"
-                        ? channel.professional_name
-                        : channel.client_name}
-                    </p>
-                  </Link>
-                ))}
+                activeConversations.map((channel) => {
+                  return (
+                    <button
+                      key={channel.id}
+                      onClick={() => navigateToChannel(channel.id)}
+                      className="flex items-center hover:bg-gray-100 rounded-xl py-2"
+                    >
+                      <p className="flex items-center justify-center h-6 w-6 bg-indigo-200 rounded-full text-sm font-semibold">
+                        {userType === "clients" &&
+                          `${channel.professional_name?.charAt(
+                            0,
+                          )}${channel.professional_name?.charAt(1)}`}
+                        {userType === "professionals" &&
+                          `${channel.client_name?.charAt(
+                            0,
+                          )}${channel.client_name?.charAt(1)}`}
+                      </p>
+                      <p className="ml-2 text-sm font-medium">
+                        {userType === "clients"
+                          ? channel.professional_name
+                          : channel.client_name}
+                      </p>
+                      {/* @ts-ignore*/}
+                      {channel.unread_messages && (
+                        <span
+                          aria-label="unread messages"
+                          className="p-1 ml-4 rounded-full bg-red-500"
+                        ></span>
+                      )}
+                    </button>
+                  );
+                })}
             </div>
           </Disclosure.Panel>
         </>

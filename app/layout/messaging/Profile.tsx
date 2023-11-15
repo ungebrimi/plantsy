@@ -11,7 +11,7 @@ const Profile = ({
   user: Tables<"professionals"> | Tables<"clients">;
   userType: string;
 }) => {
-  const profilePicture = JSON.parse(user.profile_picture as string);
+  const profilePicture = (user.profile_picture as Tables<"files">) ?? null;
   return (
     <>
       <section className="flex flex-col items-center bg-indigo-100 border border-gray-200 mt-4 w-full py-6 px-4 rounded-lg">

@@ -1,25 +1,28 @@
-"use client";
 import { Menu, Transition } from "@headlessui/react";
 import React, { Fragment, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Tables } from "@/database";
-import { getClientSupabase } from "@/app/supabase-client";
 import MessageSidebar from "@/app/layout/messaging/MessageSidebar";
+import { createClient } from "@/app/utils/supabase/client";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-function ClientDropdown({ client }: { client: Tables<"clients"> }) {
+function ClientDropdown({
+  client,
+  setClient,
+}: {
+  client: Tables<"clients">;
+  setClient: React.Dispatch<React.SetStateAction<Tables<"clients"> | null>>;
+}) {
   const [openMessagesSidebar, setOpenMessagesSidebar] =
     useState<boolean>(false);
-  const { supabase } = getClientSupabase();
-  const router = useRouter();
+  const supabase = createClient();
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    router.refresh();
+    setClient(null);
   };
 
   return (

@@ -3,6 +3,7 @@ import React from "react";
 import FileDownloader from "./FileDownloader";
 import { Carousel } from "react-responsive-carousel";
 import { Tables } from "@/database";
+import { getFormattedDate } from "@/app/utils/general-functions/getFormattedDate";
 
 interface ClientMessageProps {
   message: Tables<"messages">;
@@ -16,36 +17,10 @@ function classNames(...classes: string[]) {
 
 const ClientMessage = ({ message, client, unoReverse }: ClientMessageProps) => {
   const messageDate: Date = new Date(message.inserted_at);
-  const currentDate: Date = new Date();
   const profilePicture: Tables<"files"> = JSON.parse(
     client.profile_picture as string,
   );
-
-  // Calculate the time difference in milliseconds
-  const timeDifference: number = currentDate.getTime() - messageDate.getTime();
-
-  let formattedDate;
-
-  if (timeDifference < 86400000) {
-    // Less than a day
-    formattedDate = messageDate.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  } else if (timeDifference < 604800000) {
-    // Less than a week
-    formattedDate = messageDate.toLocaleString("en-US", {
-      weekday: "long",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  } else {
-    formattedDate = messageDate.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  }
+  const formattedDate = getFormattedDate(messageDate);
 
   return (
     <div>

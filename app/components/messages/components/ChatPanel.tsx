@@ -5,7 +5,7 @@ import Editor from "@/app/components/messages/components/editor/Editor";
 import Image from "next/image";
 import { Tables } from "@/database";
 import { Session } from "@supabase/supabase-js";
-import { getClientSupabase } from "@/app/supabase-client";
+import { createClient } from "@/app/utils/supabase/client";
 
 type ChatPanelProps = {
   session: Session;
@@ -24,7 +24,7 @@ const ChatPanel = ({
 }: ChatPanelProps) => {
   const [messages, setMessages] =
     useState<Tables<"messages">[]>(serverMessages);
-  const { supabase } = getClientSupabase();
+  const supabase = createClient();
 
   useEffect(() => {
     const channel = supabase

@@ -109,9 +109,14 @@ export default function Navbar({
                 {/*   <BellIcon className="h-6 w-6" aria-hidden="true" /> */}
                 {/* </button> */}
 
-                {client && <ClientDropdown client={client} />}
+                {client && (
+                  <ClientDropdown client={client} setClient={setClient} />
+                )}
                 {professional && (
-                  <ProfessionalDropdown professional={professional} />
+                  <ProfessionalDropdown
+                    professional={professional}
+                    setProfessional={setProfessional}
+                  />
                 )}
                 {!client && !professional && (
                   <div className="ml-2 sm:ml-4 flex flex-col md:flex-row justify-center mt-8 md:mt-0 items-center gap-x-2 sm:gap-x-6">

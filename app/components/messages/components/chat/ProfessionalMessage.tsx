@@ -4,6 +4,7 @@ import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Image from "next/image";
 import { Tables } from "@/database";
+import { getFormattedDate } from "@/app/utils/general-functions/getFormattedDate";
 
 interface ProfessionalMessageProps {
   message: Tables<"messages">;
@@ -21,34 +22,9 @@ const ProfessionalMessage = ({
   unoReverse,
 }: ProfessionalMessageProps) => {
   const messageDate: Date = new Date(message.inserted_at);
-  const currentDate: Date = new Date();
   const profilePicture = JSON.parse(professional.profile_picture as string);
-
   // Calculate the time difference in milliseconds
-  const timeDifference: number = currentDate.getTime() - messageDate.getTime();
-
-  let formattedDate;
-
-  if (timeDifference < 86400000) {
-    // Less than a day
-    formattedDate = messageDate.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  } else if (timeDifference < 604800000) {
-    // Less than a week
-    formattedDate = messageDate.toLocaleString("en-US", {
-      weekday: "long",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  } else {
-    formattedDate = messageDate.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  }
+  const formattedDate = getFormattedDate(messageDate);
 
   return (
     <div>
