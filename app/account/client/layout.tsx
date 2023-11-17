@@ -1,7 +1,7 @@
-export const dynamic = "force-dynamic"
+export const dynamic = "force-dynamic";
 import React from "react";
-import Footer from "@/app/layout/Footer";
-import ServerNav from "@/app/layout/ServerNav";
+import Footer from "@/app/components/layout/Footer";
+import Header from "@/app/components/layout/Header";
 
 export default async function ProfessionalLayout({
   children,
@@ -11,7 +11,7 @@ export default async function ProfessionalLayout({
   return (
     <>
       <main className="py-10">
-         <ServerNav />
+        <Header />
         <div className="px-4 sm:px-6 lg:px-8">{children}</div>
         <Footer />
       </main>

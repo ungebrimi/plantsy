@@ -10,7 +10,7 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
-import MessageSidebar from "@/app/layout/messaging/MessageSidebar";
+import MessageSidebar from "@/app/components/layout/messaging/MessageSidebar";
 import Link from "next/link";
 import { Tables } from "@/database";
 
@@ -34,12 +34,12 @@ const navigation = [
     current: false,
   },
   /* 
-  {
-    name: "Orders",
-    href: "/account/professional/orders",
-    icon: CheckBadgeIcon,
-    current: false,
-  }, */
+    {
+      name: "Orders",
+      href: "/account/professional/orders",
+      icon: CheckBadgeIcon,
+      current: false,
+    }, */
   {
     name: "Profile",
     href: "/account/professional/profile",

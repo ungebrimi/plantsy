@@ -5,11 +5,11 @@ import Feed from "./components/Feed";
 
 const Home = () => {
   return (
-    <main>
+    <div className="max-w-7xl mx-auto py-12">
       <Stats />
       <Calendar />
       <Feed />
-    </main>
+    </div>
   );
 };
 

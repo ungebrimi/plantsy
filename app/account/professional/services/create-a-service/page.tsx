@@ -1,11 +1,10 @@
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import ServiceForm from "../components/ServiceForm";
 import { Tables } from "@/database";
-import {getServerSession} from "@/app/supabase-server";
+import { getServerSession } from "@/app/supabase-server";
 
 export default async function page() {
-  const { supabase, session } = await getServerSession()
+  const { supabase, session } = await getServerSession();
 
   if (!session) redirect("/");
 

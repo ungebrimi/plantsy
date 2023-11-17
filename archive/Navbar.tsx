@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { Disclosure } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { usePathname } from "next/navigation";
-
 import ClientDropdown from "./ClientDropdown";
 import ProfessionalDropdown from "./ProfessionalDropdown";
 import Link from "next/link";
@@ -36,9 +35,9 @@ export default function Navbar({
   const [client, setClient] = useState<Tables<"clients"> | null>(serverClient);
   const [navigation, setNavigation] = useState<NavType[]>([
     { name: "Home", href: "/", current: true },
-    { name: "Marketplace", href: "/home/marketplace", current: false },
-    { name: "Company", href: "/home/company", current: false },
-    { name: "Get in touch", href: "/home/contact", current: false },
+    { name: "Marketplace", href: "/discover", current: false },
+    { name: "Company", href: "/company", current: false },
+    { name: "Get in touch", href: "/contact", current: false },
   ]);
 
   const currentPathname = usePathname();

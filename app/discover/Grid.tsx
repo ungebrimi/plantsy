@@ -15,7 +15,7 @@ function Grid({ services }: any) {
             <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
               <img
                 src={thumbnail.url}
-                alt={service.imageAlt}
+                alt={"#"}
                 className="h-full w-full object-cover object-center"
               />
             </div>

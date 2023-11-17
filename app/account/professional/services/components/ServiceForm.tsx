@@ -1,20 +1,21 @@
 "use client";
-import React, { useRef, useState, Fragment } from "react";
+import React, { Fragment, useRef, useState } from "react";
 import ServiceCategory from "./ServiceCategory";
 import City from "./City";
 import Images from "./Images";
 import Thumbnail from "./Thumbnail";
 import Informational from "./Informational";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Tables } from "@/database";
 import Keywords from "./Keywords";
 import TextInput from "./inputs/TextInput";
-import {useNotification} from "@/context/NotificationContext";
+import { useNotification } from "@/context/NotificationContext";
 import Zip from "@/app/account/professional/services/components/Zip";
-import { Dialog, Transition } from '@headlessui/react'
-import { CheckIcon } from '@heroicons/react/24/outline'
+import { Dialog, Transition } from "@headlessui/react";
+import { CheckIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import {createBrowserClient} from "@supabase/ssr";
+import { createBrowserClient } from "@supabase/ssr";
+
 interface CardInformationProps {
   professional: Tables<"professionals">;
   service: Tables<"services">;
@@ -23,16 +24,16 @@ interface CardInformationProps {
 
 function ServiceForm({ professional, service, edit }: CardInformationProps) {
   const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  );
   const router = useRouter();
   const [formData, setFormData] = useState<Tables<"services">>(service);
-  const [ zipList, setZipList ] = useState<string[]>([])
-  const [open, setOpen] = useState<boolean>(false)
+  const [zipList, setZipList] = useState<string[]>([]);
+  const [open, setOpen] = useState<boolean>(false);
   // ref
   const formRef = useRef<HTMLFormElement>(null);
-  const { addError } = useNotification()
+  const { addError } = useNotification();
 
   function checkForm(formData: Tables<"services">) {
     switch (true) {
@@ -45,32 +46,33 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
       case !formData.description:
         addError("Description is required.");
         return false;
-        // Add cases for other mandatory fields here.
+      // Add cases for other mandatory fields here.
       case !formData.thumbnail:
-        addError("A thumbnail is required")
-            return false
+        addError("A thumbnail is required");
+        return false;
       case !formData.price:
-        addError("Price is required")
-            return false
+        addError("Price is required");
+        return false;
       case !formData.vat:
-        addError("VAT percentage is required")
-            return false
+        addError("VAT percentage is required");
+        return false;
       case !formData.city:
-        addError("City is required")
-            return false
+        addError("City is required");
+        return false;
       case !formData.county:
-        addError("County is required")
-            return false
+        addError("County is required");
+        return false;
       case !formData.state:
-        addError("State is required")
-            return false
+        addError("State is required");
+        return false;
       case !formData.zip:
-        addError("ZIP is required")
-            return false
+        addError("ZIP is required");
+        return false;
       default:
     }
-    return true
+    return true;
   }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
@@ -78,7 +80,6 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
       // break the function if form is not valid
       return;
     }
-
 
     if (edit) {
       const { data, error } = await supabase
@@ -102,7 +103,7 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
         .select("*")
         .single();
       if (error) console.error(error);
-      router.push("/account/professional/services")
+      router.push("/account/professional/services");
     } else {
       const { error } = await supabase
         .from("services")
@@ -124,7 +125,7 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
         .select()
         .single();
       if (error) console.error(error);
-      router.push("/account/professional/services")
+      router.push("/account/professional/services");
     }
   }
 
@@ -259,7 +260,11 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
             </div>
 
             <div className="sm:col-span-3 sm:col-start-1 mt-4">
-              <City formData={formData} setFormData={setFormData} setZipList={setZipList}/>
+              <City
+                formData={formData}
+                setFormData={setFormData}
+                setZipList={setZipList}
+              />
             </div>
 
             {/* STATE */}
@@ -288,14 +293,18 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
 
             {/* POSTAL CODE / ZIP */}
             <div className="sm:col-span-2 mt-4">
-              <Zip formData={formData} setFormData={setFormData} zipList={zipList}/>
+              <Zip
+                formData={formData}
+                setFormData={setFormData}
+                zipList={zipList}
+              />
             </div>
 
             <div className="sm:col-span-4 mt-4">
               <ServiceCategory formData={formData} setFormData={setFormData} />
             </div>
             <div className="sm:col-span-4 my-4">
-            <Keywords formData={formData} setFormData={setFormData} />
+              <Keywords formData={formData} setFormData={setFormData} />
             </div>
             <Images
               professional={professional}
@@ -322,13 +331,13 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
       <Transition.Root show={open} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={setOpen}>
           <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0"
-              enterTo="opacity-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
           >
             <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
           </Transition.Child>
@@ -336,35 +345,42 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
           <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
             <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
               <Transition.Child
-                  as={Fragment}
-                  enter="ease-out duration-300"
-                  enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                  enterTo="opacity-100 translate-y-0 sm:scale-100"
-                  leave="ease-in duration-200"
-                  leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-                  leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
                 <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
                   <div>
                     <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-                      <CheckIcon className="h-6 w-6 text-green-600" aria-hidden="true" />
+                      <CheckIcon
+                        className="h-6 w-6 text-green-600"
+                        aria-hidden="true"
+                      />
                     </div>
                     <div className="mt-3 text-center sm:mt-5">
-                      <Dialog.Title as="h3" className="text-base font-semibold leading-6 text-gray-900">
+                      <Dialog.Title
+                        as="h3"
+                        className="text-base font-semibold leading-6 text-gray-900"
+                      >
                         Payment successful
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-gray-500">
-                          Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur amet labore.
+                          Lorem ipsum dolor sit amet consectetur adipisicing
+                          elit. Consequatur amet labore.
                         </p>
                       </div>
                     </div>
                   </div>
                   <div className="mt-5 sm:mt-6">
                     <Link
-                        href={"/account/professional/services"}
-                        replace
-                        className="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+                      href={"/account/professional/services"}
+                      replace
+                      className="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
                     >
                       Go back to service list
                     </Link>

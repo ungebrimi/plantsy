@@ -1,9 +1,10 @@
 import React from "react";
-import Navbar from "./Navbar";
 import { createClient } from "@/app/utils/supabase/server";
 import { cookies } from "next/headers";
+import Banner from "@/app/components/layout/Banner";
+import Navigation from "@/app/components/layout/Navigation";
 
-async function ServerNav() {
+async function Header() {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
   const { data, error } = await supabase.auth.getSession();
@@ -12,10 +13,11 @@ async function ServerNav() {
   if (!session) {
     return (
       <header>
-        <Navbar
+        <Banner />
+        <Navigation
           serverClient={null}
           serverProfessional={null}
-          session={session}
+          userType={null}
         />
       </header>
     );
@@ -39,10 +41,10 @@ async function ServerNav() {
 
       return (
         <header>
-          <Navbar
+          <Navigation
             serverClient={null}
             serverProfessional={professional}
-            session={session}
+            userType={"professional"}
           />
         </header>
       );
@@ -54,10 +56,11 @@ async function ServerNav() {
       }
       return (
         <header>
-          <Navbar
+          <Banner />
+          <Navigation
             serverClient={client}
             serverProfessional={null}
-            session={session}
+            userType={"client"}
           />
         </header>
       );
@@ -66,10 +69,11 @@ async function ServerNav() {
     if (!client && !professional) {
       return (
         <header>
-          <Navbar
+          <Banner />
+          <Navigation
             serverClient={null}
             serverProfessional={null}
-            session={session}
+            userType={null}
           />
         </header>
       );
@@ -77,4 +81,4 @@ async function ServerNav() {
   }
 }
 
-export default ServerNav;
+export default Header;

@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
-import { Dialog, Disclosure, Menu, Tab, Transition } from "@headlessui/react";
+import { Dialog, Disclosure, Transition } from "@headlessui/react";
 import { MinusIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import {Tables} from "@/database";
+import { Tables } from "@/database";
 
 function MobileFilterDialog({
   mobileFiltersOpen,

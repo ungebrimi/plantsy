@@ -1,8 +1,8 @@
-import { Fragment, SetStateAction, useRef, useState } from "react";
+import React, { Fragment, SetStateAction, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { PhotoIcon } from "@heroicons/react/24/outline";
 import { Tables } from "@/database";
-import {createBrowserClient} from "@supabase/ssr";
+import { createBrowserClient } from "@supabase/ssr";
 
 type ImageModalProps = {
   open: boolean;
@@ -19,9 +19,9 @@ export default function ImageModal({
 }: ImageModalProps) {
   const cancelButtonRef = useRef(null);
   const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  );
 
   const [tempImages, setTempImages] = useState<Tables<"files">[]>(images);
 

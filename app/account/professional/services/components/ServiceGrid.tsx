@@ -23,8 +23,16 @@ const ServiceGrid = ({ serverServices }: ServiceGridProps) => {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   );
-  const [services, setServices] =
-    useState<Tables<"services">[]>(serverServices);
+  const [services, setServices] = useState<Tables<"services">[]>([
+    ...serverServices,
+    ...serverServices,
+    ...serverServices,
+    ...serverServices,
+    ...serverServices,
+    ...serverServices,
+    ...serverServices,
+    ...serverServices,
+  ]);
 
   const deleteService = async (service: Tables<"services">) => {
     try {
@@ -45,7 +53,7 @@ const ServiceGrid = ({ serverServices }: ServiceGridProps) => {
   };
 
   return (
-    <>
+    <section className="-mx-px pt-4 gap-4 grid grid-cols-1 sm:mx-0 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
       {services &&
         services.map((service: any) => {
           if (service.thumbnail) {
@@ -60,9 +68,9 @@ const ServiceGrid = ({ serverServices }: ServiceGridProps) => {
           return (
             <div
               key={service.id}
-              className="group relative border border-gray-200 rounded-md px-2 pt-2 bg-white shadow-sm"
+              className="group relative rounded-md border border-gray-100 px-2 pt-2 bg-white/70 backdrop-blur shadow-sm"
             >
-              <div className="h-96 md:h-56 lg:h-72 w-full overflow-hidden rounded-lg bg-gray-200 group-hover:opacity-75">
+              <div className="h-56 w-full overflow-hidden rounded-lg bg-gray-200">
                 {service.thumbnail &&
                 typeof service.thumbnail === "object" &&
                 "url" in service.thumbnail ? (
@@ -72,7 +80,11 @@ const ServiceGrid = ({ serverServices }: ServiceGridProps) => {
                     className="h-full w-full object-cover object-center"
                   />
                 ) : (
-                  <div>Hello</div>
+                  <img
+                    src={"/plantsy.png"}
+                    alt={service.title}
+                    className="h-full w-full object-cover object-center"
+                  />
                 )}
               </div>
               <div className="py-4 text-center">
@@ -105,7 +117,7 @@ const ServiceGrid = ({ serverServices }: ServiceGridProps) => {
                     <span>Edit</span>
                   </Link>
                   <Link
-                    href={`/account/professional/services/${service.id}/`}
+                    href={`/discover/${service.id}/`}
                     className="relative -ml-px inline-flex items-center bg-white px-3 py-2 text-sm font-semibold text-gray-500 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10"
                   >
                     <MagnifyingGlassIcon className="w-4" />
@@ -124,7 +136,7 @@ const ServiceGrid = ({ serverServices }: ServiceGridProps) => {
             </div>
           );
         })}
-    </>
+    </section>
   );
 };
 export default ServiceGrid;

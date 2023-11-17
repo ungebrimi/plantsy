@@ -1,8 +1,8 @@
-import { Fragment, SetStateAction, useRef, useState } from "react";
+import React, { Fragment, SetStateAction, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { DocumentIcon, FolderIcon } from "@heroicons/react/24/outline";
 import { Tables } from "@/database";
-import {createBrowserClient} from "@supabase/ssr";
+import { createBrowserClient } from "@supabase/ssr";
 
 type FileModalProps = {
   open: boolean;
@@ -20,9 +20,9 @@ export default function FileModal({
   const cancelButtonRef = useRef(null);
   const [tempFiles, setTempFiles] = useState<Tables<"files">[]>(files);
   const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  );
 
   async function removeFile(file_id: number) {
     const updatedTempFiles = tempFiles.filter((file) => file.id !== file_id);

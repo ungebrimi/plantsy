@@ -1,8 +1,8 @@
-import { SetStateAction, useEffect, useState } from "react";
+import React, { SetStateAction, useEffect, useState } from "react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { Combobox } from "@headlessui/react";
 import { Tables } from "@/database";
-import {getClientSupabase} from "@/app/supabase-client";
+import { getClientSupabase } from "@/app/supabase-client";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -22,17 +22,17 @@ export default function ServiceCategory({
     Tables<"service_categories">[]
   >([]);
   const initialServiceCategory = formData.service_category
-      ? {
+    ? {
         name: formData.service_category,
         value: formData.service_category,
       }
-      : { name: "", value: "" };
+    : { name: "", value: "" };
 
   const [selectedServiceCategory, setSelectedServiceCategory] = useState<{
     name: string;
     value: string;
   }>(initialServiceCategory);
-  const { supabase } = getClientSupabase()
+  const { supabase } = getClientSupabase();
 
   useEffect(() => {
     async function getServices() {
@@ -42,6 +42,7 @@ export default function ServiceCategory({
       if (error) console.error(error);
       return data;
     }
+
     getServices().then((res: any) => setServiceList(res));
   }, [supabase]);
 
@@ -49,8 +50,8 @@ export default function ServiceCategory({
     query === ""
       ? serviceList
       : serviceList.filter((service: any) => {
-        return service.name.toLowerCase().includes(query.toLowerCase());
-      });
+          return service.name.toLowerCase().includes(query.toLowerCase());
+        });
 
   return (
     <Combobox
@@ -58,7 +59,7 @@ export default function ServiceCategory({
       value={selectedServiceCategory}
       onChange={(e: any) => {
         setFormData((formData) => ({ ...formData, service_category: e.name }));
-        setSelectedServiceCategory(e)
+        setSelectedServiceCategory(e);
       }}
     >
       <Combobox.Label className="block text-sm font-medium leading-6 text-gray-900">

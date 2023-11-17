@@ -1,5 +1,7 @@
 import "./globals.css";
 import React from "react";
+import Footer from "@/app/components/layout/Footer";
+import Header from "@/app/components/layout/Header";
 
 export const metadata = {
   title: "Plantsy",
@@ -12,8 +14,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full bg-neutral-50">
-      <body className="h-full">{children}</body>
+    <html lang="en" className="h-full bg-white">
+      <body className="h-full">
+        <Header />
+        <main className="">{children}</main>
+        <Footer />
+      </body>
     </html>
   );
 }

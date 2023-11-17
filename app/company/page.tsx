@@ -67,7 +67,7 @@ const Company = () => {
       {/* Hero section */}
       <div className="relative isolate -z-10 overflow-hidden bg-gradient-to-b from-green-100/20 pt-14">
         <div
-          className="absolute inset-y-0 right-1/2 -z-10 bg-gray-50 -mr-96 w-[200%] origin-top-right skew-x-[-30deg]  shadow-xl shadow-green-600/10 ring-1 ring-green-50 sm:-mr-80 lg:-mr-96"
+          className="absolute inset-y-0 right-1/2 -z-10 bg-white -mr-96 w-[200%] origin-top-right skew-x-[-30deg]  shadow-xl shadow-green-300/10 ring-1 ring-green-50 sm:-mr-80 lg:-mr-96"
           aria-hidden="true"
         />
         <div className="mx-auto max-w-7xl px-6 py-32 sm:py-40 lg:px-8">

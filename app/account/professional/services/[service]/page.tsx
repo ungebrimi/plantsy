@@ -1,6 +1,6 @@
 import React from "react";
 import { redirect } from "next/navigation";
-import Service from "@/app/home/marketplace/[service]/Service";
+import Service from "@/app/discover/[service]/Service";
 import Reviews from "@/app/components/services/Reviews";
 import { Tables } from "@/database";
 import { getServerSession } from "@/app/supabase-server";
@@ -51,7 +51,14 @@ async function page({ params }: { params: { service: number } }) {
           session={session}
           images={images}
         />
-        <Reviews reviews={null} average={4} totalReviewsCount={1} />
+        <Reviews
+          reviews={null}
+          average={4}
+          totalReviewsCount={1}
+          serviceId={service.id}
+          professional={professional.id}
+          client={null}
+        />
       </main>
     );
   } else {

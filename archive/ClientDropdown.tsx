@@ -3,7 +3,7 @@ import React, { Fragment, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Tables } from "@/database";
-import MessageSidebar from "@/app/layout/messaging/MessageSidebar";
+import MessageSidebar from "@/app/components/layout/messaging/MessageSidebar";
 import { createClient } from "@/app/utils/supabase/client";
 
 function classNames(...classes: string[]) {

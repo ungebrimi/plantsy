@@ -6,8 +6,7 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
-import {createBrowserClient} from "@supabase/ssr";
-import {getClientSupabase} from "@/app/supabase-client";
+import { getClientSupabase } from "@/app/supabase-client";
 import Alert from "@/app/components/Alert";
 
 interface Form {
@@ -24,12 +23,12 @@ interface Form {
 
 const PersonalInformation = ({
   user,
-  userType
+  userType,
 }: {
   user: Tables<"clients"> | Tables<"professionals">;
   userType: string;
 }) => {
-  const { supabase } = getClientSupabase()
+  const { supabase } = getClientSupabase();
   const [success, setSuccess] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [cancelWarning, setCancelWarning] = useState<boolean>(false);
@@ -88,9 +87,10 @@ const PersonalInformation = ({
       throw error;
     }
   }
+
   const handleCancel = () => {
-    setCancelWarning(true)
-  }
+    setCancelWarning(true);
+  };
 
   return (
     <form
@@ -350,7 +350,12 @@ const PersonalInformation = ({
           Save
         </button>
       </div>
-      <Alert open={cancelWarning} setOpen={setCancelWarning} setNewData={setFormData} originalData={originalFormData} />
+      <Alert
+        open={cancelWarning}
+        setOpen={setCancelWarning}
+        setNewData={setFormData}
+        originalData={originalFormData}
+      />
     </form>
   );
 };

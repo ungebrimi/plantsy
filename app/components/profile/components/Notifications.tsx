@@ -1,8 +1,7 @@
 "use client";
 import { Tables } from "@/database";
 import React, { ChangeEvent, useState } from "react";
-import {createBrowserClient} from "@supabase/ssr";
-import {getClientSupabase} from "@/app/supabase-client";
+import { createClient } from "@/app/utils/supabase/client";
 
 interface Form {
   email_notification_jobs: boolean;
@@ -13,12 +12,12 @@ interface Form {
 
 const Notifications = ({
   user,
-    userType
+  userType,
 }: {
   user: Tables<"clients"> | Tables<"professionals">;
   userType: string;
 }) => {
-  const { supabase } = getClientSupabase()
+  const supabase = createClient();
   const [formData, setFormData] = useState<Form>({
     email_notification_jobs: user.email_notification_jobs,
     email_notification_messages: user.email_notification_messages,

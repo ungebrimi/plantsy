@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Cookies from "@/app/layout/Cookies";
+import Cookies from "@/app/components/layout/Cookies";
 
 const navigation = {
   solutions: [

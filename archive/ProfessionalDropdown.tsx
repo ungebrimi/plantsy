@@ -9,6 +9,24 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
+const professionalRoutes = [
+  {
+    name: "Dashboard",
+    href: "/account/professional",
+    current: false,
+  },
+  {
+    name: "Profile",
+    href: "/account/professional/profile",
+    current: false,
+  },
+  {
+    name: "Settings",
+    href: "/account/professional/settings",
+    current: false,
+  },
+];
+
 function ProfessionalDropdown({
   professional,
   setProfessional,
@@ -61,32 +79,21 @@ function ProfessionalDropdown({
         leaveTo="transform opacity-0 scale-95"
       >
         <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-          <Menu.Item>
-            {({ active }) => (
-              <Link
-                href={"/account/professional"}
-                className={classNames(
-                  active ? "bg-gray-100" : "",
-                  "block px-4 py-2 text-sm text-gray-700",
-                )}
-              >
-                Dashboard
-              </Link>
-            )}
-          </Menu.Item>
-          <Menu.Item>
-            {({ active }) => (
-              <button
-                onClick={handleSignOut}
-                className={classNames(
-                  active ? "bg-gray-100" : "",
-                  "block px-4 py-2 text-sm text-gray-700",
-                )}
-              >
-                Sign out
-              </button>
-            )}
-          </Menu.Item>
+          {professionalRoutes.map((item) => (
+            <Menu.Item key={item.name}>
+              {({ active }) => (
+                <Link
+                  href={item.href}
+                  className={classNames(
+                    active ? "bg-gray-100" : "",
+                    "block px-4 py-2 text-sm text-gray-700",
+                  )}
+                >
+                  {item.name}
+                </Link>
+              )}
+            </Menu.Item>
+          ))}
         </Menu.Items>
       </Transition>
     </Menu>

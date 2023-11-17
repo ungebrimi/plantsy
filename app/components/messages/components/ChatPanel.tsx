@@ -68,7 +68,7 @@ const ChatPanel = ({
     <div className="flex-auto flex-wrap h-full rounded-xl bg-gray-100 p-4 py-12">
       {messages.length > 0 ? (
         <Inbox
-          messages={messages}
+          serverMessages={messages}
           professional={professional}
           client={client}
           userType={session.user.user_metadata.role + "s"}

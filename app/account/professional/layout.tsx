@@ -1,7 +1,6 @@
 import { createClient } from "@/app/utils/supabase/server";
 import ErrorNotifications from "@/app/account/professional/layout/ErrorNotifications";
 import React from "react";
-import Navigation from "./layout/Navigation";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { NotificationProvider } from "@/context/NotificationContext";
@@ -41,10 +40,12 @@ export default async function ProfessionalLayout({
     return (
       <>
         <NotificationProvider>
-          <Navigation professional={professional} />
+          {/*<Navigation professional={professional} />
           <main className="py-10 lg:pl-72">
             <div className="px-4 sm:px-6 lg:px-8">{children}</div>
           </main>
+          */}
+          {children}
           <ErrorNotifications />
         </NotificationProvider>
       </>

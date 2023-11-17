@@ -17,7 +17,7 @@ interface ReviewsProps {
   totalReviewsCount: number;
   serviceId: number;
   professional: Tables<"professionals">;
-  client: Tables<"clients">;
+  client: Tables<"clients"> | null;
 }
 
 export default function Reviews({

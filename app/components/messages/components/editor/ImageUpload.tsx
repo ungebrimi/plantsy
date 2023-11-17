@@ -1,40 +1,39 @@
 import useImageUpload from "@/hooks/useImageUpload";
 import { CameraIcon } from "@heroicons/react/24/outline";
-import React, {ChangeEvent, SetStateAction, useState} from "react";
-import {DbResultOk, Tables} from "@/database";
+import React, { SetStateAction, useState } from "react";
+import { DbResultOk, Tables } from "@/database";
 import ImageModal from "./ImageModal";
-import {StorageError} from "@supabase/storage-js";
-import {useNotification} from "@/context/NotificationContext";
-
+import { useNotification } from "@/context/NotificationContext";
 
 interface ImageUploadProps {
   user: Tables<"clients"> | Tables<"professionals">;
-  images: Tables<"files">[]
-  setImages: React.Dispatch<SetStateAction<Tables<"files">[]>>
+  images: Tables<"files">[];
+  setImages: React.Dispatch<SetStateAction<Tables<"files">[]>>;
   userType: string;
 }
 
-const ImageUpload = ({user, images, setImages }: ImageUploadProps) => {
+const ImageUpload = ({ user, images, setImages }: ImageUploadProps) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const { loading, handleMultipleImagesUpload } =
-    useImageUpload();
-  const { addError } = useNotification()
+  const { loading, handleMultipleImagesUpload } = useImageUpload();
+  const { addError } = useNotification();
 
   const handleImageChange = async (
-      event: React.ChangeEvent<HTMLInputElement>,
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     try {
       const res = (await handleMultipleImagesUpload(
-          event,
-          `${user.id}/images`,
+        event,
+        `${user.id}/images`,
       )) as DbResultOk<Tables<"files">>;
-      setImages(res)
+      setImages(res);
     } catch (error: any) {
-      if(error.status_code === "409") {
-        addError(error.message + "rename the duplicated file to proceed")
-      }
-      else {
-        addError("We've encountered an issue with uploading your image: " + error.message)
+      if (error.status_code === "409") {
+        addError(error.message + "rename the duplicated file to proceed");
+      } else {
+        addError(
+          "We've encountered an issue with uploading your image: " +
+            error.message,
+        );
       }
     }
   };

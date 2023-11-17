@@ -1,7 +1,7 @@
 import React from "react";
 import { redirect } from "next/navigation";
 import { Tables } from "@/database";
-import Service from "@/app/home/marketplace/[service]/Service";
+import Service from "@/app/discover/[service]/Service";
 import Reviews from "@/app/components/services/Reviews";
 import { cookies } from "next/headers";
 import { createClient } from "@/app/utils/supabase/server";
