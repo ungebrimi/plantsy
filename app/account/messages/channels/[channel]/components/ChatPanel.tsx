@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Inbox from "@/app/components/messages/components/chat/Inbox";
-import Editor from "@/app/components/messages/components/editor/Editor";
+import Inbox from "@/app/account/messages/channels/[channel]/components/chat/Inbox";
+import Editor from "@/app/account/messages/channels/[channel]/components/editor/Editor";
 import Image from "next/image";
 import { Tables } from "@/database";
 import { Session } from "@supabase/supabase-js";
@@ -65,7 +65,7 @@ const ChatPanel = ({
   }, [supabase]);
 
   return (
-    <div className="flex-auto flex-wrap h-full rounded-xl bg-gray-100 p-4 py-12">
+    <div className="flex-auto flex-wrap">
       {messages.length > 0 ? (
         <Inbox
           serverMessages={messages}

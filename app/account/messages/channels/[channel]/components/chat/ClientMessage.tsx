@@ -27,7 +27,7 @@ const ClientMessage = ({ message, client, unoReverse }: ClientMessageProps) => {
       <div
         className={classNames(
           unoReverse ? "justify-self-start" : "justify-self-end",
-          "p-3 flex items-center  flex-row-reverse",
+          "flex items-center  flex-row-reverse",
         )}
       >
         <div className="">

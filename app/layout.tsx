@@ -2,6 +2,7 @@ import "./globals.css";
 import React from "react";
 import Footer from "@/app/components/layout/Footer";
 import Header from "@/app/components/layout/Header";
+import { NotificationProvider } from "@/context/NotificationContext";
 
 export const metadata = {
   title: "Plantsy",
@@ -17,7 +18,9 @@ export default function RootLayout({
     <html lang="en" className="h-full bg-white">
       <body className="h-full">
         <Header />
-        <main className="">{children}</main>
+        <NotificationProvider>
+          <main className="">{children}</main>
+        </NotificationProvider>
         <Footer />
       </body>
     </html>

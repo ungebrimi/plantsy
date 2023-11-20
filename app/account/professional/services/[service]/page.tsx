@@ -1,7 +1,7 @@
 import React from "react";
 import { redirect } from "next/navigation";
-import Service from "@/app/discover/[service]/Service";
-import Reviews from "@/app/components/services/Reviews";
+import Service from "@/app/discover/[service]/components/Service";
+import Reviews from "@/app/discover/[service]/components/Reviews";
 import { Tables } from "@/database";
 import { getServerSession } from "@/app/supabase-server";
 

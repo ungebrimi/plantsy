@@ -70,7 +70,7 @@ export default function Editor({
           </div>
         )}
       </div>
-      <div className="min-w-0 flex-1 bg-white p-2 rounded-xl border">
+      <div className="min-w-0 flex-1 bg-white p-2 rounded-xl border shadow">
         <form action="#" onSubmit={handleSubmit}>
           <div className="border-b border-gray-200 focus-within:border-indigo-600">
             <label htmlFor="message" className="sr-only">

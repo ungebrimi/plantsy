@@ -3,8 +3,8 @@ import { redirect } from "next/navigation";
 import { Tables } from "@/database";
 import { cookies } from "next/headers";
 import { createClient } from "@/app/utils/supabase/server";
-import Inbox from "@/app/components/messages/components/chat/Inbox";
-import Editor from "@/app/components/messages/components/editor/Editor";
+import Inbox from "@/app/account/messages/channels/[channel]/components/chat/Inbox";
+import Editor from "@/app/account/messages/channels/[channel]/components/editor/Editor";
 
 interface PageProps {
   params: { channel: string };

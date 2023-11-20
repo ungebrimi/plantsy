@@ -5,7 +5,7 @@ import { StarIcon as StarIconSolid } from "@heroicons/react/20/solid";
 import { createClient } from "@/app/utils/supabase/client";
 import { Tables } from "@/database";
 import Link from "next/link";
-import Review from "@/app/components/services/Review";
+import Review from "@/app/discover/[service]/components/Review";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");

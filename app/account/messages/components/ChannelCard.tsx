@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Tables } from "@/database";
 import { createClient } from "@/app/utils/supabase/client";
 import { getFormattedDate } from "@/app/utils/general-functions/getFormattedDate";
+import Link from "next/link";
 
 interface ChannelData {
   lastMessage: Tables<"messages"> | null;
@@ -76,54 +77,56 @@ const ChannelCard = ({ channel }: { channel: Tables<"channels"> }) => {
   }, [channel, supabase]);
 
   return (
-    <li className="flex gap-x-4 py-5">
-      {channelData.profilePicture ? (
-        <Image
-          width={399}
-          height={399}
-          className="h-12 w-12 flex-none rounded-full bg-gray-50"
-          src={channelData.profilePicture?.url as string}
-          alt=""
-        />
-      ) : (
-        <svg
-          className="h-12 w-12 flex-none rounded-full bg-sky-100 animate-pulse"
-          fill="currentColor"
-          viewBox="0 0 24 24"
-        />
-      )}
-      <div className="flex-auto">
-        <div className="flex items-baseline justify-between gap-x-4">
-          {channelData.user ? (
-            <p className="text-sm font-semibold leading-6 text-gray-700">
-              {channelData.user.first_name + " " + channelData.user.last_name}
-            </p>
-          ) : (
-            <span className="w-1/5 rounded-md h-4 bg-sky-100 animate-pulse" />
-          )}
-          {channelData.formattedDate ? (
-            <p className="flex-none text-xs text-gray-600">
-              <time dateTime={channel.inserted_at}>
-                {channelData.formattedDate}
-              </time>
-            </p>
-          ) : (
-            <span className="w-1/5 h-4 rounded-md bg-sky-100 animate-pulse" />
-          )}
-        </div>
-        {channelData.lastMessage ? (
-          <p className="mt-1 line-clamp-2 text-sm leading-6 text-gray-600">
-            {channelData.lastMessage.message}
-          </p>
+    <Link href={`/account/messages/channels/${channel.id}`}>
+      <li className="flex gap-x-4 py-5">
+        {channelData.profilePicture ? (
+          <Image
+            width={399}
+            height={399}
+            className="h-12 w-12 flex-none rounded-full bg-gray-50"
+            src={channelData.profilePicture?.url as string}
+            alt=""
+          />
         ) : (
           <svg
-            className="h-8 w-32 flex-none mt-1 rounded-md bg-sky-100 animate-pulse"
+            className="h-12 w-12 flex-none rounded-full bg-sky-100 animate-pulse"
             fill="currentColor"
             viewBox="0 0 24 24"
           />
         )}
-      </div>
-    </li>
+        <div className="flex-auto">
+          <div className="flex items-baseline justify-between gap-x-4">
+            {channelData.user ? (
+              <p className="text-sm font-semibold leading-6 text-gray-700">
+                {channelData.user.first_name + " " + channelData.user.last_name}
+              </p>
+            ) : (
+              <span className="w-1/5 rounded-md h-4 bg-sky-100 animate-pulse" />
+            )}
+            {channelData.formattedDate ? (
+              <p className="flex-none text-xs text-gray-600">
+                <time dateTime={channel.inserted_at}>
+                  {channelData.formattedDate}
+                </time>
+              </p>
+            ) : (
+              <span className="w-1/5 h-4 rounded-md bg-sky-100 animate-pulse" />
+            )}
+          </div>
+          {channelData.lastMessage ? (
+            <p className="mt-1 line-clamp-2 text-sm leading-6 text-gray-600">
+              {channelData.lastMessage.message}
+            </p>
+          ) : (
+            <svg
+              className="h-8 w-32 flex-none mt-1 rounded-md bg-sky-100 animate-pulse"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            />
+          )}
+        </div>
+      </li>
+    </Link>
   );
 };
 export default ChannelCard;

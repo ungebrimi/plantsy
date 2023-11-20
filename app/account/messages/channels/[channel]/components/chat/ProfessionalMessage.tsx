@@ -32,7 +32,7 @@ const ProfessionalMessage = ({
         key={message.id}
         className={classNames(
           unoReverse ? "justify-self-end" : "justify-self-start",
-          "p-3 flex items-center  flex-row-reverse",
+          "flex items-center  flex-row-reverse",
         )}
       >
         {profilePicture ? (

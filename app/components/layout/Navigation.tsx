@@ -84,8 +84,10 @@ export default function Navigation({
   userType,
 }: NavbarProps) {
   const [professional, setProfessional] =
-    useState<Tables<"professionals"> | null>(serverProfessional);
-  const [client, setClient] = useState<Tables<"clients"> | null>(serverClient);
+    useState<Tables<"professionals"> | null>(serverProfessional ?? null);
+  const [client, setClient] = useState<Tables<"clients"> | null>(
+    serverClient ?? null,
+  );
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   let userDashboard;
   if (userType === "client") {
