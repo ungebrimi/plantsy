@@ -5,69 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import ChannelCard from "@/app/account/messages/components/ChannelCard";
 
-const tabs = [
-  {
-    name: "Unread",
-    href: "/account/messages?unread_messages=true",
-    count: "2",
-    current: true,
-  },
-  {
-    name: "All Messages",
-    href: "/account/messages",
-    count: "12",
-    current: false,
-  },
-  /* {
-                       name: "Archived",
-                       href: "/account/messages?unread_messages=false&archived=true",
-                       count: "6",
-                       current: false,
-                     }, */
-];
-const comments = [
-  {
-    id: 1,
-    name: "Leslie Alexander",
-    imageUrl:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    content:
-      "Explicabo nihil laborum. Saepe facilis consequuntur in eaque. Consequatur perspiciatis quam. Sed est illo quia. Culpa vitae placeat vitae. Repudiandae sunt exercitationem nihil nisi facilis placeat minima eveniet.",
-    date: "1d ago",
-    dateTime: "2023-03-04T15:54Z",
-  },
-  {
-    id: 2,
-    name: "Michael Foster",
-    imageUrl:
-      "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    content:
-      "Laudantium quidem non et saepe vel sequi accusamus consequatur et. Saepe inventore veniam incidunt cumque et laborum nemo blanditiis rerum. A unde et molestiae autem ad. Architecto dolor ex accusantium maxime cumque laudantium itaque aut perferendis.",
-    date: "2d ago",
-    dateTime: "2023-03-03T14:02Z",
-  },
-  {
-    id: 3,
-    name: "Dries Vincent",
-    imageUrl:
-      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    content:
-      "Quia animi harum in quis quidem sint. Ipsum dolorem molestias veritatis quis eveniet commodi assumenda temporibus. Dicta ut modi alias nisi. Veniam quia velit et ut. Id quas ducimus reprehenderit veniam fugit amet fugiat ipsum eius. Voluptas nobis earum in in vel corporis nisi.",
-    date: "2d ago",
-    dateTime: "2023-03-03T13:23Z",
-  },
-  {
-    id: 4,
-    name: "Lindsay Walton",
-    imageUrl:
-      "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    content:
-      "Unde dolore exercitationem nobis reprehenderit rerum corporis accusamus. Nemo suscipit temporibus quidem dolorum. Nobis optio quae atque blanditiis aspernatur doloribus sit accusamus. Sunt reiciendis ut corrupti ab debitis dolorem dolorem nam sit. Ducimus nisi qui earum aliquam. Est nam doloribus culpa illum.",
-    date: "3d ago",
-    dateTime: "2023-03-02T21:13Z",
-  },
-];
-
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
@@ -84,6 +21,32 @@ export default async function messages({
   const { data, error } = await supabase.auth.getSession();
   const { session } = data;
 
+  const { count: fullCount } = await supabase
+    .from("channels")
+    .select("*", { count: "planned", head: true })
+    .eq(`${session?.user.user_metadata.role}_id`, session?.user.id);
+
+  const { count: unreadCount } = await supabase
+    .from("channels")
+    .select("*", { count: "planned", head: true })
+    .eq(`${session?.user.user_metadata.role}_id`, session?.user.id)
+    .eq("unread_messages", true);
+
+  const tabs = [
+    {
+      name: "All Messages",
+      href: "/account/messages",
+      count: fullCount ? fullCount - 1 : "N/A",
+      current: !searchParams.unread_messages,
+    },
+    {
+      name: "Unread",
+      href: "/account/messages?unread_messages=true",
+      count: unreadCount ? unreadCount - 1 : "N/A",
+      current: !!searchParams.unread_messages,
+    },
+  ];
+
   /* channelQuery renders either the full inbox or only the unread messages, this is based of params */
   const channelQuery = supabase.from("channels").select();
   channelQuery.eq(`${session?.user.user_metadata.role}_id`, session?.user.id);
@@ -94,6 +57,8 @@ export default async function messages({
     );
   }
   const { data: channels, error: channelError } = await channelQuery;
+
+  console.log(tabs[0].count, tabs[1].count);
 
   return (
     <div className="bg-white">
@@ -118,27 +83,7 @@ export default async function messages({
             </h1>
           </div>
           <div>
-            <div className="sm:hidden">
-              <form action={"#"}>
-                <label htmlFor="tabs" className="sr-only">
-                  Select a tab
-                </label>
-                {/* Use an "onChange" listener to redirect the user to the selected tab URL. */}
-                <select
-                  id="tabs"
-                  name="tabs"
-                  className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
-                  //@ts-ignore
-                  defaultValue={tabs.find((tab) => tab.current).name}
-                >
-                  {tabs.map((tab) => (
-                    <option key={tab.name}>{tab.name}</option>
-                  ))}
-                </select>
-                <button type="submit">hello</button>
-              </form>
-            </div>
-            <div className="hidden sm:block">
+            <div className="block">
               <div className="border-b border-gray-200">
                 <nav className="-mb-px flex space-x-8" aria-label="Tabs">
                   {tabs.map((tab) => (
@@ -149,7 +94,7 @@ export default async function messages({
                         tab.current
                           ? "border-sky-500 text-sky-600"
                           : "border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700",
-                        "flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium",
+                        "flex whitespace-nowrap border-b-2 py-4 px-1 text-xs sm:text-sm font-medium",
                       )}
                       aria-current={tab.current ? "page" : undefined}
                     >
@@ -165,7 +110,18 @@ export default async function messages({
                         >
                           {tab.count}
                         </span>
-                      ) : null}
+                      ) : (
+                        <span
+                          className={classNames(
+                            tab.current
+                              ? "bg-sky-100 text-sky-600"
+                              : "bg-gray-100 text-gray-900",
+                            "ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block",
+                          )}
+                        >
+                          0
+                        </span>
+                      )}
                     </Link>
                   ))}
                 </nav>
@@ -181,13 +137,15 @@ export default async function messages({
               <div className="flex items-center flex-col py-12">
                 <Image
                   src={"/message-not-found.svg"}
-                  className="mx-auto max-w-md"
+                  className="mx-auto"
                   alt="no message found"
                   width={300}
                   height={400}
                 />
-                <h1 className="mx-auto mt-3 text-center md:text-xl text-gray-600">
-                  We{`'`}re sorry we could not find any messages
+                <h1 className="mx-auto mt-3 text-center md:text-lg text-gray-600">
+                  {searchParams.unread_messages
+                    ? "You have no unread messages"
+                    : "We could not find any messages"}
                 </h1>
               </div>
             )}

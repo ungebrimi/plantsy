@@ -42,18 +42,17 @@ const Channel = async ({ params }: PageProps) => {
     .eq("id", channel.client_id)
     .single();
 
+  const { error: update_error } = await supabase
+    .from("channels")
+    .update({ unread_messages: false })
+    .eq("id", channel.id);
+
+  if (update_error) console.log(update_error);
+
   if (!session || !channel || error) {
     redirect("/");
   }
   const typedServerMessages: Tables<"messages">[] = serverMessages || [];
-
-  // function to set messages to read
-  if (channel) {
-    await supabase
-      .from("messages")
-      .update({ is_read: true })
-      .eq("id", channel.id);
-  }
 
   return (
     <div className="bg-white">

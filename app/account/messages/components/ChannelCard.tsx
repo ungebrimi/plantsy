@@ -106,7 +106,7 @@ const ChannelCard = ({ channel }: { channel: Tables<"channels"> }) => {
             <Image
               width={399}
               height={399}
-              className="h-12 w-12 flex-none rounded-full bg-gray-50"
+              className="hidden xs:block h-12 w-12 flex-none rounded-full bg-gray-50"
               src={channelData.profilePicture?.url as string}
               alt=""
             />
