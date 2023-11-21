@@ -3,16 +3,12 @@ import React, { useEffect, useState } from "react";
 import { Tables } from "@/database";
 import { createClient } from "@/app/utils/supabase/client";
 import Image from "next/image";
-import Message from "@/app/account/messages/channels/[channel]/components/chat/Message";
+import Message from "./Message";
 
 interface InboxProps {
   serverMessages: Tables<"messages">[];
   client: Tables<"clients">;
   professional: Tables<"professionals">;
-}
-
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
 }
 
 const Inbox = ({ serverMessages, client, professional }: InboxProps) => {
