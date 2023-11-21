@@ -3,6 +3,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { PhotoIcon } from "@heroicons/react/24/outline";
 import { Tables } from "@/database";
 import { createBrowserClient } from "@supabase/ssr";
+import Image from "next/image";
 
 type ImageModalProps = {
   open: boolean;
@@ -114,10 +115,12 @@ export default function ImageModal({
                             className="flex items-center justify-between gap-x-6 py-5"
                           >
                             <div className="flex min-w-full gap-x-4">
-                              <img
+                              <Image
                                 className="w-16 h-16 flex-none rounded-sm bg-gray-50"
                                 src={image.url as string}
                                 alt=""
+                                width={300}
+                                height={300}
                               />
                               <div className="min-w-0 flex-auto">
                                 <p className="text-sm font-semibold leading-6 text-gray-900">

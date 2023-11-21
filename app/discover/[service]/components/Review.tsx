@@ -33,7 +33,7 @@ function Review({ review, client }: any) {
         }
       });
     }
-  }, [review, supabase]);
+  }, [review, supabase, client]);
 
   return (
     <div key={review.id} className="py-12">

@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const orders = [
   {
     number: "WU88191111",
@@ -111,7 +113,9 @@ export default function Orders() {
                       <tr key={product.id}>
                         <td className="py-6 pr-8">
                           <div className="flex items-center">
-                            <img
+                            <Image
+                              width={400}
+                              height={400}
                               src={product.imageSrc}
                               alt={product.imageAlt}
                               className="mr-6 h-16 w-16 rounded object-cover object-center"

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import React from "react";
+import Image from "next/image";
 
 function Grid({ services }: any) {
   return (
@@ -13,7 +14,9 @@ function Grid({ services }: any) {
             className="group text-sm"
           >
             <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
-              <img
+              <Image
+                width={400}
+                height={400}
                 src={thumbnail.url}
                 alt={"#"}
                 className="h-full w-full object-cover object-center"

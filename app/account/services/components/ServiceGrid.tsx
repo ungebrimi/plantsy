@@ -10,6 +10,7 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { createBrowserClient } from "@supabase/ssr";
+import Image from "next/image";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -74,13 +75,17 @@ const ServiceGrid = ({ serverServices }: ServiceGridProps) => {
                 {service.thumbnail &&
                 typeof service.thumbnail === "object" &&
                 "url" in service.thumbnail ? (
-                  <img
+                  <Image
+                    width={400}
+                    height={400}
                     src={service.thumbnail?.url as string}
                     alt={service.title}
                     className="h-full w-full object-cover object-center"
                   />
                 ) : (
-                  <img
+                  <Image
+                    width={400}
+                    height={400}
                     src={"/plantsy.png"}
                     alt={service.title}
                     className="h-full w-full object-cover object-center"
