@@ -1,9 +1,9 @@
 import React from "react";
 
-const SearchBar: React.FC = () => {
+const SearchBar = () => {
   return (
     <form action="#" className="w-full mt-4 ">
-      <div className="flex bg-white shadow items-center justify-between w-full rounded-full border-0 max-w-md px-4 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ">
+      <div className="flex bg-white items-center justify-between w-full rounded-full border-0 max-w-md px-4 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ">
         <input
           type="text"
           name="name"
@@ -11,7 +11,7 @@ const SearchBar: React.FC = () => {
           className="border-0 ring-0"
           placeholder="What’s on your to-do list?"
         />
-        <button className="text-green-700" aria-label="Search" type="button">
+        <button className="text-green-500" aria-label="Search" type="button">
           <svg
             height="20"
             width="20"

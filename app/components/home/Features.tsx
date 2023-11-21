@@ -1,29 +1,20 @@
-import { InboxIcon, TrashIcon, UsersIcon } from '@heroicons/react/24/outline'
 const features = [
-
-
   {
-    name: 'Post a job and hire a pro',
+    name: "Professional Showcase 🌱",
     description:
-      'Non quo aperiam repellendus quas est est. Eos aut dolore aut ut sit nesciunt. Ex tempora quia. Sit nobis consequatur dolores incidunt.',
-    href: '#',
-    icon: InboxIcon,
+      "List your services, showcase your expertise, and connect with clients seamlessly on Plantsy. As a professional, build your digital presence, share your skills, and let clients discover the value you bring to the world of agriculture and gardening.",
   },
   {
-    name: 'Browse and buy projects',
+    name: "Client Discovery 🔍",
     description:
-      'Vero eum voluptatem aliquid nostrum voluptatem. Vitae esse natus. Earum nihil deserunt eos quasi cupiditate. A inventore et molestiae natus.',
-    href: '#',
-    icon: UsersIcon,
+      "Discover professionals, hire experts, and cultivate your projects effortlessly. Whether you need a seasoned farmer or a skilled gardener, Plantsy connects you with the right professionals for your unique needs. Your green dreams are just a click away from becoming a reality.",
   },
   {
-    name: 'Get advice from an industry expert',
+    name: "Pioneer's Pride 🚀",
     description:
-      'Et quod quaerat dolorem quaerat architecto aliquam accusantium. Ex adipisci et doloremque autem quia quam. Quis eos molestiae at iure impedit.',
-    href: '#',
-    icon: TrashIcon,
+      "Be the first to join Plantsy and become part of a pioneering community that's transforming the landscape of agriculture and green innovation. Embrace the opportunity to shape the future of Plantsy and experience the exclusive benefits of being at the forefront of a groundbreaking platform.",
   },
-]
+];
 
 export default function Features() {
   return (
@@ -31,29 +22,27 @@ export default function Features() {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:mx-0">
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            Find proffesionals your way
+            Cultivate Connections, Your Way
           </h2>
           <p className="mt-6 text-lg leading-8 text-gray-600">
-            Work with the largest network of independent professionals and get things done—from quick turnarounds to big transformations.
+            Discover a new era in agriculture with Plantsy. Connect with a
+            diverse community of professionals, offering a range of services to
+            meet your unique needs. From agricultural experts to gardening
+            enthusiasts, Plantsy empowers you to find and work with the best in
+            the field. Join the movement, where every connection is an
+            opportunity to grow.
           </p>
         </div>
+
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
           <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3">
             {features.map((feature) => (
               <div key={feature.name} className="flex flex-col">
                 <dt className="text-base font-semibold leading-7 text-gray-900">
-                  <div className="mb-6 flex h-10 w-10 items-center justify-center rounded-lg bg-green-600">
-                    <feature.icon className="h-6 w-6 text-white" aria-hidden="true" />
-                  </div>
                   {feature.name}
                 </dt>
                 <dd className="mt-1 flex flex-auto flex-col text-base leading-7 text-gray-600">
                   <p className="flex-auto">{feature.description}</p>
-                  <p className="mt-6">
-                    <a href={feature.href} className="text-sm font-semibold leading-6 text-green-600">
-                      Learn more <span aria-hidden="true">→</span>
-                    </a>
-                  </p>
                 </dd>
               </div>
             ))}
@@ -61,5 +50,5 @@ export default function Features() {
         </div>
       </div>
     </div>
-  )
+  );
 }

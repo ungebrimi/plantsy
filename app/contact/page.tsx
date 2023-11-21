@@ -43,9 +43,11 @@ export default function Contact() {
               Get in touch
             </h2>
             <p className="mt-6 text-lg leading-8 text-gray-600">
-              Proin volutpat consequat porttitor cras nullam gravida at. Orci
-              molestie a eu arcu. Sed ut tincidunt integer elementum id sem.
-              Arcu sed malesuada et magna.
+              Thank you for visiting our website! We value your feedback,
+              inquiries, and the opportunity to connect with you. Whether you
+              have a question about our products/services, want to explore
+              collaboration opportunities, or just want to say hello, we&apos;d
+              love to hear from you.
             </p>
             <dl className="mt-10 space-y-4 text-base leading-7 text-gray-600">
               <div className="flex gap-x-4">

@@ -3,17 +3,17 @@ import { Fragment, useState } from "react";
 import { Dialog, Popover, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
-  ChartPieIcon,
   CursorArrowRaysIcon,
   EnvelopeOpenIcon,
   FingerPrintIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { CalendarIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { Tables } from "@/database";
 import Link from "next/link";
 import Image from "next/image";
 import UserDropdown from "@/app/components/layout/UserDropdown";
+import { createClient } from "@/app/utils/supabase/client";
 
 const DashboardNavigation = {
   client: [
@@ -29,12 +29,13 @@ const DashboardNavigation = {
       href: "/account/profile",
       icon: FingerPrintIcon,
     },
-    {
-      name: "Orders",
-      description: "View your orders and payments",
-      href: "/account/orders",
-      icon: CalendarIcon,
-    },
+    /*
+              {
+                name: "Orders",
+                description: "View your orders and payments",
+                href: "/account/orders",
+                icon: CalendarIcon,
+              }, */
     // Add more client-specific items as needed
   ],
   professional: [
@@ -51,23 +52,24 @@ const DashboardNavigation = {
       icon: CursorArrowRaysIcon,
     },
     {
-      name: "Insight",
-      description: "Learn more about your services and customers",
-      href: "/account/insight",
-      icon: ChartPieIcon,
-    },
-    {
       name: "Profile",
       description: "Your profile and settings",
       href: "/account/profile",
       icon: FingerPrintIcon,
     },
-    {
-      name: "Orders",
-      description: "Manage your orders and payments",
-      href: "/account/orders",
-      icon: CalendarIcon,
-    },
+    /*
+              {
+                name: "Insight",
+                description: "Learn more about your services and customers",
+                href: "/account/insight",
+                icon: ChartPieIcon,
+              },
+              {
+                name: "Orders",
+                description: "Manage your orders and payments",
+                href: "/account/orders",
+                icon: CalendarIcon,
+              }, */
     // Add more professional-specific items as needed
   ],
 };
@@ -95,6 +97,12 @@ export default function Navigation({
   } else if (userType === "professional") {
     userDashboard = DashboardNavigation.professional;
   }
+  const supabase = createClient();
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    setClient(null);
+    setProfessional(null);
+  };
 
   return (
     <header className="bg-white">
@@ -288,12 +296,21 @@ export default function Navigation({
                   </Link>
                 </div>
                 <div className="py-6">
-                  <a
-                    href="#"
-                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                  >
-                    Log in
-                  </a>
+                  {client || professional ? (
+                    <button
+                      onClick={handleSignOut}
+                      className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                    >
+                      Log out
+                    </button>
+                  ) : (
+                    <Link
+                      href={"/auth/login"}
+                      className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                    >
+                      Log in
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>
