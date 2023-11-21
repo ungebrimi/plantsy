@@ -3,30 +3,29 @@ import { PaperClipIcon } from "@heroicons/react/24/outline";
 import React, { ChangeEvent, SetStateAction, useState } from "react";
 import FileModal from "./FileModal";
 import useFileUpload from "@/hooks/useFileUpload";
-import { Tables} from "@/database";
-import {useNotification} from "@/context/NotificationContext";
+import { Tables } from "@/database";
+import { useNotification } from "@/context/NotificationContext";
 
 interface FileUploadProps {
   files: Tables<"files">[];
   setFiles: React.Dispatch<SetStateAction<Tables<"files">[]>>;
   user: Tables<"professionals"> | Tables<"clients">;
-  userType: string
+  userType: string;
 }
 
 const FileUpload = ({ files, setFiles, user, userType }: FileUploadProps) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const { addError } = useNotification()
+  const { addError } = useNotification();
   const { loading, handleFileUpload } = useFileUpload();
 
   const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
-   try {
-    const res = await handleFileUpload(event, `${user.id}/files`, userType);
-    setFiles(res as Tables<"files">[]);
-   }
-   catch (e: any) {
-     addError("There was an issue uploading your file" + e.message)
-   }
-   };
+    try {
+      const res = await handleFileUpload(event, `${user.id}/files`, userType);
+      setFiles(res as Tables<"files">[]);
+    } catch (e: any) {
+      addError("There was an issue uploading your file" + e.message);
+    }
+  };
 
   return (
     <div className="flow-root">

@@ -1,6 +1,6 @@
 import { getServerSession } from "@/app/supabase-server";
 import React from "react";
-import ServiceGrid from "@/app/account/professional/services/components/ServiceGrid";
+import ServiceGrid from "@/app/account/services/components/ServiceGrid";
 import Link from "next/link";
 
 const Services = async () => {
@@ -35,7 +35,7 @@ const Services = async () => {
                 Services
               </h1>
               <Link
-                href={"/account/professional/services/create-a-service"}
+                href={"/account/services/create-a-service"}
                 className="rounded-md justify-between items-center bg-green-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm mt-2 xs:mt-0"
               >
                 Create New

@@ -17,7 +17,7 @@ function Review({ review, client }: any) {
       const { data: reviewer, error } = await supabase
         .from("clients")
         .select()
-        .eq("id", client.id)
+        .eq("id", client?.id)
         .single();
       if (error) {
         console.log(error);
@@ -28,7 +28,7 @@ function Review({ review, client }: any) {
     if (review) {
       getReviewer().then((reviewer) => {
         setReviewer(reviewer);
-        if (reviewer.profile_picture) {
+        if (reviewer && reviewer.profile_picture) {
           setProfilePicture(JSON.parse(reviewer.profile_picture));
         }
       });

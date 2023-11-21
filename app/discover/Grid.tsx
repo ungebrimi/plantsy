@@ -9,7 +9,7 @@ function Grid({ services }: any) {
         return (
           <Link
             key={service.id}
-            href={`/home/marketplace/${service.id}`}
+            href={`/discover/${service.id}`}
             className="group text-sm"
           >
             <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">

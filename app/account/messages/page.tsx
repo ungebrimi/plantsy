@@ -8,22 +8,22 @@ import ChannelCard from "@/app/account/messages/components/ChannelCard";
 const tabs = [
   {
     name: "Unread",
-    href: "/account/messages?unread_messages=true&archived=false",
+    href: "/account/messages?unread_messages=true",
     count: "2",
     current: true,
   },
   {
-    name: "Active",
-    href: "/account/messages?unread_messages=false&archived=false",
+    name: "All Messages",
+    href: "/account/messages",
     count: "12",
     current: false,
   },
-  {
-    name: "Archived",
-    href: "/account/messages?unread_messages=false&archived=true",
-    count: "6",
-    current: false,
-  },
+  /* {
+                       name: "Archived",
+                       href: "/account/messages?unread_messages=false&archived=true",
+                       count: "6",
+                       current: false,
+                     }, */
 ];
 const comments = [
   {
@@ -77,7 +77,6 @@ export default async function messages({
 }: {
   searchParams: {
     unread_messages: string;
-    archived: string;
   };
 }) {
   const cookieStore = cookies();
@@ -85,20 +84,16 @@ export default async function messages({
   const { data, error } = await supabase.auth.getSession();
   const { session } = data;
 
-  const { data: channels, error: channelError } = await supabase
-    .from("channels")
-    .select()
-    .eq(`${session?.user.user_metadata.role}_id`, session?.user.id)
-    .eq(
+  /* channelQuery renders either the full inbox or only the unread messages, this is based of params */
+  const channelQuery = supabase.from("channels").select();
+  channelQuery.eq(`${session?.user.user_metadata.role}_id`, session?.user.id);
+  if (searchParams.unread_messages) {
+    channelQuery.eq(
       "unread_messages",
-      searchParams.unread_messages
-        ? JSON.parse(searchParams.unread_messages)
-        : true,
-    )
-    .eq(
-      "archived",
-      searchParams.archived ? JSON.parse(searchParams.archived) : false,
+      JSON.parse(searchParams.unread_messages),
     );
+  }
+  const { data: channels, error: channelError } = await channelQuery;
 
   return (
     <div className="bg-white">

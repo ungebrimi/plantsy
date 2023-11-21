@@ -110,7 +110,7 @@ const ServiceGrid = ({ serverServices }: ServiceGridProps) => {
                 </div>
                 <span className="isolate inline-flex rounded-md shadow-sm mt-2">
                   <Link
-                    href={`/account/professional/services/${service.id}/edit`}
+                    href={`/account/services/${service.id}/edit`}
                     className="relative inline-flex items-center rounded-l-md bg-white px-3 py-2 text-sm font-semibold text-gray-500 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10"
                   >
                     <PencilIcon className="w-4" />

@@ -76,17 +76,48 @@ const ChannelCard = ({ channel }: { channel: Tables<"channels"> }) => {
     fetchData();
   }, [channel, supabase]);
 
+  const Loading = () => (
+    <li className="flex gap-x-4 py-5 hover:bg-gray/90">
+      <svg
+        className="h-12 w-12 flex-none rounded-full bg-sky-100 animate-pulse"
+        fill="currentColor"
+        viewBox="0 0 24 24"
+      />
+      <div className="flex-auto">
+        <div className="flex items-baseline justify-between gap-x-4">
+          <span className="w-1/5 rounded-md h-4 bg-sky-100 animate-pulse" />
+          <span className="w-1/5 h-4 rounded-md bg-sky-100 animate-pulse" />
+        </div>
+        <svg
+          className="h-8 w-32 flex-none mt-1 rounded-md bg-sky-100 animate-pulse"
+          fill="currentColor"
+          viewBox="0 0 24 24"
+        />
+      </div>
+    </li>
+  );
+  if (loading) return <Loading />;
+
   return (
     <Link href={`/account/messages/channels/${channel.id}`}>
       <li className="flex gap-x-4 py-5">
-        {channelData.profilePicture ? (
-          <Image
-            width={399}
-            height={399}
-            className="h-12 w-12 flex-none rounded-full bg-gray-50"
-            src={channelData.profilePicture?.url as string}
-            alt=""
-          />
+        {channelData ? (
+          channelData.profilePicture ? (
+            <Image
+              width={399}
+              height={399}
+              className="h-12 w-12 flex-none rounded-full bg-gray-50"
+              src={channelData.profilePicture?.url as string}
+              alt=""
+            />
+          ) : (
+            <p className="hidden xs:flex items-center text-white justify-center uppercase font-bold h-10 w-10 rounded-full bg-sky-500 flex-shrink-0">
+              {channelData.user?.first_name &&
+                channelData.user?.first_name.charAt(0)}
+              {channelData.user?.last_name &&
+                channelData.user?.last_name.charAt(0)}
+            </p>
+          )
         ) : (
           <svg
             className="h-12 w-12 flex-none rounded-full bg-sky-100 animate-pulse"
@@ -96,27 +127,35 @@ const ChannelCard = ({ channel }: { channel: Tables<"channels"> }) => {
         )}
         <div className="flex-auto">
           <div className="flex items-baseline justify-between gap-x-4">
-            {channelData.user ? (
-              <p className="text-sm font-semibold leading-6 text-gray-700">
-                {channelData.user.first_name + " " + channelData.user.last_name}
-              </p>
+            {channelData ? (
+              <>
+                <p className="text-sm font-semibold leading-6 text-gray-700">
+                  {channelData.user &&
+                    channelData.user?.first_name +
+                      " " +
+                      channelData.user?.last_name}
+                </p>
+                {channelData.formattedDate && (
+                  <p className="flex-none text-xs text-gray-600">
+                    <time dateTime={channel.inserted_at}>
+                      {channelData.formattedDate}
+                    </time>
+                  </p>
+                )}
+              </>
             ) : (
-              <span className="w-1/5 rounded-md h-4 bg-sky-100 animate-pulse" />
-            )}
-            {channelData.formattedDate ? (
-              <p className="flex-none text-xs text-gray-600">
-                <time dateTime={channel.inserted_at}>
-                  {channelData.formattedDate}
-                </time>
-              </p>
-            ) : (
-              <span className="w-1/5 h-4 rounded-md bg-sky-100 animate-pulse" />
+              <>
+                <span className="w-1/5 rounded-md h-4 bg-sky-100 animate-pulse" />
+                <span className="w-1/5 h-4 rounded-md bg-sky-100 animate-pulse" />
+              </>
             )}
           </div>
-          {channelData.lastMessage ? (
-            <p className="mt-1 line-clamp-2 text-sm leading-6 text-gray-600">
-              {channelData.lastMessage.message}
-            </p>
+          {channelData ? (
+            channelData.lastMessage && (
+              <p className="mt-1 line-clamp-2 text-sm leading-6 text-gray-600">
+                {channelData.lastMessage.message}
+              </p>
+            )
           ) : (
             <svg
               className="h-8 w-32 flex-none mt-1 rounded-md bg-sky-100 animate-pulse"

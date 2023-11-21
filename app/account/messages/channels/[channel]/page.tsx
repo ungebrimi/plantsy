@@ -1,11 +1,13 @@
 import React from "react";
 import { redirect } from "next/navigation";
-import ChatPanel from "@/app/account/messages/channels/[channel]/components/ChatPanel";
 import { Tables } from "@/database";
 import { createClient } from "@/app/utils/supabase/server";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import Inbox from "@/app/account/messages/channels/[channel]/components/chat/Inbox";
+import Image from "next/image";
+import Editor from "@/app/account/messages/channels/[channel]/components/editor/Editor";
 
 interface PageProps {
   params: { channel: string };
@@ -69,7 +71,7 @@ const Channel = async ({ params }: PageProps) => {
           />
         </div>
         {/* Content container */}
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 rounded-lg backdrop-blur bg-white/50 shadow-lg divide-y divide-gray-200 overflow-hidden">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 rounded-lg backdrop-blur bg-white/50 shadow-lg divide-y divide-gray-200">
           <div className="px-4 py-3 sm:px-6">
             <Link
               href={"/account/messages"}
@@ -80,13 +82,38 @@ const Channel = async ({ params }: PageProps) => {
             </Link>
           </div>
           <div className="px-4 py-5 sm:p-6">
-            <ChatPanel
-              session={session}
-              serverMessages={typedServerMessages}
-              channel={channel}
-              professional={professional}
-              client={client}
-            />
+            <div className="flex-auto flex-wrap">
+              {typedServerMessages && typedServerMessages.length > 0 ? (
+                <Inbox
+                  serverMessages={typedServerMessages}
+                  professional={professional}
+                  client={client}
+                />
+              ) : (
+                <div className="flex items-center flex-col py-12">
+                  <Image
+                    src={"/message-not-found.svg"}
+                    className="mx-auto max-w-md"
+                    alt="no message found"
+                    width={300}
+                    height={400}
+                  />
+                  <h1 className="mx-auto mt-3 text-center md:text-xl text-gray-600">
+                    We{`'`}re sorry we could not find any messages
+                  </h1>
+                </div>
+              )}
+              {session.user.user_metadata.role === "client" && (
+                <Editor channel={channel} user={client} userType={"clients"} />
+              )}
+              {session.user.user_metadata.role === "professional" && (
+                <Editor
+                  channel={channel}
+                  user={professional}
+                  userType={"professionals"}
+                />
+              )}
+            </div>
           </div>
         </div>
         <div

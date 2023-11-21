@@ -47,13 +47,13 @@ const DashboardNavigation = {
     {
       name: "Services",
       description: "Create new services and manage existing ones",
-      href: "/account/professional/services",
+      href: "/account/services",
       icon: CursorArrowRaysIcon,
     },
     {
       name: "Insight",
       description: "Learn more about your services and customers",
-      href: "/account/professionals/create-a-service",
+      href: "/account/insight",
       icon: ChartPieIcon,
     },
     {

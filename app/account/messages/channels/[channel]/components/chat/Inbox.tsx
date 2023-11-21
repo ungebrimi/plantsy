@@ -1,28 +1,21 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import ClientMessage from "./ClientMessage";
-import ProfessionalMessage from "./ProfessionalMessage";
 import { Tables } from "@/database";
 import { createClient } from "@/app/utils/supabase/client";
 import Image from "next/image";
+import Message from "@/app/account/messages/channels/[channel]/components/chat/Message";
 
 interface InboxProps {
   serverMessages: Tables<"messages">[];
   client: Tables<"clients">;
   professional: Tables<"professionals">;
-  userType: string;
 }
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-const Inbox = ({
-  serverMessages,
-  client,
-  professional,
-  userType,
-}: InboxProps) => {
+const Inbox = ({ serverMessages, client, professional }: InboxProps) => {
   const [messages, setMessages] =
     useState<Tables<"messages">[]>(serverMessages);
   const supabase = createClient();
@@ -64,40 +57,19 @@ const Inbox = ({
       });
     };
   }, [supabase]);
-  // unoReverse is used to reverse the position of the messages. whereas false is professional and true is client
-  // whichever is true is positioned on the right hand side of the screen
-  let unoReverse = false;
-  if (userType === "client") {
-    unoReverse = true;
-  }
 
   return (
-    <section className="flex flex-col w-full">
+    <section className="flex w-full flex-col">
       {messages && messages.length > 0 ? (
         messages.map((message: Tables<"messages">, idx) => {
-          return (
-            <div
-              key={message.id}
-              className={classNames(
-                idx % 2 === 0 ? "justify-start" : "justify-end",
-                "mb-2",
-              )}
-            >
-              {message.client_id ? (
-                <ClientMessage
-                  message={message}
-                  client={client}
-                  unoReverse={unoReverse}
-                />
-              ) : (
-                <ProfessionalMessage
-                  message={message}
-                  professional={professional}
-                  unoReverse={unoReverse}
-                />
-              )}
-            </div>
-          );
+          if (message.client_id === client.id) {
+            return <Message message={message} user={client} key={idx} />;
+          }
+          if (message.professional_id === professional.id) {
+            return <Message message={message} user={professional} key={idx} />;
+          } else {
+            return null;
+          }
         })
       ) : (
         <div className="flex items-center flex-col py-12">

@@ -3,6 +3,7 @@ import React from "react";
 import Footer from "@/app/components/layout/Footer";
 import Header from "@/app/components/layout/Header";
 import { NotificationProvider } from "@/context/NotificationContext";
+import ErrorNotifications from "@/app/components/layout/ErrorNotifications";
 
 export const metadata = {
   title: "Plantsy",
@@ -20,6 +21,7 @@ export default function RootLayout({
         <Header />
         <NotificationProvider>
           <main className="">{children}</main>
+          <ErrorNotifications />
         </NotificationProvider>
         <Footer />
       </body>
