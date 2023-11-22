@@ -72,7 +72,7 @@ const Hero = () => {
                   <Image
                     width={300}
                     height={300}
-                    src="/portrait_4.jpg"
+                    src={"/portrait_4.jpg"}
                     alt=""
                     className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
                   />
@@ -85,7 +85,7 @@ const Hero = () => {
                   <Image
                     width={300}
                     height={300}
-                    src="/portrait_10.jpg"
+                    src={"/portrait_10.jpg"}
                     alt=""
                     className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
                   />
@@ -95,7 +95,7 @@ const Hero = () => {
                   <Image
                     width={300}
                     height={300}
-                    src="/portrait_9.jpg"
+                    src={"/portrait_9.jpg"}
                     alt=""
                     className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
                   />
@@ -107,7 +107,7 @@ const Hero = () => {
                   <Image
                     width={300}
                     height={300}
-                    src="/portrait_7.jpg"
+                    src={"/portrait_7.jpg"}
                     alt=""
                     className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
                   />
@@ -117,7 +117,7 @@ const Hero = () => {
                   <Image
                     width={300}
                     height={300}
-                    src="/portrait_3.jpg"
+                    src={"/portrait_3.jpg"}
                     alt=""
                     className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
                   />
