@@ -58,7 +58,7 @@ const Company = () => {
             <Image
               width={1280}
               height={720}
-              src="/hands-holding-plants-3.jpg"
+              src="/companyhero.jpg"
               alt=""
               className="mt-10 aspect-[6/5] w-full max-w-lg rounded-2xl object-cover sm:mt-16 lg:mt-0 lg:max-w-none xl:row-span-2 xl:row-end-2 xl:mt-36"
             />
@@ -110,7 +110,7 @@ const Company = () => {
 
           {/* Image */}
           <Image
-            src={"/landscape-1.jpg"}
+            src={"/quotebg.jpg"}
             width={1280}
             height={720}
             alt={"#"}
