@@ -58,7 +58,9 @@ const Company = () => {
             <Image
               width={1280}
               height={720}
-              src="/companyhero.jpg"
+              src={
+                "https://dhxummckajoranathmmy.supabase.co/storage/v1/object/public/app/images/hands-holding-plants-3.jpg"
+              }
               alt=""
               className="mt-10 aspect-[6/5] w-full max-w-lg rounded-2xl object-cover sm:mt-16 lg:mt-0 lg:max-w-none xl:row-span-2 xl:row-end-2 xl:mt-36"
             />
@@ -110,7 +112,9 @@ const Company = () => {
 
           {/* Image */}
           <Image
-            src={"/quotebg.jpg"}
+            src={
+              "https://dhxummckajoranathmmy.supabase.co/storage/v1/object/public/app/images/landscape-1.jpg"
+            }
             width={1280}
             height={720}
             alt={"#"}
@@ -153,7 +157,9 @@ const Company = () => {
                 <Image
                   width={1280}
                   height={720}
-                  src="/planting.jpg"
+                  src={
+                    "https://dhxummckajoranathmmy.supabase.co/storage/v1/object/public/app/images/planting.jpg"
+                  }
                   alt=""
                   className="aspect-[7/5] w-[37rem] max-w-none rounded-2xl bg-gray-50 object-cover"
                 />
@@ -163,7 +169,9 @@ const Company = () => {
                   <Image
                     width={1280}
                     height={720}
-                    src="/landscape-8.jpg"
+                    src={
+                      "https://dhxummckajoranathmmy.supabase.co/storage/v1/object/public/app/images/planting.jpg"
+                    }
                     alt=""
                     className="aspect-[4/3] w-[24rem] max-w-none flex-none rounded-2xl bg-gray-50 object-cover"
                   />
@@ -172,7 +180,9 @@ const Company = () => {
                   <Image
                     width={1280}
                     height={720}
-                    src="/landscape-5.jpg"
+                    src={
+                      "https://dhxummckajoranathmmy.supabase.co/storage/v1/object/public/app/images/landscape-5.jpg?t=2023-11-22T10%3A53%3A44.401Z"
+                    }
                     alt=""
                     className="aspect-[7/5] w-[37rem] max-w-none flex-none rounded-2xl bg-gray-50 object-cover"
                   />
@@ -181,7 +191,9 @@ const Company = () => {
                   <Image
                     width={1280}
                     height={720}
-                    src="/landscape-7.jpg"
+                    src={
+                      "https://dhxummckajoranathmmy.supabase.co/storage/v1/object/public/app/images/landscape-7.jpg?t=2023-11-22T10%3A53%3A50.334Z"
+                    }
                     alt=""
                     className="aspect-[4/3] w-[24rem] max-w-none rounded-2xl bg-gray-50 object-cover"
                   />

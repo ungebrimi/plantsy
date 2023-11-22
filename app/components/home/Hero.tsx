@@ -72,7 +72,9 @@ const Hero = () => {
                   <Image
                     width={300}
                     height={300}
-                    src={"/portrait-4.jpg"}
+                    src={
+                      "https://dhxummckajoranathmmy.supabase.co/storage/v1/object/public/app/images/landscape-7.jpg?t=2023-11-22T10%3A53%3A50.334Z"
+                    }
                     alt=""
                     className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
                   />
@@ -85,7 +87,9 @@ const Hero = () => {
                   <Image
                     width={300}
                     height={300}
-                    src={"/portrait-10.jpg"}
+                    src={
+                      "https://dhxummckajoranathmmy.supabase.co/storage/v1/object/public/app/images/landscape-7.jpg?t=2023-11-22T10%3A53%3A50.334Z"
+                    }
                     alt=""
                     className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
                   />
@@ -95,7 +99,9 @@ const Hero = () => {
                   <Image
                     width={300}
                     height={300}
-                    src={"/portrait-9.jpg"}
+                    src={
+                      "https://dhxummckajoranathmmy.supabase.co/storage/v1/object/public/app/images/landscape-7.jpg?t=2023-11-22T10%3A53%3A50.334Z"
+                    }
                     alt=""
                     className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
                   />
@@ -109,7 +115,9 @@ const Hero = () => {
                     height={300}
                     alt=""
                     className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
-                    src="/portrait-7.jpg"
+                    src={
+                      "https://dhxummckajoranathmmy.supabase.co/storage/v1/object/public/app/images/portrait-7.jpg?t=2023-11-22T10%3A54%3A54.747Z"
+                    }
                   />
                   <div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-gray-900/10" />
                 </div>
@@ -117,7 +125,9 @@ const Hero = () => {
                   <Image
                     width={300}
                     height={300}
-                    src={"/portrait-3.jpg"}
+                    src={
+                      "https://dhxummckajoranathmmy.supabase.co/storage/v1/object/public/app/images/portrait-3.jpg?t=2023-11-22T10%3A55%3A06.019Z"
+                    }
                     alt=""
                     className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
                   />

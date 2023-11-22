@@ -53,7 +53,9 @@ export default function CTA() {
           <div className="relative mt-16 h-80 lg:mt-8">
             <Image
               className="absolute object-contain left-0 top-0 w-[57rem] max-w-none rounded-md bg-white/5 ring-1 ring-white/10"
-              src="/landscape_2.jpg"
+              src={
+                "https://dhxummckajoranathmmy.supabase.co/storage/v1/object/public/app/images/landscape-2.jpg"
+              }
               alt="App screenshot"
               width={1824}
               height={1080}
