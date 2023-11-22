@@ -36,7 +36,7 @@ export default async function messages({
     {
       name: "All Messages",
       href: "/account/messages",
-      count: fullCount ? fullCount - 1 : "N/A",
+      count: fullCount ? fullCount - 2 : "N/A",
       current: !searchParams.unread_messages,
     },
     {
@@ -57,8 +57,6 @@ export default async function messages({
     );
   }
   const { data: channels, error: channelError } = await channelQuery;
-
-  console.log(tabs[0].count, tabs[1].count);
 
   return (
     <div className="bg-white">
@@ -145,7 +143,7 @@ export default async function messages({
                 <h1 className="mx-auto mt-3 text-center md:text-lg text-gray-600">
                   {searchParams.unread_messages
                     ? "You have no unread messages"
-                    : "We could not find any messages"}
+                    : "Your inbox seems to be empty"}
                 </h1>
               </div>
             )}

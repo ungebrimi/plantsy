@@ -6,9 +6,8 @@ import {
   CursorArrowRaysIcon,
   EnvelopeOpenIcon,
   FingerPrintIcon,
-  XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { ChevronDownIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { Tables } from "@/database";
 import Link from "next/link";
 import Image from "next/image";
@@ -30,12 +29,12 @@ const DashboardNavigation = {
       icon: FingerPrintIcon,
     },
     /*
-              {
-                name: "Orders",
-                description: "View your orders and payments",
-                href: "/account/orders",
-                icon: CalendarIcon,
-              }, */
+                                                                          {
+                                                                            name: "Orders",
+                                                                            description: "View your orders and payments",
+                                                                            href: "/account/orders",
+                                                                            icon: CalendarIcon,
+                                                                          }, */
     // Add more client-specific items as needed
   ],
   professional: [
@@ -58,18 +57,18 @@ const DashboardNavigation = {
       icon: FingerPrintIcon,
     },
     /*
-              {
-                name: "Insight",
-                description: "Learn more about your services and customers",
-                href: "/account/insight",
-                icon: ChartPieIcon,
-              },
-              {
-                name: "Orders",
-                description: "Manage your orders and payments",
-                href: "/account/orders",
-                icon: CalendarIcon,
-              }, */
+                                                                          {
+                                                                            name: "Insight",
+                                                                            description: "Learn more about your services and customers",
+                                                                            href: "/account/insight",
+                                                                            icon: ChartPieIcon,
+                                                                          },
+                                                                          {
+                                                                            name: "Orders",
+                                                                            description: "Manage your orders and payments",
+                                                                            href: "/account/orders",
+                                                                            icon: CalendarIcon,
+                                                                          }, */
     // Add more professional-specific items as needed
   ],
 };
@@ -225,98 +224,132 @@ export default function Navigation({
             </div>
           )}
         </div>
-      </nav>
-      <Dialog
-        as="div"
-        className="lg:hidden"
-        open={mobileMenuOpen}
-        onClose={setMobileMenuOpen}
-      >
-        <div className="fixed inset-0 z-10" />
-        <Dialog.Panel className="fixed inset-y-0 right-0 z-10 flex w-full flex-col justify-between overflow-y-auto bg-white sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
-          <div className="p-6">
-            <div className="flex items-center justify-between">
-              <Link href="/" className="-m-1.5 p-1.5">
-                <span className="sr-only">Your Company</span>
-                <Image
-                  className="h-8 w-auto"
-                  src="/plantsy.png"
-                  alt=""
-                  width={300}
-                  height={300}
-                />
-              </Link>
-              <button
-                type="button"
-                className="-m-2.5 rounded-md p-2.5 text-gray-700"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <span className="sr-only">Close menu</span>
-                <XMarkIcon className="h-6 w-6" aria-hidden="true" />
-              </button>
-            </div>
-            <div className="mt-6 flow-root">
-              <div className="-my-6 divide-y divide-gray-500/10">
-                <div className="space-y-2 py-6">
-                  {userDashboard &&
-                    userDashboard.map((item) => (
-                      <Link
-                        key={item.name}
-                        href={item.href}
-                        className="group -mx-3 flex items-center gap-x-6 rounded-lg p-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                      >
-                        <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                          <item.icon
-                            className="h-6 w-6 text-gray-600 group-hover:text-indigo-600"
-                            aria-hidden="true"
-                          />
+        <Transition.Root show={mobileMenuOpen} as={Fragment}>
+          <Dialog
+            as="div"
+            className="relative z-10"
+            onClose={setMobileMenuOpen}
+          >
+            <div className="fixed inset-0" />
+
+            <div className="fixed inset-0 overflow-hidden">
+              <div className="absolute inset-0 overflow-hidden">
+                <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+                  <Transition.Child
+                    as={Fragment}
+                    enter="transform transition ease-in-out duration-500 sm:duration-700"
+                    enterFrom="translate-x-full"
+                    enterTo="translate-x-0"
+                    leave="transform transition ease-in-out duration-500 sm:duration-700"
+                    leaveFrom="translate-x-0"
+                    leaveTo="translate-x-full"
+                  >
+                    <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
+                      <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
+                        <div className="px-4 sm:px-6">
+                          <div className="flex items-start justify-between">
+                            <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
+                              <Link
+                                href="/"
+                                className=""
+                                onClick={() => setMobileMenuOpen(false)}
+                              >
+                                <span className="sr-only">Plantsy</span>
+                                <Image
+                                  className="h-8 w-auto"
+                                  src="/plantsy.png"
+                                  alt=""
+                                  width={300}
+                                  height={300}
+                                />
+                              </Link>
+                            </Dialog.Title>
+                            <div className="ml-3 flex h-7 items-center">
+                              <button
+                                type="button"
+                                className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                onClick={() => setMobileMenuOpen(false)}
+                              >
+                                <span className="absolute -inset-2.5" />
+                                <span className="sr-only">Close panel</span>
+                                <XMarkIcon
+                                  className="h-6 w-6"
+                                  aria-hidden="true"
+                                />
+                              </button>
+                            </div>
+                          </div>
                         </div>
-                        {item.name}
-                      </Link>
-                    ))}
-                </div>
-                <div className="space-y-2 py-6">
-                  <Link
-                    href={"/discover"}
-                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                  >
-                    Discover
-                  </Link>
-                  <Link
-                    href={"/company"}
-                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                  >
-                    Company
-                  </Link>
-                  <Link
-                    href={"/contact"}
-                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                  >
-                    Get in touch
-                  </Link>
-                </div>
-                <div className="py-6">
-                  {client || professional ? (
-                    <button
-                      onClick={handleSignOut}
-                      className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                    >
-                      Log out
-                    </button>
-                  ) : (
-                    <Link
-                      href={"/auth/login"}
-                      className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                    >
-                      Log in
-                    </Link>
-                  )}
+                        <div className="relative flex-1 px-4 sm:px-6">
+                          <div className="mt-6 flow-root">
+                            <div className="-my-6 divide-y divide-gray-500/10">
+                              <div className="space-y-2 py-6">
+                                {userDashboard &&
+                                  userDashboard.map((item) => (
+                                    <Link
+                                      key={item.name}
+                                      href={item.href}
+                                      className="group -mx-3 flex items-center gap-x-6 rounded-lg p-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                    >
+                                      <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
+                                        <item.icon
+                                          className="h-6 w-6 text-gray-600 group-hover:text-indigo-600"
+                                          aria-hidden="true"
+                                        />
+                                      </div>
+                                      {item.name}
+                                    </Link>
+                                  ))}
+                              </div>
+                              <div className="space-y-2 py-6">
+                                <Link
+                                  href={"/discover"}
+                                  className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                >
+                                  Discover
+                                </Link>
+                                <Link
+                                  href={"/company"}
+                                  className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                >
+                                  Company
+                                </Link>
+                                <Link
+                                  href={"/contact"}
+                                  className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                >
+                                  Get in touch
+                                </Link>
+                              </div>
+                              <div className="py-6">
+                                {client || professional ? (
+                                  <button
+                                    onClick={handleSignOut}
+                                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                  >
+                                    Log out
+                                  </button>
+                                ) : (
+                                  <Link
+                                    href={"/auth/login"}
+                                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                  >
+                                    Log in
+                                  </Link>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Dialog.Panel>
+                  </Transition.Child>
                 </div>
               </div>
             </div>
-          </div>
-        </Dialog.Panel>
-      </Dialog>
+          </Dialog>
+        </Transition.Root>
+      </nav>
     </header>
   );
 }
