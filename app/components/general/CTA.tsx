@@ -54,7 +54,7 @@ export default function CTA() {
             <Image
               className="absolute object-contain left-0 top-0 w-[57rem] max-w-none rounded-md bg-white/5 ring-1 ring-white/10"
               src={
-                "https://dhxummckajoranathmmy.supabase.co/storage/v1/object/public/app/images/landscape-2.jpg"
+                "https://dhxummckajoranathmmy.supabase.co/storage/v1/object/public/app/images/workers-in-field.jpg"
               }
               alt="App screenshot"
               width={1824}

@@ -73,7 +73,7 @@ const Hero = () => {
                     width={300}
                     height={300}
                     src={
-                      "https://dhxummckajoranathmmy.supabase.co/storage/v1/object/public/app/images/landscape-7.jpg?t=2023-11-22T10%3A53%3A50.334Z"
+                      "https://dhxummckajoranathmmy.supabase.co/storage/v1/object/public/app/images/hands-holding-soil.jpg"
                     }
                     alt=""
                     className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
@@ -88,7 +88,7 @@ const Hero = () => {
                     width={300}
                     height={300}
                     src={
-                      "https://dhxummckajoranathmmy.supabase.co/storage/v1/object/public/app/images/landscape-7.jpg?t=2023-11-22T10%3A53%3A50.334Z"
+                      "https://dhxummckajoranathmmy.supabase.co/storage/v1/object/public/app/images/flowerpot-watering.jpg"
                     }
                     alt=""
                     className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
@@ -100,7 +100,7 @@ const Hero = () => {
                     width={300}
                     height={300}
                     src={
-                      "https://dhxummckajoranathmmy.supabase.co/storage/v1/object/public/app/images/landscape-7.jpg?t=2023-11-22T10%3A53%3A50.334Z"
+                      "https://dhxummckajoranathmmy.supabase.co/storage/v1/object/public/app/images/plants-without-pot.jpg"
                     }
                     alt=""
                     className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
@@ -116,7 +116,7 @@ const Hero = () => {
                     alt=""
                     className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
                     src={
-                      "https://dhxummckajoranathmmy.supabase.co/storage/v1/object/public/app/images/portrait-7.jpg?t=2023-11-22T10%3A54%3A54.747Z"
+                      "https://dhxummckajoranathmmy.supabase.co/storage/v1/object/public/app/images/family-picking-flowers.jpg"
                     }
                   />
                   <div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-gray-900/10" />
@@ -126,7 +126,7 @@ const Hero = () => {
                     width={300}
                     height={300}
                     src={
-                      "https://dhxummckajoranathmmy.supabase.co/storage/v1/object/public/app/images/portrait-3.jpg?t=2023-11-22T10%3A55%3A06.019Z"
+                      "https://dhxummckajoranathmmy.supabase.co/storage/v1/object/public/app/images/lady-in-flower-field.jpg"
                     }
                     alt=""
                     className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
