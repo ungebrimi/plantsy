@@ -5,25 +5,23 @@ import { Tab } from "@headlessui/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {Tables} from "@/database";
-import {createBrowserClient} from "@supabase/ssr";
-import {Session} from "@supabase/supabase-js";
+import { Tables } from "@/database";
+import { Session } from "@supabase/supabase-js";
+import { createClient } from "@/app/utils/supabase/client";
+
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
 interface ServiceProps {
-  service: Tables<"services">
-  professional: Tables<"professionals">
-  session: Session | null
-  images: Tables<"files">[]
+  service: Tables<"services">;
+  professional: Tables<"professionals">;
+  session: Session | null;
+  images: Tables<"files">[];
 }
 
 function Service({ service, professional, session, images }: ServiceProps) {
-  const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+  const supabase = createClient();
   const router = useRouter();
 
   async function handleContact() {
@@ -46,7 +44,7 @@ function Service({ service, professional, session, images }: ServiceProps) {
 
     if (error) console.error(error);
     if (data) {
-      router.push(`/account/client/channels/${data.id}`);
+      router.push(`/account/channels/${data.id}`);
     }
   }
 
@@ -59,7 +57,8 @@ function Service({ service, professional, session, images }: ServiceProps) {
             {/* Image selector */}
             <div className="mx-auto mt-6 hidden w-full max-w-2xl sm:block lg:max-w-none">
               <Tab.List className="grid grid-cols-4 gap-6">
-                {images && images.length > 0 &&
+                {images &&
+                  images.length > 0 &&
                   images.map((image: Tables<"files">, idx: number) => (
                     <Tab
                       key={idx}
@@ -69,8 +68,8 @@ function Service({ service, professional, session, images }: ServiceProps) {
                         <>
                           <span className="absolute inset-0 overflow-hidden rounded-md">
                             <Image
-                                width={300}
-                                height={400}
+                              width={300}
+                              height={400}
                               src={image.url as string}
                               alt=""
                               className="h-full w-full object-cover object-center"
@@ -90,7 +89,8 @@ function Service({ service, professional, session, images }: ServiceProps) {
               </Tab.List>
             </div>
             <Tab.Panels className="aspect-h-1 aspect-w-1 w-full">
-              {images && images.length > 0 &&
+              {images &&
+                images.length > 0 &&
                 images.map((image: Tables<"files">, idx: number) => (
                   <Tab.Panel key={idx}>
                     <Image
@@ -111,19 +111,22 @@ function Service({ service, professional, session, images }: ServiceProps) {
 
             <div className="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-white text-center shadow">
               <div className="flex flex-1 flex-col p-8">
-                {professional.profile_picture && typeof professional.profile_picture === "object" && "url" in professional.profile_picture ? (
-                    <Image
-                        width={300}
-                        height={300}
-                        className="mx-auto h-32 w-32 flex-shrink-0 rounded-full"
-                        src={professional.profile_picture.url as string}
-                        alt=""
-                    />
+                {professional.profile_picture &&
+                typeof professional.profile_picture === "object" &&
+                "url" in professional.profile_picture ? (
+                  <Image
+                    width={300}
+                    height={300}
+                    className="mx-auto h-32 w-32 flex-shrink-0 rounded-full"
+                    src={professional.profile_picture.url as string}
+                    alt=""
+                  />
                 ) : (
-                    <p className="hidden xs:flex items-center text-white justify-center uppercase font-bold h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
-                      {professional.first_name && professional.first_name.charAt(0)}
-                      {professional.last_name && professional.last_name.charAt(0)}
-                    </p>
+                  <p className="hidden xs:flex items-center text-white justify-center uppercase font-bold h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
+                    {professional.first_name &&
+                      professional.first_name.charAt(0)}
+                    {professional.last_name && professional.last_name.charAt(0)}
+                  </p>
                 )}
                 <h3 className="mt-6 text-sm font-medium text-gray-900">
                   {professional.first_name} {professional.last_name}
