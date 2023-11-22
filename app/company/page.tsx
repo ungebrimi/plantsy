@@ -58,7 +58,7 @@ const Company = () => {
             <Image
               width={1280}
               height={720}
-              src="/hands_holding_plants_3.jpg"
+              src="/hands-holding-plants-3.jpg"
               alt=""
               className="mt-10 aspect-[6/5] w-full max-w-lg rounded-2xl object-cover sm:mt-16 lg:mt-0 lg:max-w-none xl:row-span-2 xl:row-end-2 xl:mt-36"
             />
@@ -110,7 +110,7 @@ const Company = () => {
 
           {/* Image */}
           <Image
-            src={"/landscape_1.jpg"}
+            src={"/landscape-1.jpg"}
             width={1280}
             height={720}
             alt={"#"}
@@ -145,7 +145,7 @@ const Company = () => {
                 agriculture. As we cultivate Plantsy, our roots run deep in the
                 soil of trust, collaboration, and shared vision. Join us as we
                 blossom into a revolutionary force in the agriculture and
-                technology landscape.
+                technology landscape-
               </p>
             </div>
             <div className="flex flex-wrap items-start justify-end gap-6 sm:gap-8 lg:contents">
@@ -163,7 +163,7 @@ const Company = () => {
                   <Image
                     width={1280}
                     height={720}
-                    src="/landscape_8.jpg"
+                    src="/landscape-8.jpg"
                     alt=""
                     className="aspect-[4/3] w-[24rem] max-w-none flex-none rounded-2xl bg-gray-50 object-cover"
                   />
@@ -172,7 +172,7 @@ const Company = () => {
                   <Image
                     width={1280}
                     height={720}
-                    src="/landscape_5.jpg"
+                    src="/landscape-5.jpg"
                     alt=""
                     className="aspect-[7/5] w-[37rem] max-w-none flex-none rounded-2xl bg-gray-50 object-cover"
                   />
@@ -181,7 +181,7 @@ const Company = () => {
                   <Image
                     width={1280}
                     height={720}
-                    src="/landscape_7.jpg"
+                    src="/landscape-7.jpg"
                     alt=""
                     className="aspect-[4/3] w-[24rem] max-w-none rounded-2xl bg-gray-50 object-cover"
                   />
