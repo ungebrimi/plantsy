@@ -1,8 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
-import { redirect } from "next/navigation";
 import { createClient } from "@/app/utils/supabase/server";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export default function Login({
   searchParams,
@@ -27,7 +27,6 @@ export default function Login({
         `/auth/login?message=Could not authenticate user: ${error.message}`,
       );
     }
-
     return redirect("/");
   };
 

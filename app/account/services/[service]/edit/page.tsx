@@ -1,10 +1,14 @@
 import React from "react";
 import { redirect } from "next/navigation";
 import ServiceForm from "../../components/ServiceForm";
-import { getServerSession } from "@/app/supabase-server";
+import { cookies } from "next/headers";
+import { createClient } from "@/app/utils/supabase/server";
 
 async function page({ params }: { params: { service: number } }) {
-  const { supabase } = await getServerSession();
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+  const { data, error } = await supabase.auth.getSession();
+  const { session } = data;
 
   const { data: service, error: serviceError } = await supabase
     .from("services")

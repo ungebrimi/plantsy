@@ -2,7 +2,7 @@ import React, { SetStateAction, useEffect, useState } from "react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { Combobox } from "@headlessui/react";
 import { Tables } from "@/database";
-import { getClientSupabase } from "@/app/supabase-client";
+import { createClient } from "@/app/utils/supabase/client";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -32,7 +32,7 @@ export default function ServiceCategory({
     name: string;
     value: string;
   }>(initialServiceCategory);
-  const { supabase } = getClientSupabase();
+  const supabase = createClient();
 
   useEffect(() => {
     async function getServices() {

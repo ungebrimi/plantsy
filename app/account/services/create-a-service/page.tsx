@@ -1,10 +1,14 @@
 import { redirect } from "next/navigation";
 import ServiceForm from "../components/ServiceForm";
 import { Tables } from "@/database";
-import { getServerSession } from "@/app/supabase-server";
+import { cookies } from "next/headers";
+import { createClient } from "@/app/utils/supabase/server";
 
 export default async function page() {
-  const { supabase, session } = await getServerSession();
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+  const { data } = await supabase.auth.getSession();
+  const { session } = data;
 
   if (!session) redirect("/");
 

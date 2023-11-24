@@ -27,6 +27,22 @@ function Service({ service, professional, session, images }: ServiceProps) {
   async function handleContact() {
     if (!session || session.user.user_metadata.role !== "client") return;
 
+    //  check if there already exist an open channel between the client and the professional where the service is the same
+    //  if there is an open channel, redirect to that channel
+    //  if there is no open channel, create a new channel and redirect to that channel
+
+    const { data: channelData, error: channelError } = await supabase
+      .from("channels")
+      .select()
+      .eq("client_id", session.user.id)
+      .eq("professional_id", professional.id)
+      .single();
+
+    if (channelData) {
+      console.log(channelData);
+      router.push(`/account/messages/channels/${channelData.id}`);
+    }
+
     const { data, error } = await supabase
       .from("channels")
       .insert({
@@ -44,7 +60,7 @@ function Service({ service, professional, session, images }: ServiceProps) {
 
     if (error) console.error(error);
     if (data) {
-      router.push(`/account/channels/${data.id}`);
+      router.push(`/account/messages/channels/${data.id}`);
     }
   }
 

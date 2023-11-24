@@ -98,7 +98,7 @@ const Channel = async ({ params }: PageProps) => {
                     height={400}
                   />
                   <h1 className="mx-auto mt-3 text-center md:text-xl text-gray-600">
-                    We{`'`}re sorry we could not find any messages
+                    Be the first to send a message!
                   </h1>
                 </div>
               )}

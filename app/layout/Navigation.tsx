@@ -1,5 +1,5 @@
 "use client";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Dialog, Popover, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -11,10 +11,22 @@ import { ChevronDownIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { Tables } from "@/database";
 import Link from "next/link";
 import Image from "next/image";
-import UserDropdown from "@/app/components/layout/UserDropdown";
+import UserDropdown from "@/app/layout/UserDropdown";
 import { createClient } from "@/app/utils/supabase/client";
+import { useRouter } from "next/navigation";
 
-const DashboardNavigation = {
+interface UserSpecificNavigation {
+  name: string;
+  description: string;
+  href: string;
+  icon: any;
+}
+
+interface UserSpecificNavigationList {
+  [key: string]: UserSpecificNavigation[];
+}
+
+const userSpecificNavigation: UserSpecificNavigationList = {
   client: [
     {
       name: "Messages",
@@ -28,14 +40,6 @@ const DashboardNavigation = {
       href: "/account/profile",
       icon: FingerPrintIcon,
     },
-    /*
-                                                                          {
-                                                                            name: "Orders",
-                                                                            description: "View your orders and payments",
-                                                                            href: "/account/orders",
-                                                                            icon: CalendarIcon,
-                                                                          }, */
-    // Add more client-specific items as needed
   ],
   professional: [
     {
@@ -56,53 +60,37 @@ const DashboardNavigation = {
       href: "/account/profile",
       icon: FingerPrintIcon,
     },
-    /*
-                                                                          {
-                                                                            name: "Insight",
-                                                                            description: "Learn more about your services and customers",
-                                                                            href: "/account/insight",
-                                                                            icon: ChartPieIcon,
-                                                                          },
-                                                                          {
-                                                                            name: "Orders",
-                                                                            description: "Manage your orders and payments",
-                                                                            href: "/account/orders",
-                                                                            icon: CalendarIcon,
-                                                                          }, */
-    // Add more professional-specific items as needed
   ],
 };
-
 type NavbarProps = {
-  serverClient: Tables<"clients"> | null;
-  serverProfessional: Tables<"professionals"> | null;
+  serverUser: Tables<"professionals"> | Tables<"clients"> | null;
   userType: string | null;
 };
 
-export default function Navigation({
-  serverClient,
-  serverProfessional,
-  userType,
-}: NavbarProps) {
-  const [professional, setProfessional] =
-    useState<Tables<"professionals"> | null>(serverProfessional ?? null);
-  const [client, setClient] = useState<Tables<"clients"> | null>(
-    serverClient ?? null,
-  );
+export default function Navigation({ serverUser, userType }: NavbarProps) {
+  const [user, setUser] = useState<
+    Tables<"professionals"> | Tables<"clients"> | null
+  >(serverUser ? serverUser : null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  let userDashboard;
-  if (userType === "client") {
-    userDashboard = DashboardNavigation.client;
-  } else if (userType === "professional") {
-    userDashboard = DashboardNavigation.professional;
-  }
+
+  // const [userDashboard, setUserDashboard] = useState<>(initialDashboard)
+  const router = useRouter();
   const supabase = createClient();
+
+  useEffect(() => {
+    if (!serverUser) return;
+    if (serverUser) {
+      setUser(serverUser);
+    }
+  }, [serverUser, setUser]);
+
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    setClient(null);
-    setProfessional(null);
+    setUser(null);
+    router.replace("/");
   };
 
+  // @ts-ignore
   return (
     <header className="bg-white">
       <nav
@@ -132,7 +120,7 @@ export default function Navigation({
           </button>
         </div>
         <Popover.Group className="hidden lg:flex lg:gap-x-12">
-          {userDashboard && (
+          {user && (
             <Popover className="relative">
               <Popover.Button className="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900">
                 Dashboard
@@ -153,7 +141,7 @@ export default function Navigation({
               >
                 <Popover.Panel className="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
                   <div className="p-4">
-                    {userDashboard.map((item) => (
+                    {userSpecificNavigation[user.role].map((item) => (
                       <div
                         key={item.name}
                         className="group relative flex gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50"
@@ -203,11 +191,8 @@ export default function Navigation({
           </Link>
         </Popover.Group>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          {client && <UserDropdown user={client} setUser={setClient} />}
-          {professional && (
-            <UserDropdown user={professional} setUser={setProfessional} />
-          )}
-          {!client && !professional && (
+          {user && <UserDropdown user={user} setUser={setUser} />}
+          {!user && (
             <div className="ml-2 sm:ml-4 flex flex-col md:flex-row justify-center mt-8 md:mt-0 items-center gap-x-2 sm:gap-x-6">
               <Link
                 href={"/auth/register"}
@@ -284,22 +269,24 @@ export default function Navigation({
                           <div className="mt-6 flow-root">
                             <div className="-my-6 divide-y divide-gray-500/10">
                               <div className="space-y-2 py-6">
-                                {userDashboard &&
-                                  userDashboard.map((item) => (
-                                    <Link
-                                      key={item.name}
-                                      href={item.href}
-                                      className="group -mx-3 flex items-center gap-x-6 rounded-lg p-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                                    >
-                                      <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                                        <item.icon
-                                          className="h-6 w-6 text-gray-600 group-hover:text-indigo-600"
-                                          aria-hidden="true"
-                                        />
-                                      </div>
-                                      {item.name}
-                                    </Link>
-                                  ))}
+                                {user &&
+                                  userSpecificNavigation[user.role].map(
+                                    (item) => (
+                                      <Link
+                                        key={item.name}
+                                        href={item.href}
+                                        className="group -mx-3 flex items-center gap-x-6 rounded-lg p-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                      >
+                                        <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
+                                          <item.icon
+                                            className="h-6 w-6 text-gray-600 group-hover:text-indigo-600"
+                                            aria-hidden="true"
+                                          />
+                                        </div>
+                                        {item.name}
+                                      </Link>
+                                    ),
+                                  )}
                               </div>
                               <div className="space-y-2 py-6">
                                 <Link
@@ -322,7 +309,7 @@ export default function Navigation({
                                 </Link>
                               </div>
                               <div className="py-6">
-                                {client || professional ? (
+                                {user ? (
                                   <button
                                     onClick={handleSignOut}
                                     className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"

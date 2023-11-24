@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import ActiveToggle from "@/app/components/layout/messaging/ActiveToggle";
+import ActiveToggle from "@/app/layout/messaging/ActiveToggle";
 import { Tables } from "@/database";
 import Image from "next/image";
 

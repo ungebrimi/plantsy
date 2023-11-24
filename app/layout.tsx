@@ -1,9 +1,9 @@
 import "./globals.css";
 import React from "react";
-import Footer from "@/app/components/layout/Footer";
-import Header from "@/app/components/layout/Header";
+import Footer from "@/app/layout/Footer";
+import Header from "@/app/layout/Header";
 import { NotificationProvider } from "@/context/NotificationContext";
-import ErrorNotifications from "@/app/components/layout/ErrorNotifications";
+import ErrorNotifications from "@/app/layout/ErrorNotifications";
 
 export const metadata = {
   title: "Plantsy",

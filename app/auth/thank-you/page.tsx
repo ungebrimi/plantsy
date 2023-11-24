@@ -1,9 +1,13 @@
 import React from "react";
 import Link from "next/link";
-import {getServerSession} from "@/app/supabase-server";
+import { cookies } from "next/headers";
+import { createClient } from "@/app/utils/supabase/server";
 
 const ThankYou = async () => {
-  const { session } = await getServerSession()
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+  const { data, error } = await supabase.auth.getSession();
+  const { session } = data;
 
   if (!session) {
     return <h1>loading...</h1>;

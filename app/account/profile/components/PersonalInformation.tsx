@@ -6,8 +6,8 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
-import { getClientSupabase } from "@/app/supabase-client";
 import Alert from "@/app/components/Alert";
+import { createClient } from "@/app/utils/supabase/client";
 
 interface Form {
   first_name: string | null;
@@ -28,7 +28,7 @@ const PersonalInformation = ({
   user: Tables<"clients"> | Tables<"professionals">;
   userType: string;
 }) => {
-  const { supabase } = getClientSupabase();
+  const supabase = createClient();
   const [success, setSuccess] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [cancelWarning, setCancelWarning] = useState<boolean>(false);

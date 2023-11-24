@@ -1,28 +1,29 @@
 import { Menu, Transition } from "@headlessui/react";
-import React, { Fragment, useState } from "react";
+import React, { Fragment, SetStateAction } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { Tables } from "@/database";
-import MessageSidebar from "@/app/layout/messaging/MessageSidebar";
 import { createClient } from "@/app/utils/supabase/client";
+import { useRouter } from "next/navigation";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
 function ClientDropdown({
-  client,
-  setClient,
+  user,
+  setUser,
 }: {
-  client: Tables<"clients">;
-  setClient: React.Dispatch<React.SetStateAction<Tables<"clients"> | null>>;
+  user: Tables<"clients"> | Tables<"professionals">;
+  setUser: React.Dispatch<
+    SetStateAction<Tables<"clients"> | Tables<"professionals"> | null>
+  >;
 }) {
-  const [openMessagesSidebar, setOpenMessagesSidebar] =
-    useState<boolean>(false);
   const supabase = createClient();
+  const router = useRouter();
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    setClient(null);
+    setUser(null);
+    router.push("/");
   };
 
   return (
@@ -31,14 +32,14 @@ function ClientDropdown({
         <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
           <span className="absolute -inset-1.5" />
           <span className="sr-only">Open user menu</span>
-          {client.profile_picture &&
-          typeof client.profile_picture === "object" &&
-          "url" in client.profile_picture ? (
+          {user.profile_picture &&
+          typeof user.profile_picture === "object" &&
+          "url" in user.profile_picture ? (
             <Image
               width={300}
               className="h-8 w-8 rounded-full"
               height={300}
-              src={client.profile_picture.url as string}
+              src={user.profile_picture.url as string}
               alt=""
             />
           ) : (
@@ -65,32 +66,6 @@ function ClientDropdown({
           <Menu.Item>
             {({ active }) => (
               <button
-                onClick={() => setOpenMessagesSidebar(!openMessagesSidebar)}
-                className={classNames(
-                  active ? "bg-gray-100" : "",
-                  "block px-4 py-2 text-sm text-gray-700",
-                )}
-              >
-                Messages
-              </button>
-            )}
-          </Menu.Item>
-          <Menu.Item>
-            {({ active }) => (
-              <Link
-                href={"/account/client/profile"}
-                className={classNames(
-                  active ? "bg-gray-100" : "",
-                  "block px-4 py-2 text-sm text-gray-700",
-                )}
-              >
-                Your profile
-              </Link>
-            )}
-          </Menu.Item>
-          <Menu.Item>
-            {({ active }) => (
-              <button
                 type="button"
                 onClick={handleSignOut}
                 className={classNames(
@@ -104,12 +79,6 @@ function ClientDropdown({
           </Menu.Item>
         </Menu.Items>
       </Transition>
-      <MessageSidebar
-        open={openMessagesSidebar}
-        setOpen={setOpenMessagesSidebar}
-        user={client}
-        userType={"clients"}
-      />
     </Menu>
   );
 }

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Switch } from "@headlessui/react";
 import { Tables } from "@/database";
-import { getClientSupabase } from "@/app/supabase-client";
+import { createClient } from "@/app/utils/supabase/client";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -16,7 +16,7 @@ export default function ActiveToggle({
   userType: string;
 }) {
   const [enabled, setEnabled] = useState(user.active);
-  const { supabase } = getClientSupabase();
+  const supabase = createClient();
 
   async function changeActiveStatus() {
     try {

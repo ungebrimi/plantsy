@@ -45,7 +45,12 @@ const Message = ({ message, user }: MessageProps) => {
           </p>
         )}
       </div>
-      <article className="ml-3 max-w-xl">
+      <article
+        className={classNames(
+          user.id === message.client_id ? "mr-3" : "ml-3",
+          " max-w-xl",
+        )}
+      >
         <h3 className="text-xs mb-1 ml-2 font-medium text-gray-500">
           {user.first_name + " " + user.last_name}
         </h3>

@@ -1,10 +1,14 @@
-import { getServerSession } from "@/app/supabase-server";
 import React from "react";
 import ServiceGrid from "@/app/account/services/components/ServiceGrid";
 import Link from "next/link";
+import { createClient } from "@/app/utils/supabase/server";
+import { cookies } from "next/headers";
 
 const Services = async () => {
-  const { supabase, session } = await getServerSession();
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+  const { data } = await supabase.auth.getSession();
+  const { session } = data;
 
   const { data: services, error } = await supabase
     .from("services")

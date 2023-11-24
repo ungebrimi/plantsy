@@ -1,3 +1,4 @@
+export const revalidate = 0;
 import React from "react";
 import { cookies } from "next/headers";
 import { createClient } from "@/app/utils/supabase/server";
@@ -21,28 +22,31 @@ export default async function messages({
   const { data, error } = await supabase.auth.getSession();
   const { session } = data;
 
+  // should get the full count of active channels
   const { count: fullCount } = await supabase
     .from("channels")
-    .select("*", { count: "planned", head: true })
+    .select("*", { count: "exact", head: true })
     .eq(`${session?.user.user_metadata.role}_id`, session?.user.id);
 
+  // should get the count of channels where unread messages is true
   const { count: unreadCount } = await supabase
     .from("channels")
-    .select("*", { count: "planned", head: true })
+    .select("*", { count: "exact", head: true })
     .eq(`${session?.user.user_metadata.role}_id`, session?.user.id)
     .eq("unread_messages", true);
 
+  // used to display what tab is selected as well as the count of messages
   const tabs = [
     {
       name: "All Messages",
       href: "/account/messages",
-      count: fullCount ? fullCount - 2 : "N/A",
+      count: fullCount ? fullCount : "0",
       current: !searchParams.unread_messages,
     },
     {
       name: "Unread",
       href: "/account/messages?unread_messages=true",
-      count: unreadCount ? unreadCount - 1 : "N/A",
+      count: unreadCount ? unreadCount : "0",
       current: !!searchParams.unread_messages,
     },
   ];
@@ -129,7 +133,11 @@ export default async function messages({
           <ul role="list" className="divide-y divide-gray-100">
             {channels && channels.length > 0 ? (
               channels.map((channel) => (
-                <ChannelCard key={channel.id} channel={channel} />
+                <ChannelCard
+                  key={channel.id}
+                  channel={channel}
+                  userRole={session?.user.user_metadata.role}
+                />
               ))
             ) : (
               <div className="flex items-center flex-col py-12">

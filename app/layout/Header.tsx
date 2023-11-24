@@ -1,8 +1,8 @@
 import React from "react";
 import { createClient } from "@/app/utils/supabase/server";
 import { cookies } from "next/headers";
-import Banner from "@/app/components/layout/Banner";
-import Navigation from "@/app/components/layout/Navigation";
+import Banner from "@/app/layout/Banner";
+import Navigation from "@/app/layout/Navigation";
 
 async function Header() {
   const cookieStore = cookies();
@@ -14,11 +14,7 @@ async function Header() {
     return (
       <header>
         <Banner />
-        <Navigation
-          serverClient={null}
-          serverProfessional={null}
-          userType={null}
-        />
+        <Navigation serverUser={null} userType={null} />
       </header>
     );
   }
@@ -41,11 +37,7 @@ async function Header() {
 
       return (
         <header>
-          <Navigation
-            serverClient={null}
-            serverProfessional={professional}
-            userType={"professional"}
-          />
+          <Navigation serverUser={professional} userType={"professional"} />
         </header>
       );
     }
@@ -57,11 +49,7 @@ async function Header() {
       return (
         <header>
           <Banner />
-          <Navigation
-            serverClient={client}
-            serverProfessional={null}
-            userType={"client"}
-          />
+          <Navigation serverUser={client} userType={"client"} />
         </header>
       );
     }
@@ -70,11 +58,7 @@ async function Header() {
       return (
         <header>
           <Banner />
-          <Navigation
-            serverClient={null}
-            serverProfessional={null}
-            userType={null}
-          />
+          <Navigation serverUser={null} userType={null} />
         </header>
       );
     }

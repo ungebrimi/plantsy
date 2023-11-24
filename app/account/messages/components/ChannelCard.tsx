@@ -13,7 +13,13 @@ interface ChannelData {
   formattedDate: string | null;
 }
 
-const ChannelCard = ({ channel }: { channel: Tables<"channels"> }) => {
+const ChannelCard = ({
+  channel,
+  userRole,
+}: {
+  channel: Tables<"channels">;
+  userRole: string;
+}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [channelData, setChannelData] = useState<ChannelData>({
     lastMessage: null,
@@ -25,6 +31,10 @@ const ChannelCard = ({ channel }: { channel: Tables<"channels"> }) => {
   const supabase = createClient();
 
   useEffect(() => {
+    // Should get the last message in the channel if there is one and format the date
+    // Should get the other user's profile picture if none, display initials
+    // Should get the date of the last message if there is one
+    // Should get the other user's name
     async function fetchData() {
       try {
         if (channel) {
@@ -39,30 +49,32 @@ const ChannelCard = ({ channel }: { channel: Tables<"channels"> }) => {
             .order("inserted_at", { ascending: false })
             .limit(1)
             .single();
-          setChannelData((prevData) => ({ ...prevData, lastMessage: message }));
 
           // Fetch user
+          const { data: user } = await supabase
+            // if the userRole is client, get the professional, else get the client
+            .from(userRole === "client" ? "professionals" : "clients")
+            .select()
+            .eq("id", channel?.professional_id || channel?.client_id)
+            .single();
+          const profilePicture = JSON.parse(user?.profile_picture as string);
           if (message) {
-            const { data: user } = await supabase
-              .from(message.professional_id ? "professionals" : "clients")
-              .select()
-              .eq("id", message.professional_id || message.client_id)
-              .single();
             const messageDate: Date = new Date(message.inserted_at);
             const formattedDate = getFormattedDate(messageDate);
+
+            setChannelData((prevData) => ({
+              ...prevData,
+              lastMessage: message,
+              user,
+              profilePicture: profilePicture,
+              formattedDate,
+            }));
+          } else {
+            // Handle the case when there is no message
             setChannelData((prevData) => ({
               ...prevData,
               user,
-              formattedDate,
             }));
-
-            // Fetch profile picture
-            if (user && user.profile_picture) {
-              setChannelData((prevData) => ({
-                ...prevData,
-                profilePicture: JSON.parse(user.profile_picture as string),
-              }));
-            }
           }
         }
       } catch (error) {
@@ -151,9 +163,13 @@ const ChannelCard = ({ channel }: { channel: Tables<"channels"> }) => {
             )}
           </div>
           {channelData ? (
-            channelData.lastMessage && (
-              <p className="mt-1 line-clamp-2 text-sm leading-6 text-gray-600">
+            channelData.lastMessage ? (
+              <p className="line-clamp-2 text-sm leading-6 text-gray-600">
                 {channelData.lastMessage.message}
+              </p>
+            ) : (
+              <p className="line-clamp-2 text-sm leading-6 text-gray-600">
+                No messages yet
               </p>
             )
           ) : (

@@ -1,20 +1,20 @@
 import React, { useState } from "react";
-import {getClientSupabase} from "@/app/supabase-client";
-import {Tables} from "@/database";
-import {StorageError} from "@supabase/storage-js";
+import { Tables } from "@/database";
+import { StorageError } from "@supabase/storage-js";
+import { createClient } from "@/app/utils/supabase/client";
 
 type FileUploadHookResult = {
   loading: boolean;
   handleFileUpload: (
     event: React.ChangeEvent<HTMLInputElement>,
     path: string,
-    userType: string
+    userType: string,
   ) => Promise<Tables<"files">[] | undefined | StorageError>;
 };
 
 const useFileUpload = (): FileUploadHookResult => {
   const [loading, setLoading] = useState<boolean>(false);
-  const { supabase } = getClientSupabase()
+  const supabase = createClient();
 
   const insertToFileTable = async ({
     file,
@@ -54,7 +54,7 @@ const useFileUpload = (): FileUploadHookResult => {
           upsert: true,
         });
       if (error) {
-        throw ("Error uploading file:" + error);
+        throw "Error uploading file:" + error;
       } else {
         const { data } = supabase.storage
           .from(userType)
@@ -66,14 +66,14 @@ const useFileUpload = (): FileUploadHookResult => {
             url: data.publicUrl,
           });
         } catch (error) {
-          throw error
+          throw error;
         }
       }
     });
 
     const res: any = await Promise.all(uploadPromises);
     setLoading(false);
-    return res
+    return res;
   };
 
   return {
