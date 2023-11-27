@@ -37,7 +37,7 @@ function ClientDropdown({
           "url" in user.profile_picture ? (
             <Image
               width={300}
-              className="h-8 w-8 rounded-full"
+              className="w-8 h-8 object-cover rounded-full"
               height={300}
               src={user.profile_picture.url as string}
               alt=""

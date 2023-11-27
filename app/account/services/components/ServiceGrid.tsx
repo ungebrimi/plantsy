@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Tables } from "@/database";
 import { archiveData } from "@/app/utils/archive";
 import {
@@ -43,12 +43,6 @@ const ServiceGrid = ({ serverServices, refresh }: ServiceGridProps) => {
       console.log(e);
     }
   };
-
-  useEffect(() => {
-    if (!refresh) return;
-    if (refresh) {
-    }
-  }, [refresh]);
 
   return (
     <section className="-mx-px pt-4 gap-4 grid grid-cols-1 sm:mx-0 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">

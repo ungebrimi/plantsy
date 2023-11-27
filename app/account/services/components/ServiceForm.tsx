@@ -1,19 +1,21 @@
 "use client";
-import React, { Fragment, useRef, useState } from "react";
+import React, {Fragment, useRef, useState} from "react";
 import ServiceCategory from "./ServiceCategory";
 import City from "./City";
 import Images from "./Images";
 import Thumbnail from "./Thumbnail";
 import Informational from "./Informational";
-import { Tables } from "@/database";
+import {Tables} from "@/database";
 import Keywords from "./Keywords";
 import TextInput from "./inputs/TextInput";
-import { useNotification } from "@/context/NotificationContext";
+import {useNotification} from "@/context/NotificationContext";
 import Zip from "@/app/account/services/components/Zip";
-import { Dialog, Transition } from "@headlessui/react";
-import { CheckIcon } from "@heroicons/react/24/outline";
+import {Dialog, Transition} from "@headlessui/react";
+import {CheckIcon} from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { createClient } from "@/app/utils/supabase/client";
+import {createClient} from "@/app/utils/supabase/client";
+
+// TODO - fix image overflow on mobile
 
 interface CardInformationProps {
   professional: Tables<"professionals">;

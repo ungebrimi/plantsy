@@ -94,7 +94,7 @@ const Avatar = ({
       const image = (await handleSingleImageUpload(
         event,
         `${user.id}/avatars`,
-        250,
+        500,
       )) as DbResultOk<Tables<"files">>;
       await updateProfileThumbnail(image);
       setFormData({ ...formData, profile_picture: image });
@@ -125,7 +125,7 @@ const Avatar = ({
         <span
           className={classNames(
             loading ? "animate-pulse" : "",
-            "text-gray-500 italic",
+            "text-gray-500 italic text-wrap break-words",
           )}
         >
           {formData.profile_picture ? `(${formData.profile_picture.name})` : ""}{" "}
@@ -137,25 +137,30 @@ const Avatar = ({
         typeof formData.profile_picture === "object" &&
         "url" in formData.profile_picture ? (
           <>
-            <Image
-              width={300}
-              height={300}
-              src={formData.profile_picture.url as string}
-              alt="profile picture"
-              className="h-12 w-12 text-gray-300 rounded-full"
-            />
-            <button
-              type="button"
-              className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-            >
-              <input
-                ref={inputRef}
-                type="file"
-                accept="image/*"
-                onChange={(e) => handleImageChange(e)}
+            <div className="flex items-center gap-4">
+              <Image
+                width={300}
+                height={300}
+                src={formData.profile_picture.url as string}
+                alt="profile picture"
+                className="h-12 w-12 sm:h-16 sm:w-16 flex-0 text-gray-300 rounded-full object-cover"
               />
-              Change
-            </button>
+              <label className="mt-2 sm:mt-0">
+                <button
+                  type="button"
+                  className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                >
+                  <input
+                    ref={inputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleImageChange(e)}
+                    className="hidden"
+                  />
+                  Change
+                </button>
+              </label>
+            </div>
           </>
         ) : (
           <>

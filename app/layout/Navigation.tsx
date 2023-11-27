@@ -101,7 +101,7 @@ export default function Navigation({ serverUser, userType }: NavbarProps) {
           <Link href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Plantsy</span>
             <Image
-              className="h-8 w-auto"
+              className="h-8 w-auto object-cover"
               src="/plantsy.png"
               alt=""
               width={300}
@@ -241,7 +241,7 @@ export default function Navigation({ serverUser, userType }: NavbarProps) {
                               >
                                 <span className="sr-only">Plantsy</span>
                                 <Image
-                                  className="h-8 w-auto"
+                                  className="h-8 w-auto object-cover"
                                   src="/plantsy.png"
                                   alt=""
                                   width={300}
@@ -317,12 +317,20 @@ export default function Navigation({ serverUser, userType }: NavbarProps) {
                                     Log out
                                   </button>
                                 ) : (
-                                  <Link
-                                    href={"/auth/login"}
-                                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                                  >
-                                    Log in
-                                  </Link>
+                                  <>
+                                    <Link
+                                      href={"/auth/login"}
+                                      className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                    >
+                                      Log in
+                                    </Link>
+                                    <Link
+                                      href={"/auth/register"}
+                                      className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                                    >
+                                      Register
+                                    </Link>
+                                  </>
                                 )}
                               </div>
                             </div>

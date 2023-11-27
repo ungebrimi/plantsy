@@ -1,12 +1,13 @@
 "use client";
-import React from "react";
-import { useState } from "react";
+import React, {useState} from "react";
 import Grid from "./Grid";
 import MobileFilterDialog from "./MobileFilterDialog";
 import Filters from "./Filters";
 import ActionGroup from "./ActionGroup";
 import {Tables} from "@/database";
 
+// TODO - fix lettericon padding left on mobile
+// TODO - look if images can be improved on mobile
 const ClientPage = ({
   serverServices,
   categories,
@@ -15,7 +16,8 @@ const ClientPage = ({
   categories: Tables<"service_categories">[];
 }) => {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState<boolean>(false);
-  const [services, setServices] = useState<Tables<"services">[]>(serverServices);
+  const [services, setServices] =
+    useState<Tables<"services">[]>(serverServices);
   return (
     <div>
       {/* Mobile filter dialog */}

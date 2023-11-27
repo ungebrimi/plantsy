@@ -48,7 +48,7 @@ const Services = async ({
               </h1>
               <Link
                 href={"/account/services/create-a-service"}
-                className="rounded-md justify-between items-center bg-green-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm mt-2 xs:mt-0"
+                className="rounded-md justify-between items-center bg-green-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm mt-2"
               >
                 Create New
               </Link>
