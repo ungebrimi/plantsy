@@ -5,7 +5,6 @@ import City from "./City";
 import Images from "./Images";
 import Thumbnail from "./Thumbnail";
 import Informational from "./Informational";
-import { useRouter } from "next/navigation";
 import { Tables } from "@/database";
 import Keywords from "./Keywords";
 import TextInput from "./inputs/TextInput";
@@ -14,7 +13,7 @@ import Zip from "@/app/account/services/components/Zip";
 import { Dialog, Transition } from "@headlessui/react";
 import { CheckIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { createBrowserClient } from "@supabase/ssr";
+import { createClient } from "@/app/utils/supabase/client";
 
 interface CardInformationProps {
   professional: Tables<"professionals">;
@@ -23,11 +22,7 @@ interface CardInformationProps {
 }
 
 function ServiceForm({ professional, service, edit }: CardInformationProps) {
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  );
-  const router = useRouter();
+  const supabase = createClient();
   const [formData, setFormData] = useState<Tables<"services">>(service);
   const [zipList, setZipList] = useState<string[]>([]);
   const [open, setOpen] = useState<boolean>(false);
@@ -92,6 +87,7 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
           professional_id: professional.id,
           price: formData.price,
           vat: formData.vat,
+          pricing_type: formData.pricing_type.toLowerCase(),
           city: formData.city,
           county: formData.county,
           state: formData.state,
@@ -103,7 +99,7 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
         .select("*")
         .single();
       if (error) console.error(error);
-      router.push("/account/professional/services");
+      setOpen(true);
     } else {
       const { error } = await supabase
         .from("services")
@@ -114,6 +110,7 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
           images: JSON.stringify(formData.images),
           professional_id: professional.id,
           price: formData.price,
+          pricing_type: formData.pricing_type.toLowerCase(),
           vat: formData.vat,
           city: formData.city,
           county: formData.county,
@@ -125,12 +122,14 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
         .select()
         .single();
       if (error) console.error(error);
-      router.push("/account/professional/services");
+      setOpen(true);
     }
   }
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData({
@@ -214,6 +213,7 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
                   type="text"
                   name="price"
                   min={0}
+                  step="0.01"
                   id="price"
                   className="block w-full rounded-md border-0 py-1.5 pl-7 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   placeholder="0.00"
@@ -257,6 +257,25 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
                   onChange={handleInputChange}
                 />
               </div>
+            </div>
+
+            <div className="sm:col-span-2 mt-4">
+              <label
+                htmlFor="pricing_type"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Pricing Type
+              </label>
+              <select
+                id="pricing_type"
+                name="pricing_type"
+                className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                value={formData.pricing_type}
+                onChange={handleInputChange}
+              >
+                <option>Hourly</option>
+                <option>Fixed</option>
+              </select>
             </div>
 
             <div className="sm:col-span-3 sm:col-start-1 mt-4">
@@ -366,19 +385,19 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
                         as="h3"
                         className="text-base font-semibold leading-6 text-gray-900"
                       >
-                        Payment successful
+                        Service saved!
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-gray-500">
-                          Lorem ipsum dolor sit amet consectetur adipisicing
-                          elit. Consequatur amet labore.
+                          Your service has been saved successfully. You can
+                          return to the service list.
                         </p>
                       </div>
                     </div>
                   </div>
                   <div className="mt-5 sm:mt-6">
                     <Link
-                      href={"/account/professional/services"}
+                      href={"/account/services"}
                       replace
                       className="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
                     >

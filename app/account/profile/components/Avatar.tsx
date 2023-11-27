@@ -94,6 +94,7 @@ const Avatar = ({
       const image = (await handleSingleImageUpload(
         event,
         `${user.id}/avatars`,
+        250,
       )) as DbResultOk<Tables<"files">>;
       await updateProfileThumbnail(image);
       setFormData({ ...formData, profile_picture: image });

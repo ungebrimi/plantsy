@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Tables } from "@/database";
 import { archiveData } from "@/app/utils/archive";
 import {
@@ -9,8 +9,8 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { createBrowserClient } from "@supabase/ssr";
 import Image from "next/image";
+import { createClient } from "@/app/utils/supabase/client";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -18,22 +18,13 @@ function classNames(...classes: string[]) {
 
 type ServiceGridProps = {
   serverServices: Tables<"services">[];
+  refresh?: boolean;
 };
-const ServiceGrid = ({ serverServices }: ServiceGridProps) => {
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  );
-  const [services, setServices] = useState<Tables<"services">[]>([
-    ...serverServices,
-    ...serverServices,
-    ...serverServices,
-    ...serverServices,
-    ...serverServices,
-    ...serverServices,
-    ...serverServices,
-    ...serverServices,
-  ]);
+const ServiceGrid = ({ serverServices, refresh }: ServiceGridProps) => {
+  const supabase = createClient();
+
+  const [services, setServices] =
+    useState<Tables<"services">[]>(serverServices);
 
   const deleteService = async (service: Tables<"services">) => {
     try {
@@ -53,17 +44,22 @@ const ServiceGrid = ({ serverServices }: ServiceGridProps) => {
     }
   };
 
+  useEffect(() => {
+    if (!refresh) return;
+    if (refresh) {
+    }
+  }, [refresh]);
+
   return (
     <section className="-mx-px pt-4 gap-4 grid grid-cols-1 sm:mx-0 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
       {services &&
         services.map((service: any) => {
-          if (service.thumbnail) {
+          if (service.thumbnail && typeof service.thumbnail === "string") {
             try {
               service.thumbnail = JSON.parse(service.thumbnail);
-              // If JSON.parse doesn't throw an error, it means the string is valid JSON.
-              console.log("service.thumbnail is valid JSON");
             } catch (error) {
               console.log("service.thumbnail is not valid JSON");
+              console.log(error);
             }
           }
           return (

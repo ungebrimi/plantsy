@@ -1,9 +1,11 @@
-import { DbResultOk, Tables} from "@/database";
+import { DbResultOk, Tables } from "@/database";
 import useImageUpload from "@/hooks/useImageUpload";
 import { PhotoIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import React, { SetStateAction } from "react";
-import {useNotification} from "@/context/NotificationContext";
+import { useNotification } from "@/context/NotificationContext";
+import { archiveData } from "@/app/utils/archive";
+import { createClient } from "@/app/utils/supabase/client";
 
 interface ThumbnailProps {
   professional: Tables<"professionals">;
@@ -13,35 +15,65 @@ interface ThumbnailProps {
 
 function Thumbnail({ professional, formData, setFormData }: ThumbnailProps) {
   const { loading, handleSingleImageUpload, removeImage } = useImageUpload();
-  const { addError } = useNotification()
+  const { addError } = useNotification();
+  const supabase = createClient();
   const handleImageChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     try {
-      const image = await handleSingleImageUpload(
+      const image = (await handleSingleImageUpload(
         event,
         `${professional.id}/images`,
-      ) as DbResultOk<Tables<"files">>;
+        1080,
+      )) as DbResultOk<Tables<"files">>;
       setFormData({ ...formData, thumbnail: image });
     } catch (error: any) {
-        if(error.status_code === "409") {
-            addError("We've encountered an issue with uploading your image: " + error.message + "rename the file to proceed")
-        }
-        else {
-            addError("We've encountered an issue with uploading your image: " + error.message)
-        }
+      if (error.status_code === "409") {
+        addError(
+          "We've encountered an issue with uploading your image: " +
+            error.message +
+            "rename the file to proceed",
+        );
+      } else {
+        addError(
+          "We've encountered an issue with uploading your image: " +
+            error.message,
+        );
+      }
+    }
+  };
+
+  const archiveImage = async (service: Tables<"services">) => {
+    try {
+      await archiveData(
+        service.id,
+        "services",
+        JSON.stringify(service),
+        "remove service",
+      );
+      console.log(
+        "removal of service was successful, and is not stored in archive",
+      );
+    } catch (e) {
+      console.log(e);
     }
   };
 
   const handleRemoveImage = async (image: Tables<"files">) => {
     try {
+      await archiveData(
+        image.id,
+        "files",
+        JSON.stringify(image),
+        "remove image",
+      );
       // Attempt to remove the image
       await removeImage(image?.id, `${professional.id}/images/${image?.name}`);
       // If removal is successful, reset the states
       setFormData((formData: any) => ({ ...formData, thumbnail: null }));
     } catch (error) {
       console.log("There was an error when removing the image");
-      console.error(error)
+      console.error(error);
     }
   };
 
@@ -54,13 +86,14 @@ function Thumbnail({ professional, formData, setFormData }: ThumbnailProps) {
         Cover photo
       </label>
       <div
-        className={`mt-2 flex justify-center rounded-lg border-dashed border border-gray-900/25 ${formData.thumbnail === null ? "px-2 py-10" : "px-6 py-10"
-          }`}
+        className={`mt-2 flex justify-center rounded-lg border-dashed relative border border-gray-900/25 ${
+          formData.thumbnail === null ? "px-2 py-10 " : "px-6 py-10"
+        }`}
       >
         {formData.thumbnail &&
-          typeof formData.thumbnail === "object" &&
-          "url" in formData.thumbnail ? (
-          <div className="relative">
+        typeof formData.thumbnail === "object" &&
+        "url" in formData.thumbnail ? (
+          <div className="">
             <button
               data-testid="delete"
               type="button"
@@ -70,7 +103,7 @@ function Thumbnail({ professional, formData, setFormData }: ThumbnailProps) {
               className="absolute top-2 right-2"
             >
               <span className="sr-only">Remove uploaded thumbnail</span>
-              <XMarkIcon className="w-6 text-gray-600"></XMarkIcon>
+              <XMarkIcon className="w-6 text-gray-700 hover:text-gray-500"></XMarkIcon>
             </button>
             <Image
               width={400}
@@ -101,7 +134,7 @@ function Thumbnail({ professional, formData, setFormData }: ThumbnailProps) {
                   name="image-upload"
                   type="file"
                   className="sr-only"
-                  onChange={(e) =>handleImageChange(e)}
+                  onChange={(e) => handleImageChange(e)}
                 />
               </label>
               <p className="pl-1">or drag and drop</p>

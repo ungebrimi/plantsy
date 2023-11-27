@@ -6,6 +6,7 @@ import React, { SetStateAction, useState } from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { useNotification } from "@/context/NotificationContext";
+import { archiveData } from "@/app/utils/archive";
 
 interface ImagesProps {
   professional: Tables<"professionals">;
@@ -26,6 +27,7 @@ function Images({ professional, formData, setFormData }: ImagesProps) {
       const images = (await handleMultipleImagesUpload(
         event,
         `${professional.id}/images`,
+        672,
       )) as DbResultOk<Tables<"files">>;
       setFormData({ ...formData, images: images });
     } catch (error: any) {
@@ -43,6 +45,12 @@ function Images({ professional, formData, setFormData }: ImagesProps) {
   const handleRemoveImage = async (image: Tables<"files"> | null) => {
     if (image) {
       try {
+        await archiveData(
+          image.id,
+          "files",
+          JSON.stringify(image),
+          "remove image",
+        );
         await removeImage(
           image?.id,
           `${professional.id}/images/${image?.name}`,

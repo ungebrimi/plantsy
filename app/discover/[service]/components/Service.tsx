@@ -133,7 +133,7 @@ function Service({ service, professional, session, images }: ServiceProps) {
                   <Image
                     width={300}
                     height={300}
-                    className="mx-auto h-32 w-32 flex-shrink-0 rounded-full"
+                    className="mx-auto h-32 w-32 flex-shrink-0 rounded-full object-cover"
                     src={professional.profile_picture.url as string}
                     alt=""
                   />

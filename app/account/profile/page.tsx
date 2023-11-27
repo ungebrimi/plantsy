@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
-import ProfileInformation from "./components/ProfileInformation";
 import PersonalInformation from "./components/PersonalInformation";
 import { Tables } from "@/database";
 import { cookies } from "next/headers";
 import { createClient } from "@/app/utils/supabase/server";
+import ProfileInformation from "@/app/account/profile/components/ProfileInformation";
 
 export default async function Profile() {
   const cookieStore = cookies();
@@ -12,7 +12,7 @@ export default async function Profile() {
   const { session } = data;
 
   if (!session) {
-    // redirect("/");
+    redirect("/");
   }
 
   const { data: professional, error: professionalError } = await supabase
@@ -29,10 +29,6 @@ export default async function Profile() {
 
   if (!client && !professional) {
     redirect("/auth/login");
-  }
-
-  if (clientError || professionalError) {
-    // redirect("/");
   }
 
   const userType = professional ? "professionals" : "clients";

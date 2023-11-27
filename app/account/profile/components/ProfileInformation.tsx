@@ -30,11 +30,11 @@ const ProfileInformation = ({
   const [formData, setFormData] = useState<Form>({
     website: user.website,
     about: user.about,
-    profile_picture: user.profile_picture as Tables<"files"> | null,
+    profile_picture: user.profile_picture
+      ? (JSON.parse(user.profile_picture as string) as Tables<"files">)
+      : null,
   });
-  const [oldImage, setOldImage] = useState<Tables<"files"> | null>(
-    user.profile_picture as Tables<"files"> | null,
-  );
+
   const originalFormData = {
     ...formData,
     website: user.website,

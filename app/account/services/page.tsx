@@ -1,15 +1,23 @@
+export const dynamic = "force-dynamic";
+export const revalidate = 1;
+
 import React from "react";
 import ServiceGrid from "@/app/account/services/components/ServiceGrid";
 import Link from "next/link";
 import { createClient } from "@/app/utils/supabase/server";
 import { cookies } from "next/headers";
+import Image from "next/image";
 
-const Services = async () => {
+const Services = async ({
+  searchParams,
+}: {
+  searchParams: { refresh: string };
+}) => {
   const cookieStore = cookies();
   const supabase = createClient(cookieStore);
   const { data } = await supabase.auth.getSession();
   const { session } = data;
-
+  let refresh = searchParams.refresh ? JSON.parse(searchParams.refresh) : null;
   const { data: services, error } = await supabase
     .from("services")
     .select()
@@ -45,7 +53,24 @@ const Services = async () => {
                 Create New
               </Link>
             </div>
-            <ServiceGrid serverServices={services} />
+            {services && (
+              <ServiceGrid serverServices={services} refresh={refresh} />
+            )}
+            {!services ||
+              (services.length === 0 && (
+                <div className="mx-auto max-w-3xl flex flex-col justify-center items-center pb-4">
+                  <Image
+                    src="https://dhxummckajoranathmmy.supabase.co/storage/v1/object/public/app/images/garden-tools.png"
+                    alt="garden tools"
+                    className=" mx-auto"
+                    width={400}
+                    height={400}
+                  />
+                  <h2 className="text-base xs:text-lg sm:text-xl text-center font-bold tracking-tight text-gray-600">
+                    You have not created any services yet.
+                  </h2>
+                </div>
+              ))}
           </div>
           <div
             className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
