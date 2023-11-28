@@ -34,6 +34,7 @@ const ImageUpload = ({
         true,
       )) as DbResultOk<Tables<"files">>;
       // check if res is array or an object, if it's an array, set images to the array, if it's an object, add it to the images array
+      console.log(res);
       if (Array.isArray(res)) {
         setImages(res);
       } else {

@@ -85,7 +85,7 @@ const useImageUpload = (): useImageUploadProps => {
 
           const { data } = supabase.storage
             .from(location)
-            .getPublicUrl(`${path}/${compressedFile.name}`);
+            .getPublicUrl(`${path}/${name}`);
 
           const insertResult = await insertToFileTable({
             name: name,
