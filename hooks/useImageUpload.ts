@@ -12,16 +12,13 @@ type FileProcessingOptions = {
 
 interface useImageUploadProps {
   loading: boolean;
-  handleSingleImageUpload: (
+  handleImageUpload: (
+    location: string,
     event: React.ChangeEvent<HTMLInputElement>,
     path: string,
     maxWidthOrHeight?: number,
-  ) => Promise<Tables<"files"> | undefined | StorageError>;
-  handleMultipleImagesUpload: (
-    event: React.ChangeEvent<HTMLInputElement>,
-    path: string,
-    maxWidthOrHeight?: number,
-  ) => Promise<Tables<"files">[] | undefined | StorageError>;
+    addUniqueSuffix?: boolean,
+  ) => Promise<Tables<"files"> | Tables<"files">[] | undefined | StorageError>;
   removeImage: any;
 }
 
@@ -46,79 +43,41 @@ const useImageUpload = (): useImageUploadProps => {
     return data;
   };
 
-  const handleSingleImageUpload = async (
+  const handleImageUpload = async (
+    location: string,
     event: React.ChangeEvent<HTMLInputElement>,
     path: string,
     maxWidthOrHeight: number = 1920,
-  ): Promise<Tables<"files"> | undefined | StorageError> => {
-    setLoading(true);
-    const imageFile = event.target?.files;
-    const options: FileProcessingOptions = {
-      maxSizeMB: 1,
-      maxWidthOrHeight: maxWidthOrHeight,
-      useWebWorker: true,
-    };
-
-    if (!imageFile) return;
-    try {
-      const compressedFile = await imageCompression(imageFile[0], options);
-      console.log("Compressed file size" + compressedFile.size / 1024 / 1024);
-      console.log("image file size" + imageFile[0].size / 1024 / 1024);
-      const { error } = await supabase.storage
-        .from("professionals")
-        .upload(`${path}/${compressedFile.name}`, compressedFile);
-      if (error) throw error;
-      const { data } = supabase.storage
-        .from("professionals")
-        .getPublicUrl(`${path}/${compressedFile.name}`);
-
-      return await insertToFileTable({
-        file: compressedFile,
-        url: data.publicUrl,
-      });
-    } catch (error) {
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // copilot write me all the pages in my app
-  // account / messages / profile / services
-  // auth / login / register / forgot password / reset password / thank you / update password
-  // company
-  // contact
-  // discover
-  // legal
-
-  const handleMultipleImagesUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-    path: string,
-    maxWidthOrHeight: number = 1920,
-  ): Promise<Tables<"files">[] | undefined> => {
+    addUniqueSuffix: boolean = false,
+  ): Promise<Tables<"files">[] | Tables<"files"> | undefined> => {
     setLoading(true);
     const options: FileProcessingOptions = {
       maxSizeMB: 1,
       maxWidthOrHeight: maxWidthOrHeight,
       useWebWorker: true,
     };
-    if (!event.target.files || event.target.files.length === 0) {
-      setLoading(false);
-      return [];
-    }
 
     try {
-      const compressedFiles = await Promise.all(
-        Array.from(event.target.files).map((imageFile) =>
-          imageCompression(imageFile, options),
-        ),
-      );
+      const files = event.target?.files;
 
-      const uploadPromises = compressedFiles.map(async (compressedFile) => {
+      if (!files || files.length === 0) {
+        setLoading(false);
+        return undefined;
+      }
+
+      const uploadPromises = Array.from(files).map(async (file) => {
         try {
+          const compressedFile = await imageCompression(file, options);
+          let name = compressedFile.name;
+          if (addUniqueSuffix) {
+            const uniqueSuffix =
+              Date.now() + "-" + Math.round(Math.random() * 1e9);
+            name = `${uniqueSuffix}-${compressedFile.name}`;
+          }
+          console.log(name);
           const { error } = await supabase.storage
-            .from("professionals")
-            .upload(`${path}/${compressedFile.name}`, compressedFile);
+            .from(location)
+            .upload(`${path}/${name}`, compressedFile);
 
           if (error) {
             throw new Error(error.message);
@@ -146,8 +105,13 @@ const useImageUpload = (): useImageUploadProps => {
 
       const results = await Promise.all(uploadPromises);
       setLoading(false);
-      // Filter out any undefined results
-      return results.filter((result) => result) as Tables<"files">[];
+
+      if (results.length === 1) {
+        return results[0] as Tables<"files">;
+      } else {
+        // Filter out any undefined results
+        return results.filter((result) => result) as Tables<"files">[];
+      }
     } catch (error) {
       setLoading(false);
       throw error; // Propagate the error to the caller
@@ -194,8 +158,7 @@ const useImageUpload = (): useImageUploadProps => {
 
   return {
     loading,
-    handleSingleImageUpload,
-    handleMultipleImagesUpload,
+    handleImageUpload,
     removeImage,
   };
 };

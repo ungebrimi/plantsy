@@ -163,16 +163,16 @@ function Service({ service, professional, session, images }: ServiceProps) {
               <div>
                 {!session && (
                   <Link
-                    href={"/account/auth/register"}
-                    className="relative w-full -mr-px inline-flex bg-red-50 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-red-400"
+                    href={"/auth/register"}
+                    className="relative w-full -mr-px inline-flex bg-green-500 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-100"
                   >
-                    Sign up as a client to contact this professional
+                    Sign up to contact this professional
                   </Link>
                 )}
                 {session &&
                   session.user.user_metadata.role === "professional" && (
                     <Link
-                      href={"/account/auth/register"}
+                      href={"/auth/register"}
                       className="relative -mr-px inline-flex w-full bg-red-50 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-red-400"
                     >
                       <EnvelopeIcon

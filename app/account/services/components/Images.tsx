@@ -15,7 +15,7 @@ interface ImagesProps {
 }
 
 function Images({ professional, formData, setFormData }: ImagesProps) {
-  const { loading, handleMultipleImagesUpload, removeImage } = useImageUpload();
+  const { loading, handleImageUpload, removeImage } = useImageUpload();
   const { addError } = useNotification();
   const [currentImage, setCurrentImage] = useState<Tables<"files"> | null>(
     null,
@@ -24,10 +24,12 @@ function Images({ professional, formData, setFormData }: ImagesProps) {
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     try {
-      const images = (await handleMultipleImagesUpload(
+      const images = (await handleImageUpload(
+        "professionals",
         event,
         `${professional.id}/images`,
         672,
+        false,
       )) as DbResultOk<Tables<"files">>;
       setFormData({ ...formData, images: images });
     } catch (error: any) {

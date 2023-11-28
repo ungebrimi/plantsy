@@ -56,7 +56,7 @@ const Channel = async ({ params }: PageProps) => {
 
   return (
     <div className="bg-white">
-      <div className="relative isolate px-6 pt-14 lg:px-8">
+      <div className="relative isolate px-2 sm:px-6 pt-14 lg:px-8">
         <div
           className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
           aria-hidden="true"
@@ -70,8 +70,8 @@ const Channel = async ({ params }: PageProps) => {
           />
         </div>
         {/* Content container */}
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 rounded-lg backdrop-blur bg-white/50 shadow-lg divide-y divide-gray-200">
-          <div className="px-4 py-3 sm:px-6">
+        <div className="mx-auto px-2 sm:px-4 max-w-7xl py-4 rounded-lg backdrop-blur bg-white/50 shadow-lg divide-y divide-gray-200">
+          <div className="">
             <Link
               href={"/account/messages"}
               className="text-sm font-medium inline-flex items-center gap-2 text-sky-600 hover:text-sky-700"
@@ -80,7 +80,7 @@ const Channel = async ({ params }: PageProps) => {
               Back to messages
             </Link>
           </div>
-          <div className="px-4 py-5 sm:p-6">
+          <div className="">
             <div className="flex-auto flex-wrap">
               {typedServerMessages && typedServerMessages.length > 0 ? (
                 <Inbox

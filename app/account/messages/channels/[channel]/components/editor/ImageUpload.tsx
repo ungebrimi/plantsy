@@ -12,20 +12,33 @@ interface ImageUploadProps {
   userType: string;
 }
 
-const ImageUpload = ({ user, images, setImages }: ImageUploadProps) => {
+const ImageUpload = ({
+  user,
+  images,
+  setImages,
+  userType,
+}: ImageUploadProps) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const { loading, handleMultipleImagesUpload } = useImageUpload();
+  const { loading, handleImageUpload } = useImageUpload();
   const { addError } = useNotification();
 
   const handleImageChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     try {
-      const res = (await handleMultipleImagesUpload(
+      const res = (await handleImageUpload(
+        userType,
         event,
         `${user.id}/images`,
+        810,
+        true,
       )) as DbResultOk<Tables<"files">>;
-      setImages(res);
+      // check if res is array or an object, if it's an array, set images to the array, if it's an object, add it to the images array
+      if (Array.isArray(res)) {
+        setImages(res);
+      } else {
+        setImages([...images, res]);
+      }
     } catch (error: any) {
       if (error.status_code === "409") {
         addError(error.message + "rename the duplicated file to proceed");
@@ -43,6 +56,7 @@ const ImageUpload = ({ user, images, setImages }: ImageUploadProps) => {
       {images && images.length > 0 ? (
         <button
           onClick={() => setOpenModal(true)}
+          type="button"
           className="-m-1 inline-flex h-10 w-10 items-center justify-center rounded-full text-red-400 hover:text-red-500"
         >
           <CameraIcon className="h-6 w-6" aria-hidden="true" />

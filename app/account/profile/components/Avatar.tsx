@@ -28,7 +28,7 @@ const Avatar = ({
   user: Tables<"professionals"> | Tables<"clients">;
   userType: string;
 }) => {
-  const { loading, handleSingleImageUpload, removeImage } = useImageUpload();
+  const { loading, handleImageUpload, removeImage } = useImageUpload();
   const supabase = createClient();
   const { addError } = useNotification();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -91,10 +91,12 @@ const Avatar = ({
         console.log("removed the image");
       }
       // Upload the image
-      const image = (await handleSingleImageUpload(
+      const image = (await handleImageUpload(
+        userType,
         event,
         `${user.id}/avatars`,
         500,
+        false,
       )) as DbResultOk<Tables<"files">>;
       await updateProfileThumbnail(image);
       setFormData({ ...formData, profile_picture: image });

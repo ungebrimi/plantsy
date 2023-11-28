@@ -54,7 +54,7 @@ const Inbox = ({ serverMessages, client, professional }: InboxProps) => {
   }, [supabase]);
 
   return (
-    <section className="flex w-full flex-col">
+    <section className="flex w-full flex-col py-4 space-y-4">
       {messages &&
         messages.length > 0 &&
         messages.map((message: Tables<"messages">, idx) => {

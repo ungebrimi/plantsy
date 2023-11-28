@@ -2,8 +2,8 @@ import React, { Fragment, SetStateAction, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { PhotoIcon } from "@heroicons/react/24/outline";
 import { Tables } from "@/database";
-import { createBrowserClient } from "@supabase/ssr";
 import Image from "next/image";
+import useImageUpload from "@/hooks/useImageUpload";
 
 type ImageModalProps = {
   open: boolean;
@@ -19,10 +19,7 @@ export default function ImageModal({
   setImages,
 }: ImageModalProps) {
   const cancelButtonRef = useRef(null);
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  );
+  const { removeImage: deleteImage } = useImageUpload();
 
   const [tempImages, setTempImages] = useState<Tables<"files">[]>(images);
 
@@ -33,29 +30,26 @@ export default function ImageModal({
     setTempImages(updatedTempImages);
   }
 
-  async function removeImageFromDB(image: Tables<"files">) {
-    const { error } = await supabase.from("files").delete().eq("id", image.id);
-    if (error) {
-      console.error(error);
-    } else {
-      console.log(`image ${image.name} has been removed from the database`);
-    }
-  }
-
   function handleSave() {
     // Find images that were present in the images array but are not in tempImages
     const imagesToRemove = images.filter(
       (image) => !tempImages.some((tempImage) => tempImage.id === image.id),
     );
 
-    // Remove those images from the database
-    imagesToRemove.forEach((image) => {
-      removeImageFromDB(image);
-    });
+    // Create an array of promises for the deleteImage calls
+    const deletePromises = imagesToRemove.map((image) => deleteImage(image.id));
 
-    // Update the images array to match tempImages
-    setImages(tempImages);
-    setOpen(false);
+    // Use Promise.all to wait for all deleteImage calls to complete
+    Promise.all(deletePromises)
+      .then(() => {
+        // Once all deleteImage calls are finished, update the images array and setOpen
+        setImages(tempImages);
+        setOpen(false);
+      })
+      .catch((error) => {
+        // Handle errors if any of the deleteImage calls fail
+        console.error("Error deleting images:", error);
+      });
   }
 
   return (
@@ -116,7 +110,7 @@ export default function ImageModal({
                           >
                             <div className="flex min-w-full gap-x-4">
                               <Image
-                                className="w-16 h-16 flex-none rounded-sm bg-gray-50"
+                                className="w-16 h-16 flex-none rounded-sm bg-gray-50 object-cover"
                                 src={image.url as string}
                                 alt=""
                                 width={300}

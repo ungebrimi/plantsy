@@ -14,17 +14,19 @@ interface ThumbnailProps {
 }
 
 function Thumbnail({ professional, formData, setFormData }: ThumbnailProps) {
-  const { loading, handleSingleImageUpload, removeImage } = useImageUpload();
+  const { loading, handleImageUpload, removeImage } = useImageUpload();
   const { addError } = useNotification();
   const supabase = createClient();
   const handleImageChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     try {
-      const image = (await handleSingleImageUpload(
+      const image = (await handleImageUpload(
+        "professionals",
         event,
         `${professional.id}/images`,
         1080,
+        false,
       )) as DbResultOk<Tables<"files">>;
       setFormData({ ...formData, thumbnail: image });
     } catch (error: any) {
@@ -40,22 +42,6 @@ function Thumbnail({ professional, formData, setFormData }: ThumbnailProps) {
             error.message,
         );
       }
-    }
-  };
-
-  const archiveImage = async (service: Tables<"services">) => {
-    try {
-      await archiveData(
-        service.id,
-        "services",
-        JSON.stringify(service),
-        "remove service",
-      );
-      console.log(
-        "removal of service was successful, and is not stored in archive",
-      );
-    } catch (e) {
-      console.log(e);
     }
   };
 
