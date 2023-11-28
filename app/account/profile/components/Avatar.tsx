@@ -147,20 +147,17 @@ const Avatar = ({
                 alt="profile picture"
                 className="h-12 w-12 sm:h-16 sm:w-16 flex-0 text-gray-300 rounded-full object-cover"
               />
-              <label className="mt-2 sm:mt-0">
-                <button
-                  type="button"
-                  className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                >
-                  <input
-                    ref={inputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleImageChange(e)}
-                    className="hidden"
-                  />
-                  Change
-                </button>
+              <label className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                <input
+                  id="photo"
+                  ref={inputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple={false}
+                  onChange={(e) => handleImageChange(e)}
+                  className="hidden"
+                />
+                Change
               </label>
             </div>
           </>
@@ -170,17 +167,14 @@ const Avatar = ({
               className="h-12 w-12 text-gray-300 rounded-full"
               aria-hidden="true"
             />
-            <button
-              type="button"
-              className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-            >
+            <label className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleImageChange}
               />
               Change
-            </button>
+            </label>
           </>
         )}
       </div>
