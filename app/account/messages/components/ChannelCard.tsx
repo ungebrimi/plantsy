@@ -29,7 +29,7 @@ const ChannelCard = ({
   });
 
   const supabase = createClient();
-
+  console.log(userRole);
   useEffect(() => {
     // Should get the last message in the channel if there is one and format the date
     // Should get the other user's profile picture if none, display initials
@@ -50,12 +50,27 @@ const ChannelCard = ({
             .limit(1)
             .single();
 
+          let otherUserId: string;
+          let otherUserRole: string;
+
+          if (userRole === "client") {
+            otherUserRole = "professionals";
+          } else {
+            otherUserRole = "clients";
+          }
+
+          if (userRole === "client") {
+            otherUserId = channel.professional_id;
+          } else {
+            otherUserId = channel.client_id;
+          }
+
           // Fetch user
           const { data: user } = await supabase
             // if the userRole is client, get the professional, else get the client
-            .from(userRole === "client" ? "professionals" : "clients")
+            .from(otherUserRole)
             .select()
-            .eq("id", channel?.professional_id || channel?.client_id)
+            .eq("id", otherUserId)
             .single();
           const profilePicture = JSON.parse(user?.profile_picture as string);
           if (message) {
@@ -118,7 +133,7 @@ const ChannelCard = ({
             <Image
               width={399}
               height={399}
-              className="hidden xs:block h-12 w-12 flex-none rounded-full bg-gray-50"
+              className="hidden xs:block h-12 w-12 flex-none rounded-full object-cover bg-gray-50"
               src={channelData.profilePicture?.url as string}
               alt=""
             />
@@ -165,7 +180,9 @@ const ChannelCard = ({
           {channelData ? (
             channelData.lastMessage ? (
               <p className="line-clamp-2 text-sm leading-6 text-gray-600">
-                {channelData.lastMessage.message}
+                {channelData.lastMessage.message
+                  ? channelData.lastMessage.message
+                  : "Sent an image or file attachment"}
               </p>
             ) : (
               <p className="line-clamp-2 text-sm leading-6 text-gray-600">
