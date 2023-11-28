@@ -26,14 +26,14 @@ const useImageUpload = (): useImageUploadProps => {
   const [loading, setLoading] = useState<boolean>(false);
   const supabase = createClient();
 
-  const insertToFileTable = async ({ file, url }: any) => {
+  const insertToFileTable = async ({ name, url, size, type }: any) => {
     const { data, error } = await supabase
       .from("files")
       .insert({
-        name: file.name,
+        name: name,
         url: url,
-        size: file.size,
-        type: file.type,
+        size: size,
+        type: type,
       })
       .select()
       .single();
@@ -74,7 +74,7 @@ const useImageUpload = (): useImageUploadProps => {
               Date.now() + "-" + Math.round(Math.random() * 1e9);
             name = `${uniqueSuffix}-${compressedFile.name}`;
           }
-          console.log(name);
+
           const { error } = await supabase.storage
             .from(location)
             .upload(`${path}/${name}`, compressedFile);
@@ -84,11 +84,13 @@ const useImageUpload = (): useImageUploadProps => {
           }
 
           const { data } = supabase.storage
-            .from("professionals")
+            .from(location)
             .getPublicUrl(`${path}/${compressedFile.name}`);
 
           const insertResult = await insertToFileTable({
-            file: compressedFile,
+            name: name,
+            size: compressedFile.size,
+            type: compressedFile.type,
             url: data?.publicUrl,
           });
 
@@ -129,9 +131,9 @@ const useImageUpload = (): useImageUploadProps => {
     console.log("File deleted from table");
   };
 
-  const removeFromStorage = async (path: string) => {
+  const removeFromStorage = async (location: string, path: string) => {
     const { data, error } = await supabase.storage
-      .from("professionals")
+      .from(location)
       .remove([path]);
     if (error) {
       throw new Error(
@@ -142,13 +144,17 @@ const useImageUpload = (): useImageUploadProps => {
     console.log("File removed from storage");
   };
 
-  const removeImage = async (fileId: number, path: string) => {
+  const removeImage = async (
+    fileId: number,
+    path: string,
+    location: string,
+  ) => {
     // it does seem like this not always work
     try {
       // Remove from the file table
       await removeFromFileTable(fileId);
       // Remove from storage
-      await removeFromStorage(path);
+      await removeFromStorage(location, path);
 
       return null;
     } catch (error) {

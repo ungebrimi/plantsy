@@ -92,6 +92,7 @@ const ImageUpload = ({
           setOpen={setOpenModal}
           images={images}
           setImages={setImages}
+          userType={userType}
         />
       )}
     </div>

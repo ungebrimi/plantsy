@@ -36,7 +36,11 @@ const Avatar = ({
   const handleRemoveImage = async (image: Tables<"files">) => {
     try {
       // Attempt to remove the image
-      await removeImage(image?.id, `${user.id}/avatars/${image?.name}`);
+      await removeImage(
+        image?.id,
+        `${user.id}/avatars/${image?.name}`,
+        userType,
+      );
       setFormData((formData: any) => ({ ...formData, profile_picture: null }));
     } catch (error: any) {
       addError("There was an error when removing the image:" + error.message);

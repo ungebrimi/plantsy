@@ -10,6 +10,7 @@ type ImageModalProps = {
   setOpen: React.Dispatch<SetStateAction<boolean>>;
   images: Tables<"files">[];
   setImages: React.Dispatch<SetStateAction<Tables<"files">[]>>;
+  userType: string;
 };
 
 export default function ImageModal({
@@ -17,6 +18,7 @@ export default function ImageModal({
   setOpen,
   images,
   setImages,
+  userType,
 }: ImageModalProps) {
   const cancelButtonRef = useRef(null);
   const { removeImage: deleteImage } = useImageUpload();
@@ -37,7 +39,9 @@ export default function ImageModal({
     );
 
     // Create an array of promises for the deleteImage calls
-    const deletePromises = imagesToRemove.map((image) => deleteImage(image.id));
+    const deletePromises = imagesToRemove.map((image) =>
+      deleteImage(image.id, `${userType}/${image.name}`, userType),
+    );
 
     // Use Promise.all to wait for all deleteImage calls to complete
     Promise.all(deletePromises)

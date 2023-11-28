@@ -2,7 +2,7 @@ import { DbResultOk, Tables } from "@/database";
 import useImageUpload from "@/hooks/useImageUpload";
 import { PhotoIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
-import React, { SetStateAction, useState } from "react";
+import React, { SetStateAction } from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { useNotification } from "@/context/NotificationContext";
@@ -17,9 +17,6 @@ interface ImagesProps {
 function Images({ professional, formData, setFormData }: ImagesProps) {
   const { loading, handleImageUpload, removeImage } = useImageUpload();
   const { addError } = useNotification();
-  const [currentImage, setCurrentImage] = useState<Tables<"files"> | null>(
-    null,
-  );
   const handleImageChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -56,6 +53,7 @@ function Images({ professional, formData, setFormData }: ImagesProps) {
         await removeImage(
           image?.id,
           `${professional.id}/images/${image?.name}`,
+          "professionals",
         );
 
         const images = formData.images as Tables<"files">[];

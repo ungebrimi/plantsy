@@ -5,7 +5,6 @@ import Image from "next/image";
 import React, { SetStateAction } from "react";
 import { useNotification } from "@/context/NotificationContext";
 import { archiveData } from "@/app/utils/archive";
-import { createClient } from "@/app/utils/supabase/client";
 
 interface ThumbnailProps {
   professional: Tables<"professionals">;
@@ -16,7 +15,6 @@ interface ThumbnailProps {
 function Thumbnail({ professional, formData, setFormData }: ThumbnailProps) {
   const { loading, handleImageUpload, removeImage } = useImageUpload();
   const { addError } = useNotification();
-  const supabase = createClient();
   const handleImageChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -54,7 +52,11 @@ function Thumbnail({ professional, formData, setFormData }: ThumbnailProps) {
         "remove image",
       );
       // Attempt to remove the image
-      await removeImage(image?.id, `${professional.id}/images/${image?.name}`);
+      await removeImage(
+        image?.id,
+        `${professional.id}/images/${image?.name}`,
+        "professionals",
+      );
       // If removal is successful, reset the states
       setFormData((formData: any) => ({ ...formData, thumbnail: null }));
     } catch (error) {
