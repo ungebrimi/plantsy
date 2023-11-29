@@ -16,11 +16,17 @@ interface FileUploadProps {
 const FileUpload = ({ files, setFiles, user, userType }: FileUploadProps) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const { addError } = useNotification();
-  const { loading, handleFileUpload } = useFileUpload();
+  const { loading, handleUpload } = useFileUpload();
 
   const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
     try {
-      const res = await handleFileUpload(event, `${user.id}/files`, userType);
+      const res = await handleUpload({
+        event,
+        location: userType,
+        path: `${user.id}/files`,
+        processImage: false,
+        addUniqueSuffix: true,
+      });
       setFiles(res as Tables<"files">[]);
     } catch (e: any) {
       addError("There was an issue uploading your file" + e.message);
@@ -68,6 +74,7 @@ const FileUpload = ({ files, setFiles, user, userType }: FileUploadProps) => {
           setOpen={setOpenModal}
           files={files}
           setFiles={setFiles}
+          userType={userType}
         />
       )}
     </div>

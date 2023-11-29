@@ -1,4 +1,4 @@
-import useImageUpload from "@/hooks/useImageUpload";
+import useFileUpload from "@/hooks/useFileUpload";
 import { CameraIcon } from "@heroicons/react/24/outline";
 import React, { SetStateAction, useState } from "react";
 import { DbResultOk, Tables } from "@/database";
@@ -19,20 +19,21 @@ const ImageUpload = ({
   userType,
 }: ImageUploadProps) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const { loading, handleImageUpload } = useImageUpload();
+  const { loading, handleUpload } = useFileUpload();
   const { addError } = useNotification();
 
   const handleImageChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     try {
-      const res = (await handleImageUpload(
-        userType,
+      const res = (await handleUpload({
         event,
-        `${user.id}/images`,
-        810,
-        true,
-      )) as DbResultOk<Tables<"files">>;
+        location: userType,
+        path: `${user.id}/images`,
+        maxWidthOrHeight: 810,
+        addUniqueSuffix: true,
+        processImage: true,
+      })) as DbResultOk<Tables<"files">>;
       // check if res is array or an object, if it's an array, set images to the array, if it's an object, add it to the images array
       console.log(res);
       if (Array.isArray(res)) {

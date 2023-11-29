@@ -1,5 +1,5 @@
 import { DbResultOk, Tables } from "@/database";
-import useImageUpload from "@/hooks/useImageUpload";
+import useFileUpload from "@/hooks/useFileUpload";
 import { PhotoIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import React, { SetStateAction } from "react";
@@ -15,20 +15,26 @@ interface ImagesProps {
 }
 
 function Images({ professional, formData, setFormData }: ImagesProps) {
-  const { loading, handleImageUpload, removeImage } = useImageUpload();
+  const { loading, handleUpload, removeFile } = useFileUpload();
   const { addError } = useNotification();
   const handleImageChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     try {
-      const images = (await handleImageUpload(
-        "professionals",
+      const res = (await handleUpload({
         event,
-        `${professional.id}/images`,
-        672,
-        false,
-      )) as DbResultOk<Tables<"files">>;
-      setFormData({ ...formData, images: images });
+        location: "professionals",
+        path: `${professional.id}/images`,
+        maxWidthOrHeight: 1080,
+        processImage: true,
+      })) as DbResultOk<Tables<"files">>;
+      // check if the res is an array
+      if (Array.isArray(res)) {
+        setFormData({ ...formData, images: res });
+        return;
+      } else {
+        setFormData({ ...formData, images: [res] });
+      }
     } catch (error: any) {
       if (error.status_code === "409") {
         addError(error.message + "rename the duplicated file to proceed");
@@ -50,7 +56,7 @@ function Images({ professional, formData, setFormData }: ImagesProps) {
           JSON.stringify(image),
           "remove image",
         );
-        await removeImage(
+        await removeFile(
           image?.id,
           `${professional.id}/images/${image?.name}`,
           "professionals",

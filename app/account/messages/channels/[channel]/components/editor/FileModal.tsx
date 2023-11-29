@@ -2,13 +2,14 @@ import React, { Fragment, SetStateAction, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { DocumentIcon, FolderIcon } from "@heroicons/react/24/outline";
 import { Tables } from "@/database";
-import { createBrowserClient } from "@supabase/ssr";
+import useFileUpload from "@/hooks/useFileUpload";
 
 type FileModalProps = {
   open: boolean;
   setOpen: React.Dispatch<SetStateAction<boolean>>;
   files: Tables<"files">[];
   setFiles: React.Dispatch<SetStateAction<Tables<"files">[]>>;
+  userType: string;
 };
 
 export default function FileModal({
@@ -16,26 +17,15 @@ export default function FileModal({
   setOpen,
   files,
   setFiles,
+  userType,
 }: FileModalProps) {
   const cancelButtonRef = useRef(null);
   const [tempFiles, setTempFiles] = useState<Tables<"files">[]>(files);
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  );
+  const { removeFile } = useFileUpload();
 
-  async function removeFile(file_id: number) {
+  async function removeTempFile(file_id: number) {
     const updatedTempFiles = tempFiles.filter((file) => file.id !== file_id);
     setTempFiles(updatedTempFiles);
-  }
-
-  async function removeImageFromDB(file: Tables<"files">) {
-    const { error } = await supabase.from("files").delete().eq("id", file.id);
-    if (error) {
-      console.error(error);
-    } else {
-      console.log(`file ${file.name} has been removed from the database`);
-    }
   }
 
   function handleSave() {
@@ -45,8 +35,8 @@ export default function FileModal({
     );
 
     // Remove those images from the database
-    filesToRemove.forEach((image) => {
-      removeImageFromDB(image);
+    filesToRemove.forEach((file) => {
+      removeFile(file.id, `${userType}/${file.name}`, userType);
     });
 
     // Update the images array to match tempImages
@@ -120,7 +110,7 @@ export default function FileModal({
                             </div>
                             <button
                               type="button"
-                              onClick={() => removeFile(file.id)}
+                              onClick={() => removeTempFile(file.id)}
                               className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                             >
                               Remove

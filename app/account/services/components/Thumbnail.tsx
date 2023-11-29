@@ -1,5 +1,5 @@
 import { DbResultOk, Tables } from "@/database";
-import useImageUpload from "@/hooks/useImageUpload";
+import useFileUpload from "@/hooks/useFileUpload";
 import { PhotoIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import React, { SetStateAction } from "react";
@@ -13,19 +13,19 @@ interface ThumbnailProps {
 }
 
 function Thumbnail({ professional, formData, setFormData }: ThumbnailProps) {
-  const { loading, handleImageUpload, removeImage } = useImageUpload();
+  const { loading, handleUpload, removeFile } = useFileUpload();
   const { addError } = useNotification();
   const handleImageChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     try {
-      const image = (await handleImageUpload(
-        "professionals",
+      const image = (await handleUpload({
         event,
-        `${professional.id}/images`,
-        1080,
-        false,
-      )) as DbResultOk<Tables<"files">>;
+        location: "professionals",
+        path: `${professional.id}/images`,
+        maxWidthOrHeight: 1080,
+        processImage: true,
+      })) as DbResultOk<Tables<"files">>;
       setFormData({ ...formData, thumbnail: image });
     } catch (error: any) {
       if (error.status_code === "409") {
@@ -52,7 +52,7 @@ function Thumbnail({ professional, formData, setFormData }: ThumbnailProps) {
         "remove image",
       );
       // Attempt to remove the image
-      await removeImage(
+      await removeFile(
         image?.id,
         `${professional.id}/images/${image?.name}`,
         "professionals",
@@ -122,6 +122,7 @@ function Thumbnail({ professional, formData, setFormData }: ThumbnailProps) {
                   name="image-upload"
                   type="file"
                   className="sr-only"
+                  multiple={false}
                   onChange={(e) => handleImageChange(e)}
                 />
               </label>

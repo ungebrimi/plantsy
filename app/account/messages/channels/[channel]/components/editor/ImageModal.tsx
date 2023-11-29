@@ -3,7 +3,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { PhotoIcon } from "@heroicons/react/24/outline";
 import { Tables } from "@/database";
 import Image from "next/image";
-import useImageUpload from "@/hooks/useImageUpload";
+import useFileUpload from "@/hooks/useFileUpload";
 
 type ImageModalProps = {
   open: boolean;
@@ -21,7 +21,7 @@ export default function ImageModal({
   userType,
 }: ImageModalProps) {
   const cancelButtonRef = useRef(null);
-  const { removeImage: deleteImage } = useImageUpload();
+  const { removeFile } = useFileUpload();
 
   const [tempImages, setTempImages] = useState<Tables<"files">[]>(images);
 
@@ -40,7 +40,7 @@ export default function ImageModal({
 
     // Create an array of promises for the deleteImage calls
     const deletePromises = imagesToRemove.map((image) =>
-      deleteImage(image.id, `${userType}/${image.name}`, userType),
+      removeFile(image.id, `${userType}/${image.name}`, userType),
     );
 
     // Use Promise.all to wait for all deleteImage calls to complete
@@ -120,8 +120,8 @@ export default function ImageModal({
                                 width={300}
                                 height={300}
                               />
-                              <div className="min-w-0 flex-auto">
-                                <p className="text-sm font-semibold leading-6 text-gray-900">
+                              <div className="max-w-sm">
+                                <p className="text-sm truncate font-semibold leading-6 text-gray-900">
                                   {image.name}
                                 </p>
                                 <p className="mt-1 truncate text-xs leading-5 text-gray-500">

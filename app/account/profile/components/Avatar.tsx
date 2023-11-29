@@ -2,7 +2,7 @@
 import React, { SetStateAction, useRef } from "react";
 import Image from "next/image";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
-import useImageUpload from "@/hooks/useImageUpload";
+import useFileUpload from "@/hooks/useFileUpload";
 import { DbResultOk, Tables } from "@/database";
 import { useNotification } from "@/context/NotificationContext";
 import { createClient } from "@/app/utils/supabase/client";
@@ -28,7 +28,7 @@ const Avatar = ({
   user: Tables<"professionals"> | Tables<"clients">;
   userType: string;
 }) => {
-  const { loading, handleImageUpload, removeImage } = useImageUpload();
+  const { loading, handleUpload, removeFile } = useFileUpload();
   const supabase = createClient();
   const { addError } = useNotification();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -36,7 +36,7 @@ const Avatar = ({
   const handleRemoveImage = async (image: Tables<"files">) => {
     try {
       // Attempt to remove the image
-      await removeImage(
+      await removeFile(
         image?.id,
         `${user.id}/avatars/${image?.name}`,
         userType,
@@ -95,13 +95,13 @@ const Avatar = ({
         console.log("removed the image");
       }
       // Upload the image
-      const image = (await handleImageUpload(
-        userType,
+      const image = (await handleUpload({
         event,
-        `${user.id}/avatars`,
-        500,
-        false,
-      )) as DbResultOk<Tables<"files">>;
+        location: userType,
+        path: `${user.id}/avatars`,
+        maxWidthOrHeight: 500,
+        processImage: true,
+      })) as DbResultOk<Tables<"files">>;
       await updateProfileThumbnail(image);
       setFormData({ ...formData, profile_picture: image });
     } catch (error: any) {

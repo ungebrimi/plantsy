@@ -117,7 +117,7 @@ const Message = ({ message, user }: MessageProps) => {
                       height={300}
                       src={image.url}
                       alt="#"
-                      className="h-full w-full object-contain object-center sm:rounded-lg"
+                      className="h-full w-full  object-contain object-center sm:rounded-lg"
                     />
                   </Tab.Panel>
                 ))}
