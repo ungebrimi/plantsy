@@ -5,9 +5,10 @@ import {
   FunnelIcon,
   Squares2X2Icon,
 } from "@heroicons/react/20/solid";
+import Link from "next/link";
 
 const sortOptions = [
-  { name: "Most Popular", href: "#", current: true },
+  { name: "Most Popular", href: "", current: true },
   { name: "Best Rating", href: "#", current: false },
   { name: "Newest", href: "#", current: false },
   { name: "Price: Low to High", href: "#", current: false },
@@ -45,12 +46,12 @@ function ActionGroup({
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
+          <Menu.Items className="absolute right-0 z-50 mt-2 w-40 origin-top-right rounded-md shadow-2xl bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
             <div className="py-1">
               {sortOptions.map((option) => (
                 <Menu.Item key={option.name}>
                   {({ active }) => (
-                    <a
+                    <Link
                       href={option.href}
                       className={classNames(
                         option.current
@@ -61,7 +62,7 @@ function ActionGroup({
                       )}
                     >
                       {option.name}
-                    </a>
+                    </Link>
                   )}
                 </Menu.Item>
               ))}

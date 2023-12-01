@@ -1,8 +1,9 @@
 import Link from "next/link";
 import React from "react";
 import Image from "next/image";
+import { Tables } from "@/database";
 
-function Grid({ services }: any) {
+function Grid({ services }: { services: Tables<"services">[] }) {
   return (
     <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:col-span-3 lg:gap-x-8">
       {services.map((service: any) => {
