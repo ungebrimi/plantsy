@@ -40,7 +40,7 @@ export default async function page({
   }
 
   const { data: services, error: servicesError } = await serviceQuery;
-  loading = false;
+
   const filterOptions = [
     { id: "category", name: "Service Category", options: categories },
     { id: "city", name: "City", options: [] },
@@ -48,7 +48,7 @@ export default async function page({
     { id: "state", name: "State", options: [] },
   ];
 
-  if (loading) return <div>Loading...</div>;
+  if (!services) return <div>Loading...</div>;
 
   if (servicesError) console.error(servicesError);
   if (categoriesError) console.error(categoriesError);

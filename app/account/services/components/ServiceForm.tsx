@@ -94,7 +94,7 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
           county: formData.county,
           state: formData.state,
           zip: formData.zip,
-          service_category: formData.service_category,
+          service_category: formData.service_category.toLowerCase(),
           keywords: formData.keywords,
         })
         .eq("id", service.id)
@@ -118,7 +118,7 @@ function ServiceForm({ professional, service, edit }: CardInformationProps) {
           county: formData.county,
           state: formData.state,
           zip: formData.zip,
-          service_category: formData.service_category,
+          service_category: formData.service_category.toLowerCase(),
           keywords: formData.keywords,
         })
         .select()

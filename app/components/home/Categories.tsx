@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 const Categories = () => {
   return (
@@ -12,13 +13,13 @@ const Categories = () => {
           >
             Browse by category
           </h2>
-          <a
-            href="#"
+          <Link
+            href="/discover"
             className="hidden text-sm font-semibold text-green-600 hover:text-green-500 sm:block"
           >
             Browse all categories
             <span aria-hidden="true"> &rarr;</span>
-          </a>
+          </Link>
         </div>
 
         <div className="mt-6 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:grid-rows-2 sm:gap-x-6 lg:gap-8">
@@ -37,10 +38,10 @@ const Categories = () => {
             <div className="flex items-end p-6">
               <div>
                 <h3 className="font-semibold text-white">
-                  <a href="#">
+                  <Link href="/discover?category=regular%20indoor%20plant%20care">
                     <span className="absolute inset-0" />
                     Regular Indoor Plant Care
-                  </a>
+                  </Link>
                 </h3>
                 <p aria-hidden="true" className="mt-1 text-sm text-white">
                   Browse now
@@ -63,10 +64,10 @@ const Categories = () => {
             <div className="flex items-end p-6 sm:absolute sm:inset-0">
               <div>
                 <h3 className="font-semibold text-white">
-                  <a href="#">
+                  <Link href="/discover?category=garden%20design%20and%20landscaping">
                     <span className="absolute inset-0" />
                     Garden Design and Landscaping
-                  </a>
+                  </Link>
                 </h3>
                 <p aria-hidden="true" className="mt-1 text-sm text-white">
                   Browse now
@@ -89,7 +90,7 @@ const Categories = () => {
             <div className="flex items-end p-6 sm:absolute sm:inset-0">
               <div>
                 <h3 className="font-semibold text-white">
-                  <a href="#">
+                  <a href="/discover?category=educational%20farm%20tours%20and%20workshops">
                     <span className="absolute inset-0" />
                     Educational Farm Tours and Workshops
                   </a>
@@ -103,13 +104,13 @@ const Categories = () => {
         </div>
 
         <div className="mt-6 sm:hidden">
-          <a
-            href="#"
+          <Link
+            href="/discover"
             className="block text-sm font-semibold text-green-600 hover:text-green-500"
           >
             Browse all categories
             <span aria-hidden="true"> &rarr;</span>
-          </a>
+          </Link>
         </div>
       </div>
     </section>
