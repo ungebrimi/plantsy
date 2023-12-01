@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import Grid from "./Grid";
 import Filters from "./Filters";
 import { Tables } from "@/database";
 
@@ -40,7 +39,7 @@ const ClientPage = ({
             {/* Filters */}
             <Filters filterOptions={filterOptions} />
 
-            <Grid services={services} />
+            {/*<Grid services={services} />*/}
           </div>
         </section>
       </main>
